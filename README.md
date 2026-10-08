@@ -69,7 +69,6 @@ All of these are stored in the database (`Setting.business_rules` and `Service`)
 
 ## Pending from YM Freak
 
-- Your credit on **Fake Capo (Remix)** (production, mix, master…) and the year of the gold certification.
 - More releases for the portfolio (Spotify or YouTube links + your credit on each).
 - Platinum certifications, if any: which songs.
 - Real testimonials (the section stays hidden until there is at least one).

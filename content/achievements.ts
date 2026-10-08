@@ -44,9 +44,8 @@ export const portfolioSeeds: PortfolioSeed[] = [
     artist: "Karetta el Gucci",
     workTypes: ["Single"],
     year: 2020,
-    // TODO(YM Freak): confirm the credit on this release (production, mix, master…).
-    creditEs: null,
-    creditEn: null,
+    creditEs: "Producción completa",
+    creditEn: "Full production",
     coverUrl: "https://i.scdn.co/image/ab67616d0000b273d29cf76aea49cb02adadfa84",
     embedProvider: "SPOTIFY",
     embedId: "album/4cddGZ6rYjXeWY0DpNupXQ",
@@ -89,7 +88,7 @@ export const achievementSeeds: AchievementSeed[] = [
     titleEn: "Gold record in Spain",
     detailEs: "«Fake Capo (Remix)» de Karetta el Gucci.",
     detailEn: "“Fake Capo (Remix)” by Karetta el Gucci.",
-    year: null, // TODO(YM Freak): year of certification
+    year: 2021,
     highlight: true,
     sortOrder: 2,
     portfolioSlug: "fake-capo-remix",

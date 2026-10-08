@@ -92,6 +92,18 @@ export const knowledgeSeeds: KnowledgeSeed[] = [
     active: true,
   },
   {
+    key: "send-files-how",
+    kind: "PROCESS",
+    questionEs: "¿Cómo envío mis archivos?",
+    questionEn: "How do I send my files?",
+    answerEs:
+      "Por donde te quede más cómodo: un enlace de WeTransfer, Google Drive o un servicio similar, o por correo. Como los WAV por canales suelen pesar mucho, lo más práctico es un enlace de WeTransfer o Google Drive.",
+    answerEn:
+      "Whatever is easiest for you: a WeTransfer or Google Drive link (or a similar service), or email. Multitrack WAV files are usually large, so a WeTransfer or Google Drive link is the most practical.",
+    tags: ["archivos", "files", "enviar", "send", "wetransfer", "drive", "correo", "email"],
+    active: true,
+  },
+  {
     key: "send-files-mix",
     kind: "PROCESS",
     questionEs: "¿Qué archivos necesito enviar para mezcla y mastering?",
