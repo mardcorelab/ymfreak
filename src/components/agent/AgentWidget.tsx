@@ -125,7 +125,7 @@ export function AgentWidget() {
           body: JSON.stringify({ conversationId, actionId, decision, locale }),
         });
         const data = (await res.json()) as ConfirmResponse;
-        const state = data.ok ? (decision === "confirm" ? "confirmed" : "dismissed") : "expired";
+        const state: "confirmed" | "dismissed" | "expired" = data.ok ? (decision === "confirm" ? "confirmed" : "dismissed") : "expired";
         setItems((prev) => [
           ...prev.map((i) =>
             i.type === "card" && i.card.kind === "proposal" && i.card.actionId === actionId ? { type: "card" as const, card: { ...i.card, state } } : i,
