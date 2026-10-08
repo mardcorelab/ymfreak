@@ -13,6 +13,7 @@ import { amountDue } from "@/server/payments/service";
 import { getPaymentProvider } from "@/server/payments";
 import { ButtonLink } from "@/components/ui/ButtonLink";
 import { CancelForm, PayForm } from "@/components/booking/PaymentPanel";
+import { signInFromOrder } from "@/server/portal/actions";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { robots: { index: false, follow: false } };
@@ -32,8 +33,9 @@ export default async function CheckoutPage({ params, searchParams }: Props) {
 
   const now = new Date();
   await expireStaleHolds(db, now);
-  const [t, order, rules, contact] = await Promise.all([
+  const [t, ta, order, rules, contact] = await Promise.all([
     getTranslations("checkout"),
+    getTranslations("account"),
     db.order.findUnique({ where: { id: orderId }, include: { items: true, booking: true, payments: { orderBy: { createdAt: "asc" } } } }),
     getSetting("business_rules"),
     getSetting("contact"),
@@ -171,6 +173,17 @@ export default async function CheckoutPage({ params, searchParams }: Props) {
           )}
           <p className="text-ash">{t("saveLink")}</p>
         </div>
+      )}
+
+      {!["EXPIRED"].includes(b.status) && (
+        <form action={signInFromOrder} className="mt-10 flex flex-wrap items-center justify-between gap-4 rounded-lg border border-rule p-5">
+          <input type="hidden" name="orderId" value={order.id} />
+          <input type="hidden" name="locale" value={locale} />
+          <p className="max-w-[44ch] text-sm text-bone/80">{ta("fromCheckoutHint")}</p>
+          <button type="submit" className="inline-flex min-h-11 items-center rounded-full border border-bone/40 px-5 text-sm hover:bg-bone/5">
+            {ta("fromCheckout")}
+          </button>
+        </form>
       )}
 
       {cancellation?.allowed && cancellation.deadline && (

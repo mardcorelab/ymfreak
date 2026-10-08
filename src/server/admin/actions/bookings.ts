@@ -173,3 +173,37 @@ export async function cancelWithRefund(id: string, _prev: ActionState): Promise<
   refreshSite();
   return { status: "ok", message: `Reserva cancelada. Reembolsado: $${(result.refundedCents / 100).toFixed(2)}.` };
 }
+
+const projectLinkSchema = z.object({
+  kind: z.enum(["PREVIEW", "FINAL"], { errorMap: () => ({ message: "Tipo: elige versión para escuchar o archivos finales" }) }),
+  label: z.string().trim().max(120, "Nombre: máximo 120 caracteres"),
+  url: z
+    .string()
+    .trim()
+    .url("Enlace: pega el enlace completo")
+    .startsWith("https://", "Enlace: debe empezar por https://")
+    .max(500, "Enlace: demasiado largo"),
+  note: z.string().trim().max(1000, "Nota: máximo 1000 caracteres"),
+});
+
+/** Shares a preview or the final files with the client (shown in their portal; finals only once the balance is paid). */
+export async function addProjectLink(bookingId: string, _prev: ActionState, fd: FormData): Promise<ActionState> {
+  await requireAdmin();
+  const parsed = projectLinkSchema.safeParse({ kind: text(fd, "kind"), label: text(fd, "label"), url: text(fd, "url"), note: text(fd, "linkNote") });
+  if (!parsed.success) return invalid(parsed.error);
+  const booking = await db.booking.findUnique({ where: { id: bookingId }, select: { id: true } });
+  if (!booking) return failure("Esta reserva ya no existe.");
+  const link = await db.projectLink.create({
+    data: { bookingId, kind: parsed.data.kind, author: "admin", url: parsed.data.url, label: parsed.data.label || null, note: parsed.data.note || null },
+  });
+  await audit("booking.link_add", "ProjectLink", link.id, { bookingId, kind: parsed.data.kind });
+  refreshSite();
+  return { status: "ok", message: parsed.data.kind === "FINAL" ? "Archivos finales añadidos. El cliente los verá al pagar el saldo." : "Versión compartida con el cliente." };
+}
+
+export async function deleteProjectLink(linkId: string, bookingId: string): Promise<void> {
+  await requireAdmin();
+  await db.projectLink.deleteMany({ where: { id: linkId, bookingId, author: "admin" } });
+  await audit("booking.link_delete", "ProjectLink", linkId, { bookingId });
+  refreshSite();
+}

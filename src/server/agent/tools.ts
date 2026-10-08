@@ -387,6 +387,7 @@ const bookingStatus = tool({
         paid: money(paid, ctx.locale),
         dueNow: due ? { kind: due.kind, amount: money(due.amountCents, ctx.locale) } : null,
         bookingPage: checkoutPath,
+        clientPortal: `/${ctx.locale}/account`,
       },
       card: {
         kind: "status",

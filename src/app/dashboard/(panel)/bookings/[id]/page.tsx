@@ -2,9 +2,10 @@ import { notFound } from "next/navigation";
 import { db } from "@/server/db";
 import { nextStatuses } from "@/server/domain/booking-status";
 import { expireStaleHolds } from "@/server/booking/calendar";
-import { cancelWithRefund, changeBookingStatus, markBalancePaid } from "@/server/admin/actions/bookings";
+import { addProjectLink, cancelWithRefund, changeBookingStatus, deleteProjectLink, markBalancePaid } from "@/server/admin/actions/bookings";
+import { DeleteForm } from "@/components/admin/DeleteForm";
 import { AdminForm } from "@/components/admin/AdminForm";
-import { Select, TextField } from "@/components/admin/fields";
+import { Select, TextArea, TextField } from "@/components/admin/fields";
 import { Notice, PageHeader } from "@/components/admin/PageHeader";
 import { BOOKING_LABEL, BookingBadge } from "@/components/admin/BookingBadge";
 import { fmtDateTime, fmtDay, fmtMoney } from "@/lib/admin-format";
@@ -22,6 +23,7 @@ export default async function BookingDetail({ params, searchParams }: { params: 
       items: { include: { service: true } },
       order: { include: { items: true, payments: { orderBy: { createdAt: "asc" } } } },
       events: { orderBy: { createdAt: "desc" } },
+      links: { orderBy: { createdAt: "asc" } },
     },
   });
   if (!b) notFound();
@@ -70,6 +72,58 @@ export default async function BookingDetail({ params, searchParams }: { params: 
                   </li>
                 ))}
               </ul>
+            )}
+          </section>
+
+          <section className="rounded-lg border border-rule p-5" aria-labelledby="links">
+            <h2 id="links" className="type-sub text-xl">
+              Archivos del proyecto
+            </h2>
+            <p className="mt-1 text-sm text-ash">
+              El cliente comparte aquí sus archivos y pide revisiones desde su portal. Tú compartes versiones para escuchar y los archivos finales (el cliente
+              los ve cuando paga el saldo).
+            </p>
+            {b.links.length === 0 ? (
+              <p className="mt-4 text-sm text-ash">Todavía no hay enlaces.</p>
+            ) : (
+              <ul className="mt-4 divide-y divide-rule border-y border-rule">
+                {b.links.map((l) => (
+                  <li key={l.id} className="flex flex-wrap items-start justify-between gap-3 py-3 text-sm" data-link-kind={l.kind}>
+                    <div className="min-w-0">
+                      <p className="text-xs text-ash">
+                        {LINK_LABEL[l.kind]} · {l.author === "admin" ? "tú" : "cliente"} · {fmtDateTime(l.createdAt)}
+                      </p>
+                      {l.label && <p className="font-medium">{l.label}</p>}
+                      {l.url && (
+                        <a href={l.url} target="_blank" rel="noopener noreferrer nofollow" className="break-all underline underline-offset-4">
+                          {l.url}
+                        </a>
+                      )}
+                      {l.note && <p className="mt-1 whitespace-pre-wrap text-bone/85">{l.note}</p>}
+                    </div>
+                    {l.author === "admin" && <DeleteForm action={deleteProjectLink.bind(null, l.id, b.id)} what="este enlace" />}
+                  </li>
+                ))}
+              </ul>
+            )}
+            {!["CANCELLED", "EXPIRED"].includes(b.status) && (
+              <div className="mt-5">
+                <AdminForm action={addProjectLink.bind(null, b.id)} submitLabel="Compartir enlace">
+                  <div className="grid gap-5 sm:grid-cols-2">
+                    <Select
+                      name="kind"
+                      label="Tipo"
+                      options={[
+                        { value: "PREVIEW", label: "Versión para escuchar" },
+                        { value: "FINAL", label: "Archivos finales" },
+                      ]}
+                    />
+                    <TextField name="label" label="Nombre (opcional)" placeholder="Mezcla v1, Master final…" />
+                  </div>
+                  <TextField name="url" label="Enlace" type="url" placeholder="https://drive.google.com/…" />
+                  <TextArea name="linkNote" label="Nota para el cliente (opcional)" />
+                </AdminForm>
+              </div>
             )}
           </section>
 
@@ -181,6 +235,13 @@ export default async function BookingDetail({ params, searchParams }: { params: 
     </>
   );
 }
+
+const LINK_LABEL: Record<string, string> = {
+  CLIENT_FILES: "Archivos del cliente",
+  REVISION_REQUEST: "Revisión pedida",
+  PREVIEW: "Versión para escuchar",
+  FINAL: "Archivos finales",
+};
 
 function Item({ label, children }: { label: string; children: React.ReactNode }) {
   return (

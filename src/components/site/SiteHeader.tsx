@@ -34,6 +34,9 @@ export function SiteHeader() {
               {t(item.key)}
             </Link>
           ))}
+          <Link href="/account" className="rounded-full border border-bone/30 px-4 py-1.5 transition-colors hover:border-bone hover:text-bone">
+            {t("account")}
+          </Link>
           <LocaleSwitch label={t("language")} />
         </nav>
 
@@ -51,6 +54,9 @@ export function SiteHeader() {
                 {t(item.key)}
               </Link>
             ))}
+            <Link href="/account" className="rounded-xl px-4 py-3 hover:bg-white/5">
+              {t("account")}
+            </Link>
             <div className="mt-1 border-t border-rule px-4 pb-2 pt-3">
               <LocaleSwitch label={t("language")} />
             </div>

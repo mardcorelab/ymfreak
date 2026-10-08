@@ -173,6 +173,7 @@ model Booking {
   projectDetails Json
   revisionsUsed  Int            @default(0)
   items          BookingItem[]
+  links          ProjectLink[]
   capacity       CapacityUse[]
   events         BookingEvent[]
   orderId        String?        @unique
@@ -495,4 +496,30 @@ model RateLimitHit {
   createdAt DateTime @default(now())
 
   @@index([key, createdAt])
+}
+
+enum ProjectLinkKind {
+  /// The client's stems / files (WeTransfer, Google Drive…).
+  CLIENT_FILES
+  /// A revision the client asked for, with notes.
+  REVISION_REQUEST
+  /// A version to listen to before the final delivery.
+  PREVIEW
+  /// Final files: shown to the client only once the balance is paid.
+  FINAL
+}
+
+/// Links exchanged on a project (files are never uploaded to this site; they live on Drive/WeTransfer).
+model ProjectLink {
+  id        String          @id @default(cuid())
+  bookingId String
+  booking   Booking         @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  kind      ProjectLinkKind
+  author    String          // client | admin
+  label     String?
+  url       String?
+  note      String?
+  createdAt DateTime        @default(now())
+
+  @@index([bookingId, createdAt])
 }
