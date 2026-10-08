@@ -90,6 +90,7 @@ test("the admin sees the files, shares a preview and the finals, and delivers", 
 });
 
 test("the client hears the preview, asks for a revision, and gets the finals only after paying the balance", async ({ browser, page }) => {
+  test.setTimeout(120_000); // two people, several round trips
   const ctx = await browser.newContext({ storageState: "test-results/portal-client.json" });
   const client = await ctx.newPage();
   await client.goto(projectUrl);
