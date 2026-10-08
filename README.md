@@ -2,7 +2,7 @@
 
 Official site, booking and payments platform for YM Freak (producer, mixing & mastering engineer).
 
-**Current state: Phase 6 — public site, dashboard, bookings, PayPal payments, the YM Freak AI assistant and the client portal.** Online booking opens to the public from the dashboard once PayPal is configured.
+**Current state: Phase 7 complete — public site, dashboard, bookings, PayPal payments, the YM Freak AI assistant, the client portal, analytics, SEO and security hardening.** Next: connect ymfreak.com. Online booking opens to the public from the dashboard once PayPal is configured.
 
 ## Stack
 
@@ -107,6 +107,32 @@ Private panel, in Spanish, to edit everything the site shows: services and price
 - **Privacy:** a client only reaches bookings made with their email. Other codes return "not found", and `/account` and `/checkout` are excluded from search engines.
 - **Tests:** E2E in CI covering the full cycle: deposit, portal, files link, preview, finals locked, revision, new delivery, balance paid, finals unlocked; plus wrong email/code refused and sign-out.
 
+## Analytics, SEO, security (Phase 7)
+
+- **Analytics** (`/dashboard/analytics`, last 7/30/90 days):
+  - **How visits are counted:** first-party and cookie-free. No IP or user agent is stored, only a daily rotating anonymous hash. Bots, Do Not Track / Global Privacy Control and your own signed-in visits are ignored. Data is kept 13 months.
+  - **What the page shows:** visits per day; the funnel visits → Book page → bookings → deposits paid; the assistant funnel; top pages; referrers; countries; devices; money collected.
+- **SEO:**
+  - Canonical and hreflang on every page; a sitemap with both languages; robots.txt that excludes the dashboard, account and checkout pages.
+  - JSON-LD: Person on the home page, FAQPage, and ProfessionalService with live prices on the services page.
+  - Icons, web manifest and Open Graph image.
+- **Security:**
+  - Headers: Content-Security-Policy (only Spotify/YouTube iframes and the cover CDNs are allowed), HSTS, nosniff, frame-ancestors none, Referrer-Policy and Permissions-Policy.
+  - Every POST to the assistant and portal is checked for the same origin.
+  - Rate limits on sign-in, booking, payments, the assistant and the portal; signed HTTP-only cookies; an audit log; Dependabot for weekly dependency updates.
+  - Friendly error pages.
+- **Legal:** `/terms` (booking terms) and `/privacy`. Their figures come from the live business rules. They describe exactly what this site does, but **review them with a professional**.
+- **Measured live** (home, desktop): TTFB ≈ 0.2 s, load ≈ 1 s, CLS 0, about 36 KB of JavaScript transferred, no CSP violations with the Spotify player.
+
+## Going live on ymfreak.com (checklist)
+
+1. Vercel → Project **ymfreak** → Settings → Domains → add `ymfreak.com` and `www.ymfreak.com`. Vercel shows the DNS records.
+2. Hostinger → Domains → ymfreak.com → DNS: add the records Vercel shows (usually `A @ 76.76.21.21` and `CNAME www cname.vercel-dns.com`), and delete Hostinger's default A/CNAME records for `@` and `www`.
+3. When Vercel shows both domains as valid, set `NEXT_PUBLIC_SITE_URL=https://www.ymfreak.com` (or the one chosen as primary) and redeploy.
+4. PayPal: update the webhook URL to `https://<domain>/api/webhooks/paypal`. Then go live: set `PAYPAL_ENV=live` and the live Client ID/Secret, and create a live webhook (`PAYPAL_WEBHOOK_ID`).
+5. Dashboard → Availability: open public booking.
+6. Optional: delete the leftover Vercel project `ymfreak-ha5g`.
+
 ## Design
 
 - **Colour comes from the photos.** The page background is sampled from the studio backdrop of the portraits, so YM Freak's photos melt into the page instead of sitting in boxes. One lighter "key light" section matches the seated portrait.
@@ -155,5 +181,5 @@ All of these are stored in the database (`Setting.business_rules` and `Service`)
 3. Availability + bookings (`/book`)
 4. PayPal: deposit and balance checkouts, webhooks, refunds (emails pending)
 5. Assistant with tools + editable knowledge base
-6. Client portal ← *here*
-7. SEO, analytics, performance, security hardening
+6. Client portal
+7. SEO, analytics, performance, security hardening ← *done*
