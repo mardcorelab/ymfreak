@@ -30,9 +30,7 @@ jobs:
       - run: scripts/ci-run.sh typecheck npm run typecheck
       - run: scripts/ci-run.sh lint npm run lint
       - run: scripts/ci-run.sh test npm test
-      # Until the first migration is committed, push the schema directly.
-      - run: if [ -d prisma/migrations ]; then npx prisma migrate deploy; else npx prisma db push --skip-generate; fi
-      - run: scripts/ci-run.sh constraints npm run db:constraints
-      - run: scripts/ci-run.sh seed npm run db:seed
-      - run: npm run db:seed # second run must be a no-op
+      # Same database setup Vercel runs on every deploy (schema, constraints, seed).
+      - run: scripts/ci-run.sh db-setup npx tsx scripts/db-setup.ts
+      - run: npx tsx scripts/db-setup.ts # second run must be a no-op
       - run: scripts/ci-run.sh build npm run build

@@ -2,11 +2,11 @@
   "name": "ymfreak",
   "version": "0.1.0",
   "private": true,
-  "engines": { "node": ">=20.18" },
+  "engines": { "node": "22.x" },
   "scripts": {
     "dev": "next dev",
     "build": "prisma generate && next build",
-    "vercel-build": "prisma generate && prisma db push --skip-generate && npm run db:constraints && npm run db:seed && next build",
+    "vercel-build": "prisma generate && tsx scripts/db-setup.ts && next build",
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
