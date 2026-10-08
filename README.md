@@ -2,7 +2,7 @@
 
 Official site, booking and payments platform for YM Freak (producer, mixing & mastering engineer).
 
-**Current state: Phase 1 — public site** (home, work, services, achievements, about, FAQ, contact) on top of the Phase 0 foundation. Booking, payments and the assistant come in later phases; until then every call to action leads to real contact channels (email, Instagram), never to a button that does nothing.
+**Current state: Phase 2 — public site + private dashboard.** Booking, payments and the assistant come in later phases; until then every call to action leads to real contact channels (email, Instagram), never to a button that does nothing.
 
 ## Stack
 
@@ -39,6 +39,14 @@ Every price, credit, achievement, FAQ and contact link on the site is **read fro
 | `src/server/site-data.ts` | Loaders that turn database rows into the view models the pages render. |
 | `public/images/` | YM Freak's portraits, optimised. |
 
+## Dashboard (`/dashboard`)
+
+Private panel, in Spanish, to edit everything the site shows: services and prices, portfolio (paste a Spotify or YouTube link; the cover comes from the platform), achievements, testimonials, FAQ, contact links and business rules. Changes appear on the public site immediately, in both languages.
+
+- **Sign-in:** set `ADMIN_EMAIL` and `ADMIN_PASSWORD` (12+ characters) in Vercel. Until both are set the dashboard stays closed and says why. Changing the password signs every session out.
+- **Security:** signed, HTTP-only session cookie (7 days); the middleware redirects, and every admin page and server action checks the session again; 8 failed attempts per IP lock sign-in for 15 minutes; every change is written to an audit log; `/dashboard` is excluded from search engines.
+- **Clients, bookings, orders and availability** appear in the dashboard when those phases are built — no empty placeholder screens before then.
+
 ## Design
 
 - **Colour comes from the photos.** The page background is sampled from the studio backdrop of the portraits, so YM Freak's photos melt into the page instead of sitting in boxes. One lighter "key light" section matches the seated portrait.
@@ -63,9 +71,10 @@ All of these are stored in the database (`Setting.business_rules` and `Service`)
 
 | Part | Status |
 |---|---|
-| Domain rules (`src/server/domain`), validators, settings schemas, seed data consistency | **Verified:** strict typecheck + 30 unit tests passing. |
+| Domain rules (`src/server/domain`), validators, settings schemas, seed data consistency | **Verified:** strict typecheck + 45 unit tests passing. |
 | Page layout and copy (home, contact, services) | **Rendered and reviewed** at desktop and mobile widths by server-rendering the real components with the seed data. The preview environment lacked the Archivo font and Spotify covers, so final type and covers will look better than the previews. |
 | Next.js build, Prisma schema, seed script, i18n routing | **Verified in CI** (GitHub Actions, every push): install, Prisma validate, strict typecheck, lint, unit tests, schema + constraints applied to a real PostgreSQL 16, seed run twice (idempotent), production `next build`. |
+| Dashboard, end to end | **Verified in CI with Playwright** against the production build and a real database: dashboard closed without a session, wrong password refused, a price edited in the dashboard shows on the public site (and invalid input is explained), an FAQ entry added appears in both languages and is removed, a pasted YouTube link becomes a release that plays on the site, sign-out closes the dashboard. |
 
 ## Pending from YM Freak
 
@@ -78,8 +87,8 @@ All of these are stored in the database (`Setting.business_rules` and `Service`)
 ## Roadmap
 
 0. Foundation
-1. Public site: design system, Home, Portfolio (Spotify/YouTube embeds loaded on click), Services, About, Achievements, FAQ, Contact ← *here*
-2. Auth (magic link) + admin dashboard
+1. Public site: design system, Home, Portfolio (Spotify/YouTube embeds loaded on click), Services, About, Achievements, FAQ, Contact
+2. Admin sign-in + dashboard ← *here*
 3. Availability + bookings (`/book`)
 4. PayPal: deposit and balance checkouts, webhooks, refunds, emails
 5. Assistant with tools + editable knowledge base
