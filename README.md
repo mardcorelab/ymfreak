@@ -2,7 +2,7 @@
 
 Official site, booking and payments platform for YM Freak (producer, mixing & mastering engineer).
 
-**Current state: Phase 4 — public site, dashboard, bookings and PayPal payments.** Online booking opens to the public from the dashboard once PayPal is configured.
+**Current state: Phase 5 — public site, dashboard, bookings, PayPal payments and the YM Freak AI assistant.** Online booking opens to the public from the dashboard once PayPal is configured.
 
 ## Stack
 
@@ -66,6 +66,29 @@ Private panel, in Spanish, to edit everything the site shows: services and price
 - **Tests:** the PayPal client is unit-tested against recorded API shapes; the full payment journey runs in CI with an in-process stand-in for PayPal (`PAYMENTS_TEST_MODE=1`, impossible to enable on Vercel).
 - **Not yet:** confirmation emails (needs an email provider and the final domain). Until then the client keeps the checkout link and PayPal sends its own receipt.
 
+## Assistant — "Habla con YM Freak AI"
+
+- **Where:** floating button on every public page (ES/EN). It answers in the visitor's language. It only appears when `ANTHROPIC_API_KEY` is set in Vercel. `ANTHROPIC_MODEL` is optional and defaults to `claude-sonnet-5-5`.
+- **No invented facts:** the instructions contain no prices, dates or policies. The assistant reads them through tools that use the same code as the website:
+  - `get_services`, `get_business_info`, `search_knowledge` (your FAQ), `get_portfolio` and `get_contact`.
+  - `quote_delivery`: the real calendar, capacity and price.
+  - `check_session_slots`: free times.
+  - `get_booking_status`: needs the booking code and email.
+  - Change a price or an FAQ in the dashboard and its next answer changes.
+- **Booking only with an explicit click:** the only write tool, `propose_booking`, books nothing. It validates the data with the same rules as `/book`, recomputes the price and availability, and shows a card with **Confirm / Cancel**. Only the visitor's click creates the booking, held for 30 minutes, with a link to pay the deposit on PayPal. Everything is checked again at that moment. A double click can't book twice, and a proposal expires after 15 minutes. While online booking is closed, it offers your contact details instead.
+- **Cards:** prices, delivery date and deposit, free times (tap one to choose it), booking summary, payment link and contact. They are built on the server from tool results, never from the model's text.
+- **Limits:**
+  - 2,000 characters per message.
+  - 40 messages per conversation.
+  - 20 messages per 10 minutes per IP, plus a daily global cap that protects the API budget.
+  - Requests from other websites are refused.
+  - Tool results are treated as data, and it refuses discounts and attempts to change its rules.
+- **Dashboard → Conversaciones:**
+  - Every conversation, filtered by outcome: Consulta, Interesado (left their details), Reservó, Pagó (updated automatically when the deposit is paid).
+  - The transcript shows which tool the assistant used.
+  - Each conversation links to its client and booking.
+- **Tests:** unit tests for the Claude client, history handling, prompt (no hard-coded facts) and input validation. E2E in CI with a scripted stand-in for Claude (`AGENT_TEST_MODE=1`, impossible on Vercel): live prices and dates, refusal while booking is closed, Cancel books nothing, Confirm books and leads to the deposit, conversation visible in the dashboard, cross-site requests refused.
+
 ## Design
 
 - **Colour comes from the photos.** The page background is sampled from the studio backdrop of the portraits, so YM Freak's photos melt into the page instead of sitting in boxes. One lighter "key light" section matches the seated portrait.
@@ -94,6 +117,7 @@ All of these are stored in the database (`Setting.business_rules` and `Service`)
 | Page layout and copy (home, contact, services) | **Rendered and reviewed** at desktop and mobile widths by server-rendering the real components with the seed data. The preview environment lacked the Archivo font and Spotify covers, so final type and covers will look better than the previews. |
 | Next.js build, Prisma schema, seed script, i18n routing | **Verified in CI** (GitHub Actions, every push): install, Prisma validate, strict typecheck, lint, unit tests, schema + constraints applied to a real PostgreSQL 16, seed run twice (idempotent), production `next build`. |
 | Payments, end to end | **Verified in CI with Playwright**: the admin opens booking once payments are configured; a client pays the deposit and the booking is confirmed; nothing more can be paid until delivery; self-service cancellation needs confirmation and refunds the deposit; after delivery the client pays the balance and the project completes; unverified webhook calls are refused. |
+| Assistant | **Verified in CI** (scripted model, real tools and booking) and **live on ymfreak.vercel.app with Claude**: real prices and dates in ES/EN, files to send from the FAQ, refuses discounts and prompt-revealing, honest about being an AI. |
 | Booking, end to end | **Verified in CI with Playwright**: booking closed to the public while switched off; a mix & master booking shows the server-computed delivery date and deposit, creates the booking and holds capacity; a booked session slot is no longer offered; cancelling releases capacity; a manual booking cannot be completed until the balance is recorded. |
 | Dashboard, end to end | **Verified in CI with Playwright** against the production build and a real database: dashboard closed without a session, wrong password refused, a price edited in the dashboard shows on the public site (and invalid input is explained), an FAQ entry added appears in both languages and is removed, a pasted YouTube link becomes a release that plays on the site, sign-out closes the dashboard. |
 
@@ -111,7 +135,7 @@ All of these are stored in the database (`Setting.business_rules` and `Service`)
 1. Public site: design system, Home, Portfolio (Spotify/YouTube embeds loaded on click), Services, About, Achievements, FAQ, Contact
 2. Admin sign-in + dashboard
 3. Availability + bookings (`/book`)
-4. PayPal: deposit and balance checkouts, webhooks, refunds ← *here* (emails pending)
-5. Assistant with tools + editable knowledge base
+4. PayPal: deposit and balance checkouts, webhooks, refunds (emails pending)
+5. Assistant with tools + editable knowledge base ← *here*
 6. Client portal
 7. SEO, analytics, performance, security hardening

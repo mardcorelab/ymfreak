@@ -141,6 +141,10 @@ export async function handleChat(input: { conversationId?: string | null; text: 
     if (cards.length === 0) return { ok: false, error: "MODEL_ERROR", conversationId };
   }
 
+  // When the assistant only looked up the catalogue on the way to a quote or a
+  // proposal, the specific card is what matters: skip the full price list.
+  const specific = cards.some((c) => c.kind === "quote" || c.kind === "slots" || c.kind === "proposal");
+  if (specific) cards.splice(0, cards.length, ...cards.filter((c) => c.kind !== "services"));
   for (const card of cards) await addRow(conversationId, "card", card);
   await db.conversation.update({ where: { id: conversationId }, data: { lastMessageAt: new Date() } });
 
