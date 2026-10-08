@@ -32,6 +32,7 @@ jobs:
         with: { node-version-file: .nvmrc }
       # No lockfile yet (Phase 0 was written without registry access); see README.
       - run: npm install --no-audit --no-fund
+      - run: npm ls zod --all 2>&1 | head -30 | awk '{printf "%s%%0A", $0}' | sed 's/^/::warning title=zod::/'; echo; node -e "console.log('::warning title=zodver::'+require('zod/package.json').version)"
       - run: npx prisma validate
       - run: npx prisma generate
       - run: scripts/ci-run.sh typecheck npm run typecheck
