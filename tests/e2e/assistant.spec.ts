@@ -121,7 +121,8 @@ test("a booking happens only when the visitor presses Confirm, then goes to the 
 
   // The dashboard shows the conversation, linked to the booking.
   await page.goto("/dashboard/conversations");
-  await page.getByRole("link", { name: /Reservó/ }).first().click();
+  // (the first "Reservó" link is the filter; the conversation is in the list)
+  await page.getByRole("listitem").getByRole("link", { name: /Reservó/ }).first().click();
   await expect(page.getByText("preparó una reserva para confirmar").first()).toBeVisible();
   await page.getByRole("link", { name: `Reserva ${code}` }).click();
   await expect(page.getByRole("heading", { name: `Reserva ${code}` })).toBeVisible();
