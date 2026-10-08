@@ -94,7 +94,7 @@ export interface PortalProject extends PortalBookingSummary {
   revisions: { included: number; used: number; fee: string };
   cancel: { deadline: string; amount: string } | null;
   filesHelp: { question: string; answer: string }[];
-  review: { canReview: boolean; sent: boolean; defaultName: string; defaultRole: string };
+  review: { canReview: boolean; sent: boolean; published: boolean; defaultName: string; defaultRole: string };
 }
 
 /** A booking of this customer, by its code. Returns null for codes that belong to someone else. */
@@ -175,11 +175,12 @@ export async function getClientProject(customerId: string, code: string, locale:
     cancel: cancellation?.allowed && cancellation.deadline ? { deadline: dateTime(cancellation.deadline, tz, locale), amount: money(cancellation.refundCents) } : null,
     filesHelp,
     review: await (async () => {
-      const existing = await db.testimonial.findUnique({ where: { bookingId: b.id }, select: { id: true } });
+      const existing = await db.testimonial.findUnique({ where: { bookingId: b.id }, select: { id: true, published: true } });
       const details = (b.projectDetails ?? {}) as { artistName?: string };
       return {
         canReview: b.status === "COMPLETED" && !existing,
         sent: Boolean(existing),
+        published: existing?.published ?? false,
         defaultName: details.artistName || b.customer.name,
         defaultRole: "",
       };

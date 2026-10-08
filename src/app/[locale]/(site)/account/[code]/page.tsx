@@ -130,7 +130,7 @@ export default async function ProjectPage({ params }: Props) {
             {t("reviewTitle")}
           </h2>
           {p.review.sent ? (
-            <p className="mt-2 text-bone/85">{t("reviewSent")}</p>
+            <p role="status" className="mt-2 text-bone/85">{p.review.published ? t("reviewSent") : t("reviewThanks")}</p>
           ) : (
             <>
               <p className="mt-2 text-bone/85">{t("reviewIntro")}</p>
