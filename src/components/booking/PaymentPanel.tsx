@@ -1,12 +1,13 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import { useFormStatus } from "react-dom";
 import { useTranslations } from "next-intl";
 import { cancelMyBooking, payNow, type PayActionState } from "@/server/payments/actions";
 
-function PayButton({ label }: { label: string }) {
-  const { pending } = useFormStatus();
+function PayButton({ label, leaving }: { label: string; leaving: boolean }) {
+  const { pending: submitting } = useFormStatus();
+  const pending = submitting || leaving;
   const t = useTranslations("checkout");
   return (
     <button
@@ -32,13 +33,18 @@ function ErrorText({ state }: { state: PayActionState }) {
 /** Sends the client to PayPal for whatever is due on this order. */
 export function PayForm({ orderId, locale, label, amount }: { orderId: string; locale: "es" | "en"; label: string; amount: string }) {
   const t = useTranslations("checkout");
-  const [state, action] = useActionState(payNow.bind(null, orderId, locale), { status: "idle" });
+  const [state, action, pending] = useActionState(payNow.bind(null, orderId, locale), { status: "idle" });
+  // Full page navigation to PayPal (not a client-side route change).
+  useEffect(() => {
+    if (state.status === "redirect") window.location.assign(state.url);
+  }, [state]);
+  const leaving = pending || state.status === "redirect";
   return (
     <form action={action} className="rounded-lg bg-key p-6">
       <p className="text-sm text-bone/70">{t("amountNow")}</p>
       <p className="type-head num mt-1 text-5xl">{amount}</p>
       <div className="mt-5">
-        <PayButton label={label} />
+        <PayButton label={label} leaving={leaving} />
       </div>
       <p className="mt-3 text-sm text-bone/70">{t("payNote")}</p>
       <ErrorText state={state} />
