@@ -1,9 +1,0 @@
-name: probe
-on: workflow_dispatch
-jobs:
-  p:
-    runs-on: ubuntu-latest
-    steps:
-      - run: |
-          out=$(curl -s -w ' HTTP%{http_code}' "https://api.song.link/v1-alpha.1/links?userCountry=US&url=https%3A%2F%2Fopen.spotify.com%2Falbum%2F577TEkqeYU0F3iqerqpq45" | head -c 600 | tr '\n' ' ')
-          echo "::warning title=songlink::$out"

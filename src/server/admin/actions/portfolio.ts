@@ -7,7 +7,7 @@ import { audit, requireAdmin } from "@/server/auth/admin";
 import { portfolioSchema } from "@/lib/validators/admin";
 import { parseMediaLink } from "@/lib/media-link";
 import { checkbox, optionalInt, optionalText, slugify, text } from "@/lib/form-data";
-import { fetchCoverUrl, fetchPlatformLinks, lookupPlatformLinks, PLATFORMS } from "../media";
+import { fetchCoverUrl, fetchPlatformLinks, lookupPlatformLinks, PLATFORM_HOSTS, PLATFORMS, type PlatformLink } from "../media";
 import { failure, invalid, refreshSite, type ActionState } from "../common";
 
 export async function savePortfolioItem(id: string | null, _prev: ActionState, fd: FormData): Promise<ActionState> {
@@ -85,4 +85,33 @@ export async function refreshPlatformLinks(id: string, _prev: ActionState): Prom
   refreshSite();
   const names = links.map((l) => PLATFORMS.find((p) => p.key === l.platform)?.label ?? l.platform).join(", ");
   return { status: "ok", message: `Encontrado en: ${names}.` };
+}
+
+/** Saves the platform links typed by hand (empty fields remove that platform). */
+export async function savePlatformLinks(id: string, _prev: ActionState, fd: FormData): Promise<ActionState> {
+  await requireAdmin();
+  const item = await db.portfolioItem.findUnique({ where: { id }, select: { id: true } });
+  if (!item) return failure("Este trabajo ya no existe.");
+  const links: PlatformLink[] = [];
+  const errors: string[] = [];
+  for (const p of PLATFORMS) {
+    const raw = text(fd, `pl_${p.key}`);
+    if (!raw) continue;
+    let url: URL | null = null;
+    try {
+      url = new URL(raw);
+    } catch {
+      url = null;
+    }
+    if (!url || url.protocol !== "https:" || !PLATFORM_HOSTS[p.key]!.test(url.hostname)) {
+      errors.push(`${p.label}: pega un enlace de ${p.label} que empiece por https://`);
+      continue;
+    }
+    links.push({ platform: p.key, url: url.toString() });
+  }
+  if (errors.length) return { status: "error", errors };
+  await db.portfolioItem.update({ where: { id }, data: { platformLinks: links.length ? (links as unknown as Prisma.InputJsonValue) : Prisma.DbNull } });
+  await audit("portfolio.platform_links", "PortfolioItem", id, { count: links.length });
+  refreshSite();
+  return { status: "ok", message: links.length ? `Guardado: ${links.length} plataformas.` : "Enlaces quitados." };
 }

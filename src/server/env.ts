@@ -33,6 +33,9 @@ const schema = z.object({
   /** Optional: Claude model id for the assistant (defaults in src/server/agent/model.ts). */
   ANTHROPIC_MODEL: z.string().optional(),
 
+  /** Optional: song.link API key, to find releases on every platform automatically. */
+  SONGLINK_API_KEY: z.string().optional(),
+
   // Phase 7 — rate limiting / anti-spam
   UPSTASH_REDIS_REST_URL: z.string().url().optional(),
   UPSTASH_REDIS_REST_TOKEN: z.string().optional(),
