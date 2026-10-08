@@ -7,6 +7,11 @@ import { channelIdFromHtml, parseYoutubeFeed, type YoutubeVideo } from "@/lib/yo
 
 export type { YoutubeVideo };
 
+/** Hard time limit around any YouTube call (fetch's own signal isn't always honoured by the framework's cache). */
+function withTimeout<T>(p: Promise<T>, ms: number, fallback: T): Promise<T> {
+  return Promise.race([p, new Promise<T>((resolve) => setTimeout(() => resolve(fallback), ms))]);
+}
+
 async function channelId(channelUrl: string, fresh = false): Promise<string | null> {
   const direct = /youtube\.com\/channel\/(UC[\w-]{22})/.exec(channelUrl)?.[1];
   if (direct) return direct;
@@ -23,7 +28,9 @@ async function channelId(channelUrl: string, fresh = false): Promise<string | nu
 }
 
 /** Latest videos from the YouTube channel set in the dashboard (contact → YouTube). Refreshed every hour. */
-export const getYoutubeVideos = cache(async (): Promise<YoutubeVideo[]> => {
+export const getYoutubeVideos = cache(async (): Promise<YoutubeVideo[]> => withTimeout(loadVideos(), 8000, []));
+
+async function loadVideos(): Promise<YoutubeVideo[]> {
   try {
     const contact = await getSetting("contact");
     if (!contact.youtube) return [];
@@ -35,7 +42,7 @@ export const getYoutubeVideos = cache(async (): Promise<YoutubeVideo[]> => {
   } catch {
     return [];
   }
-});
+}
 
 /** Videos shaped like portfolio items, so the same lazy player shows them. */
 export function videoToVM(v: YoutubeVideo): PortfolioVM {
@@ -54,7 +61,13 @@ export function videoToVM(v: YoutubeVideo): PortfolioVM {
 }
 
 /** For the dashboard: is the channel connected, and if not, why. Always fetched fresh. */
-export async function youtubeStatus(): Promise<{ ok: true; channelId: string; videos: number; shorts: number } | { ok: false; reason: string }> {
+type YoutubeStatus = { ok: true; channelId: string; videos: number; shorts: number } | { ok: false; reason: string };
+
+export async function youtubeStatus(): Promise<YoutubeStatus> {
+  return withTimeout(checkYoutube(), 10000, { ok: false, reason: "YouTube no respondió a tiempo." });
+}
+
+async function checkYoutube(): Promise<YoutubeStatus> {
   const contact = await getSetting("contact");
   if (!contact.youtube) return { ok: false, reason: "No hay enlace de YouTube en Contacto y reglas." };
   const id = await channelId(contact.youtube, true);
