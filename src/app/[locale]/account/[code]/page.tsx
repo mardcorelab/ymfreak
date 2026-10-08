@@ -107,6 +107,12 @@ export default async function ProjectPage({ params }: Props) {
         )}
       </section>
 
+      {p.status === "REVISION" && (
+        <p role="status" className="mt-12 rounded-lg border border-emerald-400/30 bg-emerald-500/10 px-4 py-3">
+          {t("ok.REVISION_REQUESTED")}
+        </p>
+      )}
+
       {p.canRequestRevision && (
         <section className="mt-12 rounded-xl border border-rule p-5 sm:p-6" aria-labelledby="revision">
           <h2 id="revision" className="type-sub text-2xl">
