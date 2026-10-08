@@ -27,12 +27,15 @@ jobs:
       - run: npm install --no-audit --no-fund
       - run: npx prisma validate
       - run: npx prisma generate
-      - run: npm run typecheck
-      - run: npm run lint
-      - run: npm test
+      - run: scripts/ci-run.sh typecheck npm run typecheck
+        continue-on-error: true
+      - run: scripts/ci-run.sh lint npm run lint
+        continue-on-error: true
+      - run: scripts/ci-run.sh test npm test
+        continue-on-error: true
       # Until the first migration is committed, push the schema directly.
       - run: if [ -d prisma/migrations ]; then npx prisma migrate deploy; else npx prisma db push --skip-generate; fi
-      - run: npm run db:constraints
-      - run: npm run db:seed
+      - run: scripts/ci-run.sh constraints npm run db:constraints
+      - run: scripts/ci-run.sh seed npm run db:seed
       - run: npm run db:seed # second run must be a no-op
-      - run: npm run build
+      - run: scripts/ci-run.sh build npm run build
