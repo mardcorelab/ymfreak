@@ -6,6 +6,8 @@ import { routing } from "@/i18n/routing";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { getContactVM } from "@/server/site-data";
+import { agentAvailable } from "@/server/agent/model";
+import { AgentWidget } from "@/components/agent/AgentWidget";
 import { siteUrl } from "@/lib/seo";
 import { archivo } from "@/lib/fonts";
 import "../globals.css";
@@ -54,6 +56,7 @@ export default async function LocaleLayout({
           <SiteHeader />
           <main id="main">{children}</main>
           <SiteFooter contact={contact} />
+          {agentAvailable() && <AgentWidget />}
         </NextIntlClientProvider>
       </body>
     </html>

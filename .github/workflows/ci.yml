@@ -24,6 +24,8 @@ jobs:
       ADMIN_PASSWORD: ci-only-test-password-123
       # Swaps PayPal for an in-process test double (never possible on Vercel).
       PAYMENTS_TEST_MODE: "1"
+      # Scripted stand-in for Claude so the assistant's tools are tested without an API key.
+      AGENT_TEST_MODE: "1"
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5

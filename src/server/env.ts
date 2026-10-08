@@ -30,6 +30,8 @@ const schema = z.object({
 
   // Phase 5 — assistant
   ANTHROPIC_API_KEY: z.string().optional(),
+  /** Optional: Claude model id for the assistant (defaults in src/server/agent/model.ts). */
+  ANTHROPIC_MODEL: z.string().optional(),
 
   // Phase 7 — rate limiting / anti-spam
   UPSTASH_REDIS_REST_URL: z.string().url().optional(),

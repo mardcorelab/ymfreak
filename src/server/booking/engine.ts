@@ -162,13 +162,14 @@ class Abort extends Error {
  * availability inside a serializable transaction so two clients can never
  * take the same capacity or session slot.
  *
- * WEB bookings are held for `holdMinutes` while the client pays the deposit.
+ * WEB and AGENT (assistant, after the visitor confirms) bookings are held for
+ * `holdMinutes` while the client pays the deposit.
  * ADMIN bookings (arranged directly with YM Freak) start CONFIRMED with the
  * deposit recorded as paid outside the website.
  */
 export async function createBooking(
   req: BookingRequest,
-  opts: { source: "WEB" | "ADMIN"; now?: Date },
+  opts: { source: "WEB" | "AGENT" | "ADMIN"; now?: Date },
 ): Promise<CreateResult> {
   const now = opts.now ?? new Date();
 
@@ -295,7 +296,7 @@ export async function createBooking(
               items: { create: svc.rows.map((s) => ({ serviceId: s.id, quantity })) },
               capacity: delivery ? { create: delivery.starts.map((s) => ({ day: dateColumn(s.date), projects: s.projects })) } : undefined,
               events: {
-                create: { from: null, to: status, actor: admin ? "admin" : "client", note: admin ? "Reserva creada desde el panel" : "Reserva creada en la web" },
+                create: { from: null, to: status, actor: admin ? "admin" : "client", note: admin ? "Reserva creada desde el panel" : opts.source === "AGENT" ? "Reserva creada con el asistente (confirmada por el cliente)" : "Reserva creada en la web" },
               },
             },
           });

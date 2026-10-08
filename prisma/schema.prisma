@@ -425,21 +425,30 @@ model Conversation {
   customer       Customer?           @relation(fields: [customerId], references: [id])
   locale         Locale              @default(es)
   outcome        ConversationOutcome @default(NONE)
+  /// Booking created from this conversation, if any (set on confirmation).
+  bookingId      String?
+  /// Number of visitor messages, to cap very long conversations.
+  userMessages   Int                 @default(0)
   messages       Message[]
   pendingActions PendingAction[]
   startedAt      DateTime            @default(now())
   lastMessageAt  DateTime            @default(now())
+
+  @@index([lastMessageAt])
+  @@index([bookingId])
 }
 
 model Message {
   id             String       @id @default(cuid())
   conversationId String
   conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
-  role           String       // user | assistant | tool
+  role           String       // user | assistant | tool (tool results) | card (UI card shown to the visitor)
   content        Json
+  /// Insertion order (several rows can share a millisecond within one turn).
+  seq            Int          @default(autoincrement())
   createdAt      DateTime     @default(now())
 
-  @@index([conversationId, createdAt])
+  @@index([conversationId, seq])
 }
 
 /// Write actions proposed by the assistant. They run only after the client

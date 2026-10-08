@@ -174,6 +174,7 @@ export async function applyCapture(paymentId: string, result: CaptureResult): Pr
     const paid = order.payments.filter((p) => p.status === "SUCCEEDED" && p.id !== paymentId).reduce((s, p) => s + p.amountCents, 0) + payment.amountCents;
 
     if (payment.kind === "DEPOSIT") {
+      if (booking) await tx.conversation.updateMany({ where: { bookingId: booking.id }, data: { outcome: "PAID" } });
       await tx.order.update({ where: { id: order.id }, data: { status: paid >= order.totalCents ? "PAID_IN_FULL" : "DEPOSIT_PAID" } });
       if (booking && booking.status === "AWAITING_PAYMENT") {
         await tx.booking.update({ where: { id: booking.id }, data: { status: "CONFIRMED", holdExpiresAt: null } });
