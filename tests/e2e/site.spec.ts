@@ -58,6 +58,7 @@ test("visits are counted without cookies and appear in the dashboard", async ({ 
   await page.getByLabel("Correo").fill(EMAIL);
   await page.getByLabel("Contraseña").fill(PASSWORD);
   await page.getByRole("button", { name: "Entrar" }).click();
+  await expect(page.getByRole("heading", { name: "Tu panel" })).toBeVisible();
   await page.goto("/dashboard/analytics?d=7");
   await expect(page.getByRole("heading", { name: "Analíticas" })).toBeVisible();
   await expect(page.getByRole("cell", { name: "Servicios" })).toBeVisible();
