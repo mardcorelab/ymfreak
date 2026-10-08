@@ -19,6 +19,7 @@ const host = new URL(env.DATABASE_URL).hostname;
 console.log(`Database setup against ${host}`);
 
 const steps: [string, string[]][] = [
+  ["Prepare schema changes", ["prisma", "db", "execute", "--file", "prisma/sql/000_before_push.sql", "--schema", "prisma/schema.prisma"]],
   ["Apply schema", ["prisma", "db", "push", "--skip-generate"]],
   ["Apply constraints", ["prisma", "db", "execute", "--file", "prisma/sql/001_session_no_overlap.sql", "--schema", "prisma/schema.prisma"]],
   ["Seed initial content", ["tsx", "prisma/seed.ts"]],
