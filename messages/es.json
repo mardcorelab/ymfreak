@@ -196,7 +196,8 @@
       "project.referenceLinks": "enlace de referencia",
       "project.notes": "notas",
       "startsAt": "horario"
-    }
+    },
+    "agree": "Al reservar aceptas las <terms>condiciones de reserva</terms> y la <privacy>política de privacidad</privacy>."
   },
   "checkout": {
     "title": "Tu reserva",
@@ -432,5 +433,54 @@
       "NOT_ALLOWED": "Esto no se puede hacer en el estado actual del proyecto.",
       "SIGNED_OUT": "Tu sesión terminó. Vuelve a entrar."
     }
+  },
+  "legal": {
+    "updated": "Última actualización: {date}",
+    "privacy": {
+      "title": "Privacidad",
+      "description": "Qué datos guarda ymfreak.com, para qué y con quién se comparten.",
+      "intro": "Esta página explica qué datos se guardan cuando usas ymfreak.com y para qué. El responsable es YM Freak, en República Dominicana.",
+      "s1t": "Qué datos se guardan",
+      "s1": "Al reservar: tu nombre, correo, teléfono (si lo das), nombre artístico, canción, notas y enlaces de referencia. En tu portal: los enlaces a archivos que compartes y tus pedidos de revisión. Con el asistente: los mensajes de la conversación. Los pagos se hacen en la página de PayPal: este sitio nunca ve ni guarda los datos de tu tarjeta o de tu cuenta de PayPal.",
+      "s2t": "Para qué se usan",
+      "s2": "Para gestionar tu reserva, tus pagos, la entrega de tu trabajo y tus revisiones; para responderte; y para que YM Freak pueda dar seguimiento a lo que preguntas al asistente.",
+      "s3t": "Estadísticas sin cookies",
+      "s3": "Para saber cuántas personas visitan el sitio se cuentan las páginas vistas, el país, el tipo de dispositivo y el sitio desde el que llegaste. No se usan cookies para esto ni se guarda tu dirección IP: se usa un identificador anónimo que cambia cada día y no se puede revertir. Si tu navegador envía «Do Not Track» o «Global Privacy Control», no se cuenta tu visita. Estas estadísticas se borran a los 13 meses.",
+      "s4t": "Cookies",
+      "s4": "Solo cookies técnicas: la que mantiene abierta tu sesión en «Mi cuenta» (30 días) y la del panel de administración. No hay cookies de publicidad ni de rastreo. El asistente guarda en tu navegador el identificador de tu conversación para que puedas retomarla.",
+      "s5t": "Con quién se comparten",
+      "s5": "Solo con los servicios que hacen funcionar el sitio: PayPal (pagos), Anthropic (el modelo de IA que genera las respuestas del asistente, que recibe los mensajes de la conversación), Vercel (alojamiento del sitio) y Neon (base de datos). Tus datos no se venden ni se usan para publicidad.",
+      "s6t": "Música incrustada",
+      "s6": "Los reproductores de Spotify y YouTube solo se cargan cuando pulsas play. A partir de ese momento se aplican las políticas de privacidad de esas plataformas.",
+      "s7t": "Tus derechos",
+      "s7": "Puedes pedir una copia de tus datos, corregirlos o borrarlos escribiendo a {email}. Las reservas y los pagos pueden conservarse el tiempo que exijan las obligaciones contables."
+    },
+    "terms": {
+      "title": "Condiciones de reserva",
+      "description": "Cómo funcionan las reservas, los pagos, las revisiones y las cancelaciones con YM Freak.",
+      "intro": "Estas son las condiciones con las que se reservan los servicios de YM Freak en este sitio. Las cifras se muestran tal y como están configuradas hoy.",
+      "s1t": "Precios",
+      "s1": "Los precios están en dólares estadounidenses (USD) y son los publicados en la página de servicios. El precio de tu proyecto queda fijado en el momento de reservar.",
+      "s2t": "Pago",
+      "s2": "Pagas el {deposit} % para reservar tu fecha y el resto cuando el trabajo está listo. Los archivos finales se entregan una vez pagado el saldo. Los pagos se hacen con PayPal (cuenta de PayPal o tarjeta).",
+      "s3t": "Fechas",
+      "s3": "Al reservar ves la fecha de entrega estimada, calculada en días laborables (de lunes a viernes) según la disponibilidad real. Mientras pagas el depósito, tu fecha queda apartada durante {hold} minutos; si no se completa el pago en ese tiempo, la fecha se libera. Las sesiones (grabación de voces y asesoría) son remotas, por videollamada, y se reservan por hora.",
+      "s4t": "Revisiones",
+      "s4": "Cada servicio incluye el número de revisiones indicado en su descripción. Cada revisión adicional cuesta {fee} y se suma a tu saldo.",
+      "s5t": "Cancelación",
+      "s5": "Puedes cancelar dentro de las {hours} horas siguientes al pago del depósito y recibir el reembolso completo, desde la página de tu reserva. Pasado ese plazo, escribe a YM Freak para ver tu caso.",
+      "s6t": "Archivos",
+      "s6": "Envías tus archivos por enlace (WeTransfer, Google Drive o similar) desde tu portal o por correo. Los formatos que se necesitan para cada servicio están en las preguntas frecuentes.",
+      "s7t": "Contacto",
+      "s7": "Para cualquier duda sobre estas condiciones, escribe a {email}."
+    },
+    "footerPrivacy": "Privacidad",
+    "footerTerms": "Condiciones"
+  },
+  "error": {
+    "title": "Algo salió mal",
+    "body": "Fue un error de nuestro lado. Prueba de nuevo; si sigue pasando, escríbenos.",
+    "retry": "Intentar de nuevo",
+    "home": "Ir al inicio"
   }
 }

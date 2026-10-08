@@ -6,7 +6,8 @@ import { ServiceList } from "@/components/sections/ServiceList";
 import { Process } from "@/components/sections/Process";
 import { ButtonLink } from "@/components/ui/ButtonLink";
 import { getBusinessVM, getServicesVM } from "@/server/site-data";
-import { alternates } from "@/lib/seo";
+import { alternates, jsonLdScript, servicesJsonLd } from "@/lib/seo";
+import { getActiveServices } from "@/server/catalog";
 
 export const revalidate = 60;
 type Props = { params: Promise<{ locale: AppLocale }> };
@@ -20,10 +21,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function ServicesPage({ params }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const [services, business, t] = await Promise.all([getServicesVM(locale), getBusinessVM(locale), getTranslations()]);
+  const [services, business, t, rows] = await Promise.all([getServicesVM(locale), getBusinessVM(locale), getTranslations(), getActiveServices()]);
+  const jsonLd = servicesJsonLd({
+    locale,
+    services: rows.map((s) => ({
+      name: locale === "es" ? s.nameEs : s.nameEn,
+      description: locale === "es" ? s.descriptionEs : s.descriptionEn,
+      priceCents: s.priceCents,
+      unit: s.pricingUnit,
+    })),
+  });
 
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(jsonLd) }} />
       <Section
         headingLevel="h1"
         title={t("services.title")}

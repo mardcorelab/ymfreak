@@ -196,7 +196,8 @@
       "project.referenceLinks": "reference link",
       "project.notes": "notes",
       "startsAt": "time"
-    }
+    },
+    "agree": "By booking you accept the <terms>booking terms</terms> and the <privacy>privacy policy</privacy>."
   },
   "checkout": {
     "title": "Your booking",
@@ -432,5 +433,54 @@
       "NOT_ALLOWED": "That can't be done at the project's current stage.",
       "SIGNED_OUT": "Your session ended. Please sign in again."
     }
+  },
+  "legal": {
+    "updated": "Last updated: {date}",
+    "privacy": {
+      "title": "Privacy",
+      "description": "What data ymfreak.com keeps, why, and who it is shared with.",
+      "intro": "This page explains what data is kept when you use ymfreak.com and why. The controller is YM Freak, in the Dominican Republic.",
+      "s1t": "What is kept",
+      "s1": "When you book: your name, email, phone (if given), artist name, song, notes and reference links. In your portal: the file links you share and your revision requests. With the assistant: the messages of the conversation. Payments happen on PayPal's page: this site never sees or stores your card or PayPal account details.",
+      "s2t": "What it is used for",
+      "s2": "To manage your booking, payments, delivery and revisions; to answer you; and so YM Freak can follow up on what you ask the assistant.",
+      "s3t": "Cookie-free statistics",
+      "s3": "To know how many people visit the site, page views, country, device type and the site you came from are counted. No cookies are used for this and your IP address is not stored: an anonymous identifier that changes every day and cannot be reversed is used instead. If your browser sends Do Not Track or Global Privacy Control, your visit is not counted. These statistics are deleted after 13 months.",
+      "s4t": "Cookies",
+      "s4": "Only technical cookies: the one that keeps you signed in to My account (30 days) and the admin panel's. There are no advertising or tracking cookies. The assistant stores your conversation's identifier in your browser so you can pick it up again.",
+      "s5t": "Who it is shared with",
+      "s5": "Only with the services that run the site: PayPal (payments), Anthropic (the AI model that writes the assistant's replies, which receives the conversation's messages), Vercel (hosting) and Neon (database). Your data is not sold or used for advertising.",
+      "s6t": "Embedded music",
+      "s6": "Spotify and YouTube players only load when you press play. From then on, those platforms' privacy policies apply.",
+      "s7t": "Your rights",
+      "s7": "You can ask for a copy of your data, correct it or delete it by writing to {email}. Bookings and payments may be kept for as long as accounting obligations require."
+    },
+    "terms": {
+      "title": "Booking terms",
+      "description": "How bookings, payments, revisions and cancellations work with YM Freak.",
+      "intro": "These are the terms under which YM Freak's services are booked on this site. Figures are shown as they are configured today.",
+      "s1t": "Prices",
+      "s1": "Prices are in US dollars (USD), as published on the services page. Your project's price is fixed when you book.",
+      "s2t": "Payment",
+      "s2": "You pay {deposit}% to book your date and the rest when the work is ready. Final files are delivered once the balance is paid. Payments are made with PayPal (PayPal account or card).",
+      "s3t": "Dates",
+      "s3": "When you book you see the estimated delivery date, counted in working days (Monday to Friday) from real availability. While you pay the deposit, your date is held for {hold} minutes; if payment isn't completed in that time, the date is released. Sessions (vocal recording and coaching) are remote, by video call, and booked by the hour.",
+      "s4t": "Revisions",
+      "s4": "Each service includes the number of revisions stated in its description. Each extra revision costs {fee} and is added to your balance.",
+      "s5t": "Cancellation",
+      "s5": "You can cancel within {hours} hours of paying the deposit and get a full refund, from your booking page. After that, write to YM Freak about your case.",
+      "s6t": "Files",
+      "s6": "You send your files by link (WeTransfer, Google Drive or similar) from your portal or by email. The formats needed for each service are in the FAQ.",
+      "s7t": "Contact",
+      "s7": "For any question about these terms, write to {email}."
+    },
+    "footerPrivacy": "Privacy",
+    "footerTerms": "Terms"
+  },
+  "error": {
+    "title": "Something went wrong",
+    "body": "It was an error on our side. Try again; if it keeps happening, write to us.",
+    "retry": "Try again",
+    "home": "Go to the home page"
   }
 }

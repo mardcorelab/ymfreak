@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState, useTransition, type ReactNode } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { useRouter } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 import type { BusinessHoursVM, ServiceVM } from "@/lib/view-models";
 import { formatMoney } from "@/server/domain/money";
 import { addDays } from "@/server/domain/calendar";
@@ -353,6 +353,20 @@ export function BookingForm({
         <ul className="mt-4 grid gap-1 text-sm text-ash">
           <li>{t("policyCancel", { hours: business.cancellationWindowHours })}</li>
           {!isSession && <li>{t("policyRevisions", { fee: business.revisionFee })}</li>}
+          <li>
+            {t.rich("agree", {
+              terms: (c) => (
+                <Link href="/terms" target="_blank" className="underline underline-offset-4 hover:text-bone">
+                  {c}
+                </Link>
+              ),
+              privacy: (c) => (
+                <Link href="/privacy" target="_blank" className="underline underline-offset-4 hover:text-bone">
+                  {c}
+                </Link>
+              ),
+            })}
+          </li>
         </ul>
 
         {error && (

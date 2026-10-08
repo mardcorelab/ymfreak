@@ -35,3 +35,35 @@ export function personJsonLd(params: { locale: Locale; sameAs: string[]; email: 
 export function jsonLdScript(data: unknown): string {
   return JSON.stringify(data).replace(/</g, "\\u003c");
 }
+
+/** schema.org ProfessionalService with one Offer per active service (prices from the database). */
+export function servicesJsonLd(params: {
+  locale: Locale;
+  services: { name: string; description: string; priceCents: number; unit: "FLAT" | "PER_SONG" | "PER_HOUR" }[];
+}) {
+  const unitText = { FLAT: "piece", PER_SONG: "song", PER_HOUR: "hour" } as const;
+  return {
+    "@context": "https://schema.org",
+    "@type": "ProfessionalService",
+    name: "YM Freak",
+    url: `${siteUrl()}/${params.locale}/services`,
+    image: `${siteUrl()}/images/ymfreak-portrait.jpg`,
+    areaServed: "Worldwide",
+    address: { "@type": "PostalAddress", addressCountry: "DO" },
+    founder: { "@type": "Person", name: "YM Freak" },
+    hasOfferCatalog: {
+      "@type": "OfferCatalog",
+      name: params.locale === "es" ? "Servicios" : "Services",
+      itemListElement: params.services.map((s) => ({
+        "@type": "Offer",
+        itemOffered: { "@type": "Service", name: s.name, description: s.description },
+        priceSpecification: {
+          "@type": "UnitPriceSpecification",
+          price: (s.priceCents / 100).toFixed(2),
+          priceCurrency: "USD",
+          unitText: unitText[s.unit],
+        },
+      })),
+    },
+  };
+}

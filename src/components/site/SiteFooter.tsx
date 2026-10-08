@@ -35,9 +35,15 @@ export function SiteFooter({ contact }: { contact: ContactVM }) {
           </div>
         )}
       </div>
-      <p className="mx-auto max-w-[90rem] px-5 pb-10 text-sm text-ash sm:px-8 lg:px-12">
-        {t("footer.rights", { year: new Date().getFullYear() })}
-      </p>
+      <div className="mx-auto flex max-w-[90rem] flex-wrap items-center gap-x-6 gap-y-2 px-5 pb-10 text-sm text-ash sm:px-8 lg:px-12">
+        <p>{t("footer.rights", { year: new Date().getFullYear() })}</p>
+        <Link href="/terms" className="hover:text-bone">
+          {t("legal.footerTerms")}
+        </Link>
+        <Link href="/privacy" className="hover:text-bone">
+          {t("legal.footerPrivacy")}
+        </Link>
+      </div>
     </footer>
   );
 }

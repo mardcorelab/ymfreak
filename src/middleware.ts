@@ -31,5 +31,5 @@ export default async function middleware(request: NextRequest) {
 
 export const config = {
   // Everything except API routes, Next internals and static files.
-  matcher: ["/((?!api|_next|_vercel|.*\\..*).*)"],
+  matcher: ["/((?!api|_next|_vercel|apple-icon|.*\\..*).*)"],
 };

@@ -8,6 +8,7 @@ import { SiteFooter } from "@/components/site/SiteFooter";
 import { getContactVM } from "@/server/site-data";
 import { agentAvailable } from "@/server/agent/model";
 import { AgentWidget } from "@/components/agent/AgentWidget";
+import { Analytics } from "@/components/site/Analytics";
 import { siteUrl } from "@/lib/seo";
 import { archivo } from "@/lib/fonts";
 import "../globals.css";
@@ -57,6 +58,7 @@ export default async function LocaleLayout({
           <main id="main">{children}</main>
           <SiteFooter contact={contact} />
           {agentAvailable() && <AgentWidget />}
+          <Analytics />
         </NextIntlClientProvider>
       </body>
     </html>

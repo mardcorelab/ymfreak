@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
+import { track } from "@/components/site/Analytics";
 import { AGENT_LIMITS, type AgentCard, type ChatItem, type ChatResponse, type ConfirmResponse } from "@/lib/agent-types";
 
 const STORAGE_KEY = "ymf-agent-conversation";
@@ -161,7 +162,10 @@ export function AgentWidget() {
         <button
           ref={launcherRef}
           type="button"
-          onClick={() => setOpen(true)}
+          onClick={() => {
+            setOpen(true);
+            track("agent_open");
+          }}
           className="fixed right-4 bottom-4 z-40 inline-flex min-h-12 items-center gap-2.5 rounded-full bg-bone py-2 pr-5 pl-3 font-semibold text-studio shadow-[0_8px_30px_rgba(0,0,0,0.45)] transition hover:bg-white active:scale-[0.98] sm:right-6 sm:bottom-6"
           aria-haspopup="dialog"
         >

@@ -523,3 +523,21 @@ model ProjectLink {
 
   @@index([bookingId, createdAt])
 }
+
+/// First-party, cookie-free analytics. No IPs or user agents are stored:
+/// `visitor` is a hash that changes every day, enough to count unique visits.
+model AnalyticsEvent {
+  id        String   @id @default(cuid())
+  type      String   // pageview | agent_open
+  path      String
+  locale    String?
+  referrer  String?  // host only
+  utmSource String?
+  country   String?  @db.Char(2)
+  device    String?  // mobile | tablet | desktop
+  visitor   String
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([type, createdAt])
+}
