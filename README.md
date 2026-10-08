@@ -65,7 +65,7 @@ All of these are stored in the database (`Setting.business_rules` and `Service`)
 |---|---|
 | Domain rules (`src/server/domain`), validators, settings schemas, seed data consistency | **Verified:** strict typecheck + 30 unit tests passing. |
 | Page layout and copy (home, contact, services) | **Rendered and reviewed** at desktop and mobile widths by server-rendering the real components with the seed data. The preview environment lacked the Archivo font and Spotify covers, so final type and covers will look better than the previews. |
-| Next.js build, Prisma schema, seed script, i18n routing, CI workflow | **Written, not yet run.** The build environment used for Phase 0 had no access to the npm registry. First real run: `npm install && npm run check` locally, or push to GitHub and let `.github/workflows/ci.yml` run it against a real Postgres. |
+| Next.js build, Prisma schema, seed script, i18n routing | **Verified in CI** (GitHub Actions, every push): install, Prisma validate, strict typecheck, lint, unit tests, schema + constraints applied to a real PostgreSQL 16, seed run twice (idempotent), production `next build`. |
 
 ## Pending from YM Freak
 
