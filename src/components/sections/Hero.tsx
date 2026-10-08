@@ -31,7 +31,7 @@ export function Hero() {
         <h1 className="mt-5">
           <span className="sr-only">YM Freak</span>
           <span className="block overflow-hidden pb-[0.5%]">
-            <Wordmark className="animate-rise block h-auto w-[min(100%,62rem)] [animation-delay:150ms]" />
+            <Wordmark className="animate-rise block h-auto w-[min(100%,62rem)] lg:w-[min(44vw,52rem)] [animation-delay:150ms]" />
           </span>
         </h1>
 
