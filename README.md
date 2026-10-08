@@ -2,7 +2,7 @@
 
 Official site, booking and payments platform for YM Freak (producer, mixing & mastering engineer).
 
-**Current state: Phase 3 — public site, dashboard, availability and bookings.** Online booking stays switched off for the public until online payment (Phase 4) is live; the admin can use and test it while signed in.
+**Current state: Phase 4 — public site, dashboard, bookings and PayPal payments.** Online booking opens to the public from the dashboard once PayPal is configured.
 
 ## Stack
 
@@ -56,6 +56,16 @@ Private panel, in Spanish, to edit everything the site shows: services and price
 - Spam protection: hidden honeypot field and per-IP rate limits.
 - **Dashboard:** bookings (filters, detail, status changes through the state machine, history, extra-revision fee added automatically from the 3rd revision, balance paid outside the site), manual bookings for clients who book by WhatsApp, clients, a 5-week capacity view, blocked days, and the switch that opens booking to the public.
 
+## Payments (PayPal)
+
+- **Flow:** booking → checkout page (`/checkout/<order>`) → "Pay deposit with PayPal" → PayPal's own page → back to the site, where the payment is captured and the booking moves to **Confirmed**. After delivery the same page offers "Pay the balance"; paying it completes the project.
+- **Safety:** amounts come from the order on the server; captures are idempotent (return URL and webhook can both arrive); a deposit is never captured for a date whose hold has expired; amount mismatches are flagged, not confirmed; card/PayPal data never touches this app.
+- **Cancellation:** the client can cancel from the checkout page within 24 h of paying the deposit and is refunded automatically through PayPal. The admin can cancel with refund from the booking page.
+- **Webhook** (`/api/webhooks/paypal`): every event is verified with PayPal and processed once. It is a backup for clients who close the tab before returning to the site.
+- **Setup (Vercel env):** `PAYPAL_CLIENT_ID`, `PAYPAL_CLIENT_SECRET`, `PAYPAL_ENV` (`sandbox` by default, `live` for real money), `PAYPAL_WEBHOOK_ID`. The dashboard (Availability) shows whether PayPal is connected and in which mode, and refuses to open public booking without it.
+- **Tests:** the PayPal client is unit-tested against recorded API shapes; the full payment journey runs in CI with an in-process stand-in for PayPal (`PAYMENTS_TEST_MODE=1`, impossible to enable on Vercel).
+- **Not yet:** confirmation emails (needs an email provider and the final domain). Until then the client keeps the checkout link and PayPal sends its own receipt.
+
 ## Design
 
 - **Colour comes from the photos.** The page background is sampled from the studio backdrop of the portraits, so YM Freak's photos melt into the page instead of sitting in boxes. One lighter "key light" section matches the seated portrait.
@@ -80,9 +90,10 @@ All of these are stored in the database (`Setting.business_rules` and `Service`)
 
 | Part | Status |
 |---|---|
-| Domain rules (`src/server/domain`), validators, settings schemas, seed data consistency | **Verified:** strict typecheck + 47 unit tests passing. |
+| Domain rules (`src/server/domain`), validators, settings schemas, seed data consistency | **Verified:** strict typecheck + 52 unit tests passing. |
 | Page layout and copy (home, contact, services) | **Rendered and reviewed** at desktop and mobile widths by server-rendering the real components with the seed data. The preview environment lacked the Archivo font and Spotify covers, so final type and covers will look better than the previews. |
 | Next.js build, Prisma schema, seed script, i18n routing | **Verified in CI** (GitHub Actions, every push): install, Prisma validate, strict typecheck, lint, unit tests, schema + constraints applied to a real PostgreSQL 16, seed run twice (idempotent), production `next build`. |
+| Payments, end to end | **Verified in CI with Playwright**: the admin opens booking once payments are configured; a client pays the deposit and the booking is confirmed; nothing more can be paid until delivery; self-service cancellation needs confirmation and refunds the deposit; after delivery the client pays the balance and the project completes; unverified webhook calls are refused. |
 | Booking, end to end | **Verified in CI with Playwright**: booking closed to the public while switched off; a mix & master booking shows the server-computed delivery date and deposit, creates the booking and holds capacity; a booked session slot is no longer offered; cancelling releases capacity; a manual booking cannot be completed until the balance is recorded. |
 | Dashboard, end to end | **Verified in CI with Playwright** against the production build and a real database: dashboard closed without a session, wrong password refused, a price edited in the dashboard shows on the public site (and invalid input is explained), an FAQ entry added appears in both languages and is removed, a pasted YouTube link becomes a release that plays on the site, sign-out closes the dashboard. |
 
@@ -99,8 +110,8 @@ All of these are stored in the database (`Setting.business_rules` and `Service`)
 0. Foundation
 1. Public site: design system, Home, Portfolio (Spotify/YouTube embeds loaded on click), Services, About, Achievements, FAQ, Contact
 2. Admin sign-in + dashboard
-3. Availability + bookings (`/book`) ← *here*
-4. PayPal: deposit and balance checkouts, webhooks, refunds, emails
+3. Availability + bookings (`/book`)
+4. PayPal: deposit and balance checkouts, webhooks, refunds ← *here* (emails pending)
 5. Assistant with tools + editable knowledge base
 6. Client portal
 7. SEO, analytics, performance, security hardening
