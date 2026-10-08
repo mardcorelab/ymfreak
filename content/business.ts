@@ -35,3 +35,6 @@ export const paymentSeed = {
   provider: "paypal" as const,
   paypalAccountEmail: "davianmd@gmail.com",
 };
+
+/** Online booking starts switched off; it is turned on from the dashboard once payments work. */
+export const bookingSeed = { enabled: false, holdMinutes: 30 };

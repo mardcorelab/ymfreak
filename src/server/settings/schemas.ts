@@ -61,10 +61,18 @@ export const paymentSettingsSchema = z.object({
   paypalAccountEmail: z.string().email(),
 });
 
+/** Public booking switch: off until online payment is live, so nobody books without paying. */
+export const bookingSettingsSchema = z.object({
+  enabled: z.boolean(),
+  /** Minutes a slot/capacity is held while the client pays the deposit. */
+  holdMinutes: z.number().int().min(10).max(24 * 60),
+});
+
 export const SETTING_SCHEMAS = {
   business_rules: businessRulesSchema,
   contact: contactSchema,
   payment: paymentSettingsSchema,
+  booking: bookingSettingsSchema,
 } as const;
 
 export type SettingKey = keyof typeof SETTING_SCHEMAS;

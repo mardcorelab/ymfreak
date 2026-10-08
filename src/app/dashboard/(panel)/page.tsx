@@ -1,9 +1,16 @@
 import Link from "next/link";
 import { db } from "@/server/db";
+import { expireStaleHolds } from "@/server/booking/calendar";
+import { getSetting } from "@/server/settings";
 import { PageHeader } from "@/components/admin/PageHeader";
 
 export default async function DashboardHome() {
-  const [services, activeServices, portfolio, achievements, testimonials, faqs] = await Promise.all([
+  await expireStaleHolds(db, new Date());
+  const [activeBookings, awaiting, clients, booking, services, activeServices, portfolio, achievements, testimonials, faqs] = await Promise.all([
+    db.booking.count({ where: { status: { in: ["PAID", "CONFIRMED", "IN_PROGRESS", "DELIVERED", "REVISION"] } } }),
+    db.booking.count({ where: { status: "AWAITING_PAYMENT" } }),
+    db.customer.count(),
+    getSetting("booking"),
     db.service.count(),
     db.service.count({ where: { active: true } }),
     db.portfolioItem.count({ where: { published: true } }),
@@ -13,6 +20,9 @@ export default async function DashboardHome() {
   ]);
 
   const cards = [
+    { href: "/dashboard/bookings", title: "Reservas", value: `${activeBookings} activas${awaiting ? `, ${awaiting} esperando pago` : ""}` },
+    { href: "/dashboard/clients", title: "Clientes", value: `${clients} en total` },
+    { href: "/dashboard/availability", title: "Disponibilidad", value: booking.enabled ? "Reservas en línea abiertas" : "Reservas en línea cerradas al público" },
     { href: "/dashboard/services", title: "Servicios y precios", value: `${activeServices} de ${services} visibles` },
     { href: "/dashboard/portfolio", title: "Trabajos", value: `${portfolio} publicados` },
     { href: "/dashboard/achievements", title: "Logros", value: `${achievements} publicados` },
@@ -37,9 +47,6 @@ export default async function DashboardHome() {
           </li>
         ))}
       </ul>
-      <p className="mt-10 max-w-[62ch] text-sm text-ash">
-        Reservas, clientes, pedidos y disponibilidad aparecerán aquí cuando se activen las reservas y los pagos en línea.
-      </p>
     </>
   );
 }

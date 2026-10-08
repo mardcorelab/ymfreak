@@ -29,7 +29,7 @@ export function TextField({
   label: string;
   defaultValue?: string | number | null;
   hint?: ReactNode;
-  type?: "text" | "email" | "url" | "time" | "password";
+  type?: "text" | "email" | "url" | "time" | "date" | "password";
   placeholder?: string;
   inputMode?: "numeric" | "decimal" | "tel" | "email" | "url";
 }) {

@@ -7,7 +7,7 @@
  */
 import { PrismaClient } from "@prisma/client";
 import { serviceSeeds } from "../content/services";
-import { businessRulesSeed, contactSeed, paymentSeed } from "../content/business";
+import { bookingSeed, businessRulesSeed, contactSeed, paymentSeed } from "../content/business";
 import { knowledgeSeeds } from "../content/knowledge";
 import { achievementSeeds, portfolioSeeds } from "../content/achievements";
 import { parseSetting } from "../src/server/settings/schemas";
@@ -23,6 +23,7 @@ async function main() {
     business_rules: parseSetting("business_rules", businessRulesSeed),
     contact: parseSetting("contact", contactSeed),
     payment: parseSetting("payment", paymentSeed),
+    booking: parseSetting("booking", bookingSeed),
   };
   for (const [key, value] of Object.entries(settings)) {
     await prisma.setting.upsert({ where: { key }, update: {}, create: { key, value } });
