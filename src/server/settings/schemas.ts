@@ -5,7 +5,13 @@
  */
 import { z } from "zod";
 
-const localTime = z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, "Use HH:mm");
+const localTime = z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, "Horario: usa el formato HH:mm, por ejemplo 08:00");
+const int = (label: string, min: number, max: number) =>
+  z
+    .number({ invalid_type_error: `${label}: escribe un número entero`, required_error: `${label}: obligatorio` })
+    .int(`${label}: escribe un número entero`)
+    .min(min, `${label}: mínimo ${min}`)
+    .max(max, `${label}: máximo ${max}`);
 
 export const businessRulesSchema = z
   .object({
@@ -17,28 +23,36 @@ export const businessRulesSchema = z
         return false;
       }
     }, "Unknown time zone"),
-    workingWeekdays: z.array(z.number().int().min(1).max(7)).min(1),
+    workingWeekdays: z.array(z.number().int().min(1).max(7)).min(1, "Días laborables: elige al menos uno"),
     workdayStart: localTime,
     workdayEnd: localTime,
-    dailyProjectStarts: z.number().int().min(1).max(50),
-    leadWorkingDays: z.number().int().min(0).max(30),
-    sessionLeadHours: z.number().int().min(0).max(24 * 14),
-    depositPercent: z.number().int().min(0).max(100),
-    revisionFeeCents: z.number().int().min(0),
-    cancellationWindowHours: z.number().int().min(0).max(24 * 30),
+    dailyProjectStarts: int("Proyectos nuevos por día", 1, 50),
+    leadWorkingDays: int("Días antes de empezar", 0, 30),
+    sessionLeadHours: int("Horas de antelación para sesiones", 0, 24 * 14),
+    depositPercent: int("Depósito (%)", 0, 100),
+    revisionFeeCents: z
+      .number({ invalid_type_error: "Revisión adicional: escribe un monto válido, por ejemplo 20" })
+      .int("Revisión adicional: monto no válido")
+      .min(0, "Revisión adicional: no puede ser negativo"),
+    cancellationWindowHours: int("Horas para cancelar", 0, 24 * 30),
   })
-  .refine((r) => r.workdayStart < r.workdayEnd, { message: "workdayEnd must be after workdayStart", path: ["workdayEnd"] });
+  .refine((r) => r.workdayStart < r.workdayEnd, { message: "Horario: la hora de cierre debe ser posterior a la de inicio", path: ["workdayEnd"] });
 
-const optionalUrl = z.union([z.literal(""), z.string().url().startsWith("https://")]);
+const optionalUrl = (label: string) =>
+  z.union([z.literal(""), z.string().url(`${label}: enlace no válido`).startsWith("https://", `${label}: debe empezar por https://`)], {
+    errorMap: () => ({ message: `${label}: pega el enlace completo, empezando por https://` }),
+  });
 
 export const contactSchema = z.object({
-  email: z.union([z.literal(""), z.string().email()]),
+  email: z.union([z.literal(""), z.string().email()], { errorMap: () => ({ message: "Correo: no es una dirección válida" }) }),
   /** Digits only, with country code, e.g. 18095551234. */
-  whatsapp: z.union([z.literal(""), z.string().regex(/^\d{8,15}$/, "Digits only, with country code")]),
-  instagram: optionalUrl,
-  youtube: optionalUrl,
-  spotify: optionalUrl,
-  tiktok: optionalUrl,
+  whatsapp: z.union([z.literal(""), z.string().regex(/^\d{8,15}$/)], {
+    errorMap: () => ({ message: "WhatsApp: escribe el número con código de país, por ejemplo 18095551234" }),
+  }),
+  instagram: optionalUrl("Instagram"),
+  youtube: optionalUrl("YouTube"),
+  spotify: optionalUrl("Spotify"),
+  tiktok: optionalUrl("TikTok"),
   other: z.array(z.object({ label: z.string().min(1).max(40), url: z.string().url().startsWith("https://") })).max(10),
 });
 

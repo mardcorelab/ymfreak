@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import { Archivo } from "next/font/google";
 import { notFound } from "next/navigation";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
@@ -8,15 +7,9 @@ import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { getContactVM } from "@/server/site-data";
 import { siteUrl } from "@/lib/seo";
+import { archivo } from "@/lib/fonts";
 import "../globals.css";
 
-// One family; its width axis does the typographic work (condensed for display).
-const archivo = Archivo({
-  subsets: ["latin"],
-  axes: ["wdth"],
-  display: "swap",
-  variable: "--font-archivo",
-});
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));

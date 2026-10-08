@@ -2,7 +2,9 @@
   "name": "ymfreak",
   "version": "0.1.0",
   "private": true,
-  "engines": { "node": "22.x" },
+  "engines": {
+    "node": "22.x"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "prisma generate && next build",
@@ -16,9 +18,12 @@
     "db:constraints": "prisma db execute --file prisma/sql/001_session_no_overlap.sql --schema prisma/schema.prisma",
     "db:seed": "prisma db seed",
     "db:studio": "prisma studio",
-    "check": "npm run typecheck && npm run lint && npm test"
+    "check": "npm run typecheck && npm run lint && npm test",
+    "test:e2e": "playwright test"
   },
-  "prisma": { "seed": "tsx prisma/seed.ts" },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
   "dependencies": {
     "@prisma/client": "^6.16.0",
     "next": "^15.5.0",
@@ -39,6 +44,7 @@
     "prisma": "^6.16.0",
     "tailwindcss": "^4.1.0",
     "tsx": "^4.20.0",
-    "typescript": "^5.9.0"
+    "typescript": "^5.9.0",
+    "@playwright/test": "^1.56.0"
   }
 }

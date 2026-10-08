@@ -12,9 +12,13 @@ const schema = z.object({
   DATABASE_URL: z.string().url().startsWith("postgres"),
   NEXT_PUBLIC_SITE_URL: z.string().url(),
 
-  // Phase 2 — auth
-  AUTH_SECRET: z.string().min(32).optional(),
-  ADMIN_EMAIL: z.string().email().optional(),
+  // Phase 2 — admin sign-in (dashboard is disabled until both are set)
+  // Kept lenient on purpose: a bad admin value must disable the dashboard,
+  // never take the public site down. src/server/auth/admin.ts checks them.
+  ADMIN_EMAIL: z.string().optional(),
+  ADMIN_PASSWORD: z.string().optional(),
+  /** Optional: signs sessions; derived from ADMIN_PASSWORD when not set. */
+  AUTH_SECRET: z.string().optional(),
   RESEND_API_KEY: z.string().optional(),
   EMAIL_FROM: z.string().optional(),
 

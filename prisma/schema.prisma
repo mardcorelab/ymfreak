@@ -468,3 +468,13 @@ model AuditLog {
 
   @@index([entity, entityId])
 }
+
+/// Failed and successful admin sign-ins, used to rate-limit by IP.
+model LoginAttempt {
+  id        String   @id @default(cuid())
+  ip        String
+  success   Boolean
+  createdAt DateTime @default(now())
+
+  @@index([ip, createdAt])
+}
