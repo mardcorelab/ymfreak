@@ -28,11 +28,8 @@ jobs:
       - run: npx prisma validate
       - run: npx prisma generate
       - run: scripts/ci-run.sh typecheck npm run typecheck
-        continue-on-error: true
       - run: scripts/ci-run.sh lint npm run lint
-        continue-on-error: true
       - run: scripts/ci-run.sh test npm test
-        continue-on-error: true
       # Until the first migration is committed, push the schema directly.
       - run: if [ -d prisma/migrations ]; then npx prisma migrate deploy; else npx prisma db push --skip-generate; fi
       - run: scripts/ci-run.sh constraints npm run db:constraints
