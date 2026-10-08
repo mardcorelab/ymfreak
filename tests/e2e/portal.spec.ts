@@ -156,7 +156,7 @@ test("after the project is completed, the client's review appears on the site on
   const client = await ctx.newPage();
   await client.goto(projectUrl);
   await expect(client.getByRole("heading", { name: "¿Cómo fue trabajar conmigo?" })).toBeVisible();
-  await client.getByLabel("4 estrellas", { exact: true }).check({ force: true });
+  await client.getByRole("radio", { name: "4 estrellas", exact: true }).check({ force: true });
   await client.getByLabel("Tu reseña").fill("Un trabajo increíble, la mezcla quedó enorme y muy clara.");
   await client.getByLabel("Acepto que YM Freak publique").check();
   await client.getByRole("button", { name: "Enviar reseña" }).click();
