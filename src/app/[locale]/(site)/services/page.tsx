@@ -5,6 +5,7 @@ import { Section } from "@/components/sections/Section";
 import { ServiceList } from "@/components/sections/ServiceList";
 import { Process } from "@/components/sections/Process";
 import { ButtonLink } from "@/components/ui/ButtonLink";
+import { Link } from "@/i18n/navigation";
 import { getBusinessVM, getServicesVM } from "@/server/site-data";
 import { alternates, jsonLdScript, servicesJsonLd } from "@/lib/seo";
 import { getActiveServices } from "@/server/catalog";
@@ -42,6 +43,11 @@ export default async function ServicesPage({ params }: Props) {
       >
         <ServiceList services={services} business={business} detailed />
         <p className="mt-8 text-ash">{t("services.combine")}</p>
+        <p className="mt-3">
+          <Link href="/analyzer" className="underline underline-offset-4 hover:text-white">
+            {t("services.analyzer")}
+          </Link>
+        </p>
         <div className="mt-10">
           <ButtonLink href="/book">{t("services.cta")}</ButtonLink>
         </div>

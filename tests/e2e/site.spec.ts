@@ -98,3 +98,46 @@ test("the home page shows the next available delivery date from the calendar", a
   await expect(page.getByTestId("next-available")).toContainText("Próxima entrega disponible:");
   await expect(page.getByTestId("next-available")).toContainText("Mezcla + Mastering");
 });
+
+/** 16-bit stereo WAV of a 1 kHz sine at the given peak level. */
+function sineWav(dbfs: number, seconds: number, rate = 48000): Buffer {
+  const n = seconds * rate;
+  const data = Buffer.alloc(n * 4);
+  const amp = Math.pow(10, dbfs / 20) * 32767;
+  for (let i = 0; i < n; i++) {
+    const v = Math.round(amp * Math.sin((2 * Math.PI * 1000 * i) / rate));
+    data.writeInt16LE(v, i * 4);
+    data.writeInt16LE(v, i * 4 + 2);
+  }
+  const h = Buffer.alloc(44);
+  h.write("RIFF", 0);
+  h.writeUInt32LE(36 + data.length, 4);
+  h.write("WAVE", 8);
+  h.write("fmt ", 12);
+  h.writeUInt32LE(16, 16);
+  h.writeUInt16LE(1, 20);
+  h.writeUInt16LE(2, 22);
+  h.writeUInt32LE(rate, 24);
+  h.writeUInt32LE(rate * 4, 28);
+  h.writeUInt16LE(4, 32);
+  h.writeUInt16LE(16, 34);
+  h.write("data", 36);
+  h.writeUInt32LE(data.length, 40);
+  return Buffer.concat([h, data]);
+}
+
+test("the master analyzer measures a reference tone in the browser", async ({ page }) => {
+  const uploads: string[] = [];
+  page.on("request", (r) => r.method() === "POST" && !r.url().endsWith("/api/t") && uploads.push(r.url()));
+  await page.goto("/es/analyzer");
+  await expect(page.getByRole("heading", { level: 1, name: "Analizador de masters" })).toBeVisible();
+  await page.getByTestId("analyzer-input").setInputFiles({ name: "tono.wav", mimeType: "audio/wav", buffer: sineWav(-23, 6) });
+  await expect(page.getByTestId("analyzer-result")).toBeVisible({ timeout: 30_000 });
+  await expect(page.getByTestId("lufs")).toHaveText(/^-23[.,]0 LUFS$/);
+  await expect(page.getByText(/WAV · 48 kHz · 16 bits · estéreo/)).toBeVisible();
+  await expect(page.locator('[data-platform="Spotify"]')).toContainText("La sube 9");
+  await expect(page.locator('[data-platform="YouTube"]')).toContainText("No sube canciones bajas");
+  await expect(page.getByRole("link", { name: /Reserva tu mastering \(\$70\)/ })).toBeVisible();
+  // The audio never left the browser.
+  expect(uploads).toEqual([]);
+});

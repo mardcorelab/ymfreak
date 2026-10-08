@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { siteUrl } from "@/lib/seo";
 
-const PATHS = ["", "/portfolio", "/services", "/achievements", "/about", "/faq", "/contact", "/book", "/links", "/privacy", "/terms"];
+const PATHS = ["", "/portfolio", "/services", "/achievements", "/about", "/faq", "/contact", "/book", "/links", "/analyzer", "/privacy", "/terms"];
 
 /** Every public page in both languages, each pointing at its translation. */
 export default function sitemap(): MetadataRoute.Sitemap {

@@ -23,6 +23,9 @@ export function SiteFooter({ contact }: { contact: ContactVM }) {
               {t(`nav.${item.key}`)}
             </Link>
           ))}
+          <Link href="/analyzer" className="hover:text-bone">
+            {t("analyzer.navLabel")}
+          </Link>
         </nav>
 
         {links.length > 0 && (

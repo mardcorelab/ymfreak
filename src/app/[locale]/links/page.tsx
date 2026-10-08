@@ -79,6 +79,10 @@ export default async function LinksPage({ params }: Props) {
           <span className="font-semibold">{t("listen")}</span>
           <span aria-hidden>→</span>
         </TrackedLink>
+        <TrackedLink label="analyzer" href={`/${locale}/analyzer`} className={`${big} border border-bone/30 hover:bg-bone/5`}>
+          <span className="font-semibold">{tAll("analyzer.navLabel")}</span>
+          <span aria-hidden>→</span>
+        </TrackedLink>
       </nav>
 
       {releases.length > 0 && (
