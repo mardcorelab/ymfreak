@@ -117,7 +117,7 @@ test("a manual booking from the dashboard starts confirmed and can be completed 
   for (const label of ["En proceso", "Entregada"]) {
     await page.getByLabel("Nuevo estado").selectOption({ label });
     await page.getByRole("button", { name: "Cambiar estado" }).click();
-    await expect(page.getByRole("status").filter({ hasText: /\S/ })).toContainText(label);
+    await expect(page.getByRole("status").filter({ hasText: `Reserva marcada como «${label}»` })).toBeVisible();
   }
   // Cannot complete before the balance is recorded.
   await page.getByLabel("Nuevo estado").selectOption({ label: "Completada" });
