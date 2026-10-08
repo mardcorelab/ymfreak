@@ -16,13 +16,10 @@
     "db:migrate": "prisma migrate dev && npm run db:constraints",
     "db:deploy": "prisma migrate deploy && npm run db:constraints",
     "db:constraints": "prisma db execute --file prisma/sql/001_session_no_overlap.sql --schema prisma/schema.prisma",
-    "db:seed": "prisma db seed",
+    "db:seed": "tsx prisma/seed.ts",
     "db:studio": "prisma studio",
     "check": "npm run typecheck && npm run lint && npm test",
     "test:e2e": "playwright test"
-  },
-  "prisma": {
-    "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.16.0",
