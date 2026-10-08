@@ -2,7 +2,7 @@
 
 Official site, booking and payments platform for YM Freak (producer, mixing & mastering engineer).
 
-**Current state: Phase 2 — public site + private dashboard.** Booking, payments and the assistant come in later phases; until then every call to action leads to real contact channels (email, Instagram), never to a button that does nothing.
+**Current state: Phase 3 — public site, dashboard, availability and bookings.** Online booking stays switched off for the public until online payment (Phase 4) is live; the admin can use and test it while signed in.
 
 ## Stack
 
@@ -47,6 +47,15 @@ Private panel, in Spanish, to edit everything the site shows: services and price
 - **Security:** signed, HTTP-only session cookie (7 days); the middleware redirects, and every admin page and server action checks the session again; 8 failed attempts per IP lock sign-in for 15 minutes; every change is written to an audit log; `/dashboard` is excluded from search engines.
 - **Clients, bookings, orders and availability** appear in the dashboard when those phases are built — no empty placeholder screens before then.
 
+## Bookings (`/book`)
+
+- **Delivery work** (mix, master, beats, arrangements, ads): the client picks the service and number of songs and sees the real delivery date, computed from the calendar (2 new projects per working day, Mon–Fri, blocked days, combined turnaround). They can ask whether it makes a specific date.
+- **Sessions** (coaching, vocal recording): free hourly slots between 08:00 and 18:00 Santo Domingo time with 12 h notice. A booked slot disappears; the database makes double-booking impossible.
+- Booking creates the client, an order with frozen prices (50 % deposit / 50 % balance) and a booking held for 30 minutes while the deposit is paid (Phase 4). Unpaid holds expire and release the date automatically.
+- Price and availability are recalculated on the server inside a serializable transaction at the moment of booking; the browser never sends a price.
+- Spam protection: hidden honeypot field and per-IP rate limits.
+- **Dashboard:** bookings (filters, detail, status changes through the state machine, history, extra-revision fee added automatically from the 3rd revision, balance paid outside the site), manual bookings for clients who book by WhatsApp, clients, a 5-week capacity view, blocked days, and the switch that opens booking to the public.
+
 ## Design
 
 - **Colour comes from the photos.** The page background is sampled from the studio backdrop of the portraits, so YM Freak's photos melt into the page instead of sitting in boxes. One lighter "key light" section matches the seated portrait.
@@ -71,9 +80,10 @@ All of these are stored in the database (`Setting.business_rules` and `Service`)
 
 | Part | Status |
 |---|---|
-| Domain rules (`src/server/domain`), validators, settings schemas, seed data consistency | **Verified:** strict typecheck + 45 unit tests passing. |
+| Domain rules (`src/server/domain`), validators, settings schemas, seed data consistency | **Verified:** strict typecheck + 47 unit tests passing. |
 | Page layout and copy (home, contact, services) | **Rendered and reviewed** at desktop and mobile widths by server-rendering the real components with the seed data. The preview environment lacked the Archivo font and Spotify covers, so final type and covers will look better than the previews. |
 | Next.js build, Prisma schema, seed script, i18n routing | **Verified in CI** (GitHub Actions, every push): install, Prisma validate, strict typecheck, lint, unit tests, schema + constraints applied to a real PostgreSQL 16, seed run twice (idempotent), production `next build`. |
+| Booking, end to end | **Verified in CI with Playwright**: booking closed to the public while switched off; a mix & master booking shows the server-computed delivery date and deposit, creates the booking and holds capacity; a booked session slot is no longer offered; cancelling releases capacity; a manual booking cannot be completed until the balance is recorded. |
 | Dashboard, end to end | **Verified in CI with Playwright** against the production build and a real database: dashboard closed without a session, wrong password refused, a price edited in the dashboard shows on the public site (and invalid input is explained), an FAQ entry added appears in both languages and is removed, a pasted YouTube link becomes a release that plays on the site, sign-out closes the dashboard. |
 
 ## Pending from YM Freak
@@ -88,8 +98,8 @@ All of these are stored in the database (`Setting.business_rules` and `Service`)
 
 0. Foundation
 1. Public site: design system, Home, Portfolio (Spotify/YouTube embeds loaded on click), Services, About, Achievements, FAQ, Contact
-2. Admin sign-in + dashboard ← *here*
-3. Availability + bookings (`/book`)
+2. Admin sign-in + dashboard
+3. Availability + bookings (`/book`) ← *here*
 4. PayPal: deposit and balance checkouts, webhooks, refunds, emails
 5. Assistant with tools + editable knowledge base
 6. Client portal
