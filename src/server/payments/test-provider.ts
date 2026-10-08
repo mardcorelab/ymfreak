@@ -6,8 +6,6 @@
  */
 import type { CaptureResult, CheckoutSession, CreateCheckoutInput, PaymentProvider, ProviderEvent } from "./provider";
 
-const orders = new Map<string, { amountCents: number; captured: boolean }>();
-
 export class TestPaymentProvider implements PaymentProvider {
   readonly name = "test" as const;
   readonly mode = "test" as const;
@@ -15,8 +13,9 @@ export class TestPaymentProvider implements PaymentProvider {
   constructor(private readonly siteUrl: string) {}
 
   async createCheckout(input: CreateCheckoutInput): Promise<CheckoutSession> {
-    const providerRef = `TEST-${input.paymentId}`;
-    orders.set(providerRef, { amountCents: input.amountCents, captured: false });
+    // Stateless on purpose: Next.js may run actions and route handlers in
+    // separate module instances, so the amount travels inside the reference.
+    const providerRef = `TEST-${input.paymentId}-${input.amountCents}`;
     const url = new URL("/api/payments/test/approve", this.siteUrl);
     url.searchParams.set("token", providerRef);
     url.searchParams.set("return", input.returnUrl);
@@ -24,10 +23,9 @@ export class TestPaymentProvider implements PaymentProvider {
   }
 
   async capture(providerRef: string): Promise<CaptureResult> {
-    const order = orders.get(providerRef);
-    if (!order) return { status: "FAILED", rawStatus: "UNKNOWN_ORDER" };
-    order.captured = true;
-    return { status: "SUCCEEDED", captureRef: `CAP-${providerRef}`, amountCents: order.amountCents, rawStatus: "COMPLETED" };
+    const match = /^TEST-(c[a-z0-9]+)-(\d+)$/.exec(providerRef);
+    if (!match) return { status: "FAILED", rawStatus: "UNKNOWN_ORDER" };
+    return { status: "SUCCEEDED", captureRef: `CAP-${match[1]}`, amountCents: Number(match[2]), rawStatus: "COMPLETED" };
   }
 
   async refund(): Promise<void> {}
