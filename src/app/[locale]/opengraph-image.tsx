@@ -1,16 +1,22 @@
 import { readFile } from "node:fs/promises";
-import { join } from "node:path";
 import { ImageResponse } from "next/og";
 import { WORDMARK } from "@/components/brand/marks";
+import { routing } from "@/i18n/routing";
 
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 export const alt = "YM Freak";
 
+// Rendered once per language at build time.
+export function generateStaticParams() {
+  return routing.locales.map((locale) => ({ locale }));
+}
+
 /** Link preview (WhatsApp, Instagram, X, Google…): the logo over the studio portrait. */
 export default async function OpenGraphImage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
-  const photo = await readFile(join(process.cwd(), "public/images/ymfreak-portrait.jpg"));
+  // Referenced through import.meta.url so the build bundles the file with this route.
+  const photo = await readFile(new URL("../../../public/images/ymfreak-portrait.jpg", import.meta.url));
   const photoSrc = `data:image/jpeg;base64,${photo.toString("base64")}`;
   const logo = `data:image/svg+xml;utf8,${encodeURIComponent(
     `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${WORDMARK.viewBox}"><path fill="#ebe6dc" fill-rule="evenodd" d="${WORDMARK.d}"/></svg>`,
