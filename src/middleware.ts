@@ -14,7 +14,13 @@ export default async function middleware(request: NextRequest) {
     // Convenience redirect only: every admin page and action re-checks with requireAdmin().
     const session = await verifySessionToken(
       request.cookies.get(SESSION_COOKIE)?.value,
-      process.env.ADMIN_EMAIL && process.env.ADMIN_PASSWORD ? secretMaterial(process.env) : null,
+      process.env.ADMIN_EMAIL && process.env.ADMIN_PASSWORD
+        ? secretMaterial({
+            AUTH_SECRET: process.env.AUTH_SECRET,
+            ADMIN_PASSWORD: process.env.ADMIN_PASSWORD,
+            DATABASE_URL: process.env.DATABASE_URL,
+          })
+        : null,
     );
     if (!session) return NextResponse.redirect(new URL("/dashboard/login", request.url));
     return NextResponse.next();

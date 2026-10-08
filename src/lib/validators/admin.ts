@@ -16,8 +16,7 @@ const int = (label: string, min: number, max: number) =>
     .int(`${label}: escribe un número entero`)
     .min(min, `${label}: mínimo ${min}`)
     .max(max, `${label}: máximo ${max}`);
-const choice = <T extends [string, ...string[]]>(values: T, label: string) =>
-  z.enum(values, { errorMap: () => ({ message: `${label}: elige una opción` }) });
+const choice = (label: string) => ({ errorMap: () => ({ message: `${label}: elige una opción` }) });
 const order = z.number({ invalid_type_error: "Orden: debe ser un número entero" }).int("Orden: debe ser un número entero").min(0).max(9999);
 const year = z
   .number({ invalid_type_error: "Año: debe ser un número" })
@@ -38,8 +37,8 @@ export const serviceSchema = z
       .number({ invalid_type_error: "Precio: escribe un monto válido, por ejemplo 150 o 75.50" })
       .refine((n) => Number.isInteger(n), "Precio: escribe un monto válido, por ejemplo 150 o 75.50")
       .refine((n) => n >= 100 && n <= 10_000_00, "Precio: debe estar entre $1 y $10,000"),
-    pricingUnit: choice(["FLAT", "PER_SONG", "PER_HOUR"], "Unidad de precio"),
-    bookingMode: choice(["DELIVERY", "SESSION"], "Tipo de servicio"),
+    pricingUnit: z.enum(["FLAT", "PER_SONG", "PER_HOUR"], choice("Unidad de precio")),
+    bookingMode: z.enum(["DELIVERY", "SESSION"], choice("Tipo de servicio")),
     turnaroundDays: int("Días de entrega", 1, 60).nullable(),
     sessionMinutes: int("Duración de la sesión (min)", 15, 480).nullable(),
     revisionsIncluded: int("Revisiones incluidas", 0, 20),
@@ -71,7 +70,7 @@ export const portfolioSchema = z.object({
 });
 
 export const achievementSchema = z.object({
-  kind: choice(["NOMINATION", "AWARD", "CERTIFICATION", "MILESTONE"], "Tipo"),
+  kind: z.enum(["NOMINATION", "AWARD", "CERTIFICATION", "MILESTONE"], choice("Tipo")),
   titleEs: t(120, "Título (ES)"),
   titleEn: t(120, "Título (EN)"),
   detailEs: t(300, "Detalle (ES)"),
@@ -93,7 +92,7 @@ export const testimonialSchema = z.object({
 });
 
 export const knowledgeSchema = z.object({
-  kind: choice(["FAQ", "POLICY", "PROCESS", "DOC"], "Tipo"),
+  kind: z.enum(["FAQ", "POLICY", "PROCESS", "DOC"], choice("Tipo")),
   questionEs: t(200, "Pregunta (ES)"),
   questionEn: t(200, "Pregunta (EN)"),
   answerEs: t(2000, "Respuesta (ES)"),
