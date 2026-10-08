@@ -51,10 +51,10 @@ export async function signOutClient(form: FormData): Promise<void> {
 
 async function ownBooking(code: string) {
   const client = await currentClient();
-  if (!client) return { error: "SIGNED_OUT" as const };
+  if (!client) return { ok: false as const, error: "SIGNED_OUT" as const };
   const booking = await db.booking.findFirst({ where: { code, customerId: client.id } });
-  if (!booking) return { error: "NOT_ALLOWED" as const };
-  return { booking };
+  if (!booking) return { ok: false as const, error: "NOT_ALLOWED" as const };
+  return { ok: true as const, booking };
 }
 
 const linkSchema = z.string().trim().url().startsWith("https://").max(500);
@@ -66,7 +66,7 @@ export async function addClientFiles(_prev: PortalState, form: FormData): Promis
   const note = str(form.get("note")).slice(0, 1000);
   if (!url.success) return { status: "error", error: "URL" };
   const own = await ownBooking(code);
-  if ("error" in own) return { status: "error", error: own.error };
+  if (!own.ok) return { status: "error", error: own.error };
   if (own.booking.bookingMode !== "DELIVERY" || ["CANCELLED", "EXPIRED", "COMPLETED", "PENDING"].includes(own.booking.status)) {
     return { status: "error", error: "NOT_ALLOWED" };
   }
@@ -84,7 +84,7 @@ export async function requestRevision(_prev: PortalState, form: FormData): Promi
   const note = str(form.get("note"));
   if (note.length < 5 || note.length > 3000) return { status: "error", error: "NOTE" };
   const own = await ownBooking(code);
-  if ("error" in own) return { status: "error", error: own.error };
+  if (!own.ok) return { status: "error", error: own.error };
   if (!(await allowRate(`portal-revision:${own.booking.id}`, 5, 60 * 60_000))) return { status: "error", error: "RATE_LIMITED" };
 
   const r = await transitionBookingAs("client", own.booking.id, "REVISION", "Revisión solicitada por el cliente desde su portal");
