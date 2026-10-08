@@ -40,7 +40,9 @@ test("a mix & master booking gets a real delivery date and holds capacity", asyn
   // Delivery date comes from the server calendar.
   await expect(page.getByText("Entrega", { exact: true })).toBeVisible();
   await expect(page.getByText(/Empiezo a trabajarla el/)).toBeVisible();
-  await expect(page.getByText("$75", { exact: true })).toBeVisible(); // 50% deposit of $150
+  // $150 total → $75 deposit now and $75 on delivery.
+  await expect(page.getByText("Depósito para reservar (50 %)")).toBeVisible();
+  await expect(page.getByText("$75", { exact: true })).toHaveCount(2);
 
   await fillProject(page, "Delivery");
   await page.getByLabel("Nombre de la canción").fill("Canción E2E");
