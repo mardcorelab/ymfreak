@@ -40,7 +40,7 @@ export function Hero() {
           <p className="type-sub text-[clamp(1.6rem,3.2vw,2.4rem)]">{t("tagline")}</p>
           <p className="mt-4 max-w-[46ch] text-bone/75">{t("lede")}</p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <ButtonLink href="/contact">{t("ctaPrimary")}</ButtonLink>
+            <ButtonLink href="/book">{t("ctaPrimary")}</ButtonLink>
             <ButtonLink href="/#trabajos" variant="line">
               {t("ctaSecondary")}
             </ButtonLink>

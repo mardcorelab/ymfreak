@@ -12,6 +12,7 @@ import { createBooking } from "@/server/booking/engine";
 import { bookingRequestSchema } from "@/lib/validators/booking";
 import { checkbox, optionalInt, optionalText, text } from "@/lib/form-data";
 import { dateColumn } from "@/server/booking/code";
+import { getPaymentProvider } from "@/server/payments";
 import { failure, invalid, refreshSite, type ActionState } from "../common";
 
 const ENGINE_MESSAGES: Record<string, string> = {
@@ -137,6 +138,9 @@ export async function saveBookingSwitch(_prev: ActionState, fd: FormData): Promi
   const row = await db.setting.findUnique({ where: { key: "booking" } });
   const current = row ? parseSetting("booking", row.value) : { enabled: false, holdMinutes: 30 };
   const holdMinutes = optionalInt(fd, "holdMinutes") ?? current.holdMinutes;
+  if (checkbox(fd, "enabled") && !getPaymentProvider()) {
+    return failure("Primero configura PayPal (PAYPAL_CLIENT_ID y PAYPAL_CLIENT_SECRET en Vercel): sin pago en línea nadie podría pagar el depósito.");
+  }
   if (Number.isNaN(holdMinutes) || holdMinutes < 10 || holdMinutes > 1440) {
     return failure("Minutos para pagar: escribe un número entre 10 y 1440.");
   }
@@ -149,4 +153,23 @@ export async function saveBookingSwitch(_prev: ActionState, fd: FormData): Promi
 
 export async function changeBookingStatus(id: string, prev: ActionState, fd: FormData): Promise<ActionState> {
   return transitionBooking(id, text(fd, "to"), prev, fd);
+}
+
+export async function cancelWithRefund(id: string, _prev: ActionState): Promise<ActionState> {
+  await requireAdmin();
+  const { cancelByAdminWithRefund } = await import("@/server/payments/service");
+  const result = await cancelByAdminWithRefund(id);
+  if (!result.ok) {
+    const messages: Record<string, string> = {
+      NOT_ALLOWED: "Esta reserva ya no se puede cancelar.",
+      NOT_CONFIGURED: "PayPal no está configurado: no se puede reembolsar automáticamente.",
+      NOT_REFUNDABLE: "Un pago no se puede reembolsar automáticamente; hazlo desde PayPal.",
+      PROVIDER_ERROR: "PayPal no aceptó el reembolso. Inténtalo de nuevo o hazlo desde PayPal.",
+      NOT_FOUND: "Esta reserva no tiene pedido.",
+    };
+    return failure(messages[result.error] ?? "No se pudo cancelar.");
+  }
+  await audit("booking.cancel_refund", "Booking", id, { refundedCents: result.refundedCents });
+  refreshSite();
+  return { status: "ok", message: `Reserva cancelada. Reembolsado: $${(result.refundedCents / 100).toFixed(2)}.` };
 }

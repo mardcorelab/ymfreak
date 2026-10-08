@@ -32,7 +32,7 @@ export default async function ServicesPage({ params }: Props) {
         <ServiceList services={services} business={business} detailed />
         <p className="mt-8 text-ash">{t("services.combine")}</p>
         <div className="mt-10">
-          <ButtonLink href="/contact">{t("services.cta")}</ButtonLink>
+          <ButtonLink href="/book">{t("services.cta")}</ButtonLink>
         </div>
       </Section>
       <Section tone="deep" title={t("process.title")}>

@@ -53,7 +53,7 @@ export function HomeView({ data }: { data: HomeData }) {
       >
         <ServiceList services={data.services} business={data.business} />
         <div className="mt-12 flex flex-wrap items-center gap-x-8 gap-y-4">
-          <ButtonLink href="/contact">{t("services.cta")}</ButtonLink>
+          <ButtonLink href="/book">{t("services.cta")}</ButtonLink>
           <ButtonLink href="/services" variant="line">
             {t("services.all")}
           </ButtonLink>

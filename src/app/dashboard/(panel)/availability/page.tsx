@@ -9,6 +9,7 @@ import { DeleteForm } from "@/components/admin/DeleteForm";
 import { Checkbox, TextField } from "@/components/admin/fields";
 import { Notice, PageHeader } from "@/components/admin/PageHeader";
 import Link from "next/link";
+import { paymentStatus } from "@/server/payments";
 
 const DAY = new Intl.DateTimeFormat("es-DO", { weekday: "short", day: "numeric", month: "short", timeZone: "UTC" });
 const dayLabel = (d: string) => DAY.format(new Date(`${d}T12:00:00Z`));
@@ -23,6 +24,7 @@ export default async function AvailabilityAdmin({ searchParams }: { searchParams
     db.blockedPeriod.findMany({ where: { toDate: { gte: new Date(Date.now() - 864e5) } }, orderBy: { fromDate: "asc" } }),
   ]);
 
+  const pay = paymentStatus();
   const days = Array.from({ length: 35 }, (_, i) => addDays(cal.today, i));
   const sessionsByDay = new Map<string, number>();
   for (const s of cal.busy) {
@@ -41,6 +43,16 @@ export default async function AvailabilityAdmin({ searchParams }: { searchParams
           {booking.enabled
             ? "Abiertas: cualquier visitante puede reservar desde la web."
             : "Cerradas al público: la página de reservas muestra tu contacto. Tú puedes probarla igualmente estando conectado."}
+        </p>
+        <p className="mt-3 text-sm">
+          {pay.configured ? (
+            <span className="text-emerald-300">
+              PayPal conectado ({pay.mode === "live" ? "modo real" : pay.mode === "sandbox" ? "modo de prueba Sandbox: los pagos no son reales" : "pruebas automáticas"}).
+              {pay.provider === "paypal" && !pay.webhook && " Falta el webhook (PAYPAL_WEBHOOK_ID); es un respaldo recomendado."}
+            </span>
+          ) : (
+            <span className="text-amber-300">PayPal no está configurado: añade PAYPAL_CLIENT_ID y PAYPAL_CLIENT_SECRET en Vercel.</span>
+          )}
         </p>
         <div className="mt-4">
           <AdminForm action={saveBookingSwitch}>

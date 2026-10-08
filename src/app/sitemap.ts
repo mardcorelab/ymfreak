@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { siteUrl } from "@/lib/seo";
 
-const PATHS = ["", "/portfolio", "/services", "/achievements", "/about", "/faq", "/contact"];
+const PATHS = ["", "/portfolio", "/services", "/achievements", "/about", "/faq", "/contact", "/book"];
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = siteUrl();

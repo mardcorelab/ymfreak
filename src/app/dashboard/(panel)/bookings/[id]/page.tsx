@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { db } from "@/server/db";
 import { nextStatuses } from "@/server/domain/booking-status";
 import { expireStaleHolds } from "@/server/booking/calendar";
-import { changeBookingStatus, markBalancePaid } from "@/server/admin/actions/bookings";
+import { cancelWithRefund, changeBookingStatus, markBalancePaid } from "@/server/admin/actions/bookings";
 import { AdminForm } from "@/components/admin/AdminForm";
 import { Select, TextField } from "@/components/admin/fields";
 import { Notice, PageHeader } from "@/components/admin/PageHeader";
@@ -28,6 +28,7 @@ export default async function BookingDetail({ params, searchParams }: { params: 
   const project = (b.projectDetails ?? {}) as Project;
   const next = nextStatuses(b.status, "admin");
   const paid = b.order?.payments.filter((p) => p.status === "SUCCEEDED").reduce((s, p) => s + p.amountCents, 0) ?? 0;
+  const paidOnline = b.order?.payments.filter((p) => p.status === "SUCCEEDED" && p.provider !== "manual").reduce((s, p) => s + p.amountCents, 0) ?? 0;
 
   return (
     <>
@@ -158,6 +159,13 @@ export default async function BookingDetail({ params, searchParams }: { params: 
                     </li>
                   ))}
                 </ul>
+              )}
+              {paidOnline > 0 && next.includes("CANCELLED") && (
+                <div className="mt-5 border-t border-rule pt-5">
+                  <AdminForm action={cancelWithRefund.bind(null, b.id)} submitLabel={`Cancelar y reembolsar ${fmtMoney(paidOnline)}`}>
+                    <p className="text-xs text-ash">Devuelve por PayPal lo pagado en línea y cancela la reserva.</p>
+                  </AdminForm>
+                </div>
               )}
               {b.order.status !== "PAID_IN_FULL" && !["CANCELLED", "EXPIRED"].includes(b.status) && paid > 0 && (
                 <div className="mt-5">

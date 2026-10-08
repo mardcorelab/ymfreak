@@ -9,6 +9,7 @@ export const NAV_ITEMS = [
   { href: "/about", key: "about" },
   { href: "/faq", key: "faq" },
   { href: "/contact", key: "contact" },
+  { href: "/book", key: "book" },
 ] as const;
 
 export function SiteHeader() {
