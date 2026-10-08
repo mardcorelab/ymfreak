@@ -183,7 +183,7 @@ export class PayPalProvider implements PaymentProvider {
   }
 
   static parseEvent(event: { id: string; event_type: string; resource: Record<string, unknown> }): ProviderEvent {
-    const r = event.resource as PayPalCapture & PayPalOrder & { custom_id?: string };
+    const r = event.resource as unknown as PayPalCapture & PayPalOrder & { custom_id?: string };
     switch (event.event_type) {
       case "CHECKOUT.ORDER.APPROVED":
         return { kind: "APPROVED", eventId: event.id, providerRef: r.id };
