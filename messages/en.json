@@ -1,19 +1,133 @@
 {
   "meta": {
     "title": "YM Freak — Producer, mixing and mastering engineer",
-    "description": "Music production, mixing and mastering with 13+ years of experience. 2026 Latin Grammy-nominated co-producer."
+    "description": "Music production, mixing and mastering with 13+ years of experience. 2026 Latin Grammy-nominated co-producer. Based in the Dominican Republic, working with artists worldwide.",
+    "portfolio": "Work",
+    "portfolioDescription": "Productions, mixes and masters by YM Freak. Listen here.",
+    "services": "Services and prices",
+    "servicesDescription": "Mixing and mastering, full production, beats, arrangements and coaching. Prices in USD and turnaround times.",
+    "achievements": "Achievements",
+    "achievementsDescription": "2026 Latin Grammy nomination and a gold record in Spain.",
+    "about": "About YM Freak",
+    "aboutDescription": "Producer, mixing and mastering engineer with 13+ years of experience.",
+    "faq": "FAQ",
+    "faqDescription": "Payments, revisions, cancellations and turnaround.",
+    "contact": "Contact",
+    "contactDescription": "Get in touch with YM Freak to produce, mix or master your music."
   },
-  "foundation": {
-    "eyebrow": "Phase 0 · technical foundation",
-    "headline": "YM Freak",
+  "nav": {
+    "home": "Home",
+    "work": "Work",
+    "services": "Services",
+    "achievements": "Achievements",
+    "about": "About",
+    "faq": "FAQ",
+    "contact": "Contact",
+    "menu": "Menu",
+    "language": "Español",
+    "skip": "Skip to content"
+  },
+  "hero": {
     "roles": "Producer • Mixing Engineer • Mastering Engineer",
-    "servicesTitle": "Services (read from the database)",
+    "tagline": "From demo to record.",
+    "lede": "I produce, mix and master songs for artists, producers and labels. Thirteen years taking ideas all the way to release.",
+    "ctaPrimary": "Work with me",
+    "ctaSecondary": "Listen to my work",
+    "photoAlt": "YM Freak in profile, wearing a black jacket, in the studio"
+  },
+  "credits": {
+    "label": "Credits",
+    "years": "Years in production, mixing and mastering",
+    "yearsValue": "13+"
+  },
+  "work": {
+    "title": "Hear the work",
+    "intro": "Releases I've worked on. Press play and they sound right here.",
+    "play": "Play “{title}”",
+    "loading": "Loading player…",
+    "openOn": "Open in {provider}",
+    "playerTitle": "{provider} player: {title}",
+    "embedNote": "Without a Spotify login, the platform plays a preview.",
+    "all": "See all work",
+    "empty": "Work will be published here soon.",
+    "coverAlt": "Cover of “{title}” by {artist}"
+  },
+  "services": {
+    "title": "Services",
+    "intro": "Prices in US dollars. You pay {deposit}% to book your date and the rest when you receive the work.",
     "perSong": "per song",
     "perHour": "per hour",
     "flat": "per piece",
-    "workingDays": "{count, plural, one {# working day} other {# working days}}",
-    "remoteSession": "Remote session over video call",
-    "emptyServices": "No active services. Run npm run db:seed.",
-    "note": "This page only checks that the database, languages and prices work. The design arrives in Phase 1."
+    "turnaround": "{count, plural, one {Delivered in # working day} other {Delivered in # working days}}",
+    "session": "{minutes}-minute blocks, Monday to Friday",
+    "revisions": "{count, plural, =0 {} one {# revision included} other {# revisions included}}",
+    "extraRevision": "Extra revision: {fee}",
+    "includes": "What's included",
+    "flagship": "Most requested",
+    "cta": "Ask for a date",
+    "all": "See all services and details",
+    "combine": "If you combine services for the same song, the turnaround days add up."
+  },
+  "highlights": {
+    "title": "Achievements",
+    "nomination": "Nomination",
+    "certification": "Certification",
+    "award": "Award",
+    "milestone": "Milestone",
+    "listen": "Listen to the release"
+  },
+  "about": {
+    "title": "About YM Freak",
+    "p1": "YM Freak is a producer, mixing engineer and mastering engineer. For more than thirteen years he has worked on songs from start to finish: from the beat to the master that goes out to streaming platforms.",
+    "p2": "His work runs from merengue and bachata to urban music. In 2026 he was nominated for a Latin Grammy as co-producer of “No Era El Plan” by Gabriel Pagán, and he holds a gold record in Spain.",
+    "p3": "He works remotely with artists, producers and labels from any country.",
+    "photoAlt": "YM Freak seated in the studio"
+  },
+  "process": {
+    "title": "How we work",
+    "s1t": "Book your date",
+    "s1d": "Pick the service and pay {deposit}% to hold your spot in the calendar.",
+    "s2t": "Send your material",
+    "s2d": "You send the song files and your references.",
+    "s3t": "Work and revisions",
+    "s3d": "You get the first version and ask for the changes you need. The first revisions are included.",
+    "s4t": "Final delivery",
+    "s4d": "You pay the balance and receive the final files, ready for distribution."
+  },
+  "testimonials": {
+    "title": "What artists say"
+  },
+  "closing": {
+    "title": "Is your song ready to sound like a record?",
+    "body": "Send me your demo or your stems and I'll tell you how I'd approach it.",
+    "email": "Email {email}",
+    "instagram": "Message on Instagram"
+  },
+  "footer": {
+    "rights": "© {year} YM Freak. All rights reserved.",
+    "follow": "Follow"
+  },
+  "faq": {
+    "title": "Frequently asked questions",
+    "intro": "If your question isn't here, get in touch.",
+    "empty": "No questions published yet.",
+    "contact": "Email YM Freak"
+  },
+  "contact": {
+    "title": "Let's talk about your music",
+    "intro": "Tell me what song you have, what service you need and when. I'll reply with availability and next steps.",
+    "emailLabel": "Email",
+    "instagramLabel": "Instagram",
+    "youtubeLabel": "YouTube",
+    "whatsappLabel": "WhatsApp",
+    "spotifyLabel": "Spotify",
+    "tiktokLabel": "TikTok",
+    "hours": "Monday to Friday, {start} to {end} (Dominican Republic time).",
+    "bookingSoon": "Online booking and payment are coming soon. Meanwhile, book your date by email or Instagram."
+  },
+  "notFound": {
+    "title": "This page doesn't exist",
+    "body": "The link may be mistyped, or the page may have moved.",
+    "home": "Go to the home page"
   }
 }

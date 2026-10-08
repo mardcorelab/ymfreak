@@ -40,7 +40,12 @@ async function main() {
   }
 
   if ((await prisma.achievement.count()) === 0) {
-    await prisma.achievement.createMany({ data: achievementSeeds.map(({ key: _key, ...a }) => a) });
+    for (const { key: _key, portfolioSlug, ...a } of achievementSeeds) {
+      const item = portfolioSlug
+        ? await prisma.portfolioItem.findUnique({ where: { slug: portfolioSlug }, select: { id: true } })
+        : null;
+      await prisma.achievement.create({ data: { ...a, portfolioId: item?.id ?? null } });
+    }
   }
 
   const adminEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase();

@@ -2,7 +2,7 @@
 
 Official site, booking and payments platform for YM Freak (producer, mixing & mastering engineer).
 
-**Current state: Phase 0 — technical foundation.** There is no visual design yet; that is Phase 1.
+**Current state: Phase 1 — public site** (home, work, services, achievements, about, FAQ, contact) on top of the Phase 0 foundation. Booking, payments and the assistant come in later phases; until then every call to action leads to real contact channels (email, Instagram), never to a button that does nothing.
 
 ## Stack
 
@@ -22,7 +22,7 @@ npm run dev                         # http://localhost:3000/es and /en
 npm run check                       # typecheck + lint + unit tests
 ```
 
-The home page in this phase lists the services with prices and turnaround **read from the database**, in Spanish and English. If you change a price in the database (`npm run db:studio`), the page changes. That is the proof that prices are not hard-coded.
+Every price, credit, achievement, FAQ and contact link on the site is **read from the database**, in Spanish and English. Change a price with `npm run db:studio` and the site shows it within a minute (pages revalidate every 60 s).
 
 ## Where things live
 
@@ -35,6 +35,17 @@ The home page in this phase lists the services with prices and turnaround **read
 | `prisma/schema.prisma` | Database schema. `prisma/sql/` holds constraints Prisma can't express. |
 | `content/` | **Initial data for the seed only.** After seeding, the database is the source of truth and edits happen in the dashboard (Phase 2). |
 | `messages/` | Interface text in ES/EN. |
+| `src/components/` | UI. Components receive localised view models as props and never query the database. |
+| `src/server/site-data.ts` | Loaders that turn database rows into the view models the pages render. |
+| `public/images/` | YM Freak's portraits, optimised. |
+
+## Design
+
+- **Colour comes from the photos.** The page background is sampled from the studio backdrop of the portraits, so YM Freak's photos melt into the page instead of sitting in boxes. One lighter "key light" section matches the seated portrait.
+- **One typeface, Archivo**, used through its width axis: extra-condensed for the name, condensed for headings, normal width for reading.
+- **Brass appears only on certifications and nominations** (with a record mark), so it always means the same thing.
+- **One motion moment:** the name rises in on load and the portrait settles. Everything else moves only when the visitor acts. Reduced-motion settings are respected.
+- **Listening:** releases show their cover; Spotify/YouTube's official player loads only when the visitor presses play, so the page stays fast.
 
 ## Business rules (as configured)
 
@@ -54,21 +65,24 @@ All of these are stored in the database (`Setting.business_rules` and `Service`)
 | Part | Status |
 |---|---|
 | Domain rules (`src/server/domain`), validators, settings schemas, seed data consistency | **Verified:** strict typecheck + 28 unit tests passing. |
-| Next.js app, Prisma schema, seed script, i18n, CI workflow | **Written, not yet run.** The build environment used for Phase 0 had no access to the npm registry. First real run: `npm install && npm run check` locally, or push to GitHub and let `.github/workflows/ci.yml` run it against a real Postgres. |
+| Page layout and copy (home, contact, services) | **Rendered and reviewed** at desktop and mobile widths by server-rendering the real components with the seed data. The preview environment lacked the Archivo font and Spotify covers, so final type and covers will look better than the previews. |
+| Next.js build, Prisma schema, seed script, i18n routing, CI workflow | **Written, not yet run.** The build environment used for Phase 0 had no access to the npm registry. First real run: `npm install && npm run check` locally, or push to GitHub and let `.github/workflows/ci.yml` run it against a real Postgres. |
 
 ## Pending from YM Freak
 
 - Confirm turnaround for **mastering only** and **ads**.
 - How clients send stems/files (seeded as an inactive FAQ until answered).
-- Portfolio: Spotify/YouTube links, covers, credits, years.
-- Gold/platinum certifications: which songs, which certifier.
-- Photos, real testimonials, social links, contact email and WhatsApp.
+- Your credit on **Fake Capo (Remix)** (production, mix, master…) and the year of the gold certification.
+- More releases for the portfolio (Spotify or YouTube links + your credit on each).
+- Platinum certifications, if any: which songs.
+- Real testimonials (the section stays hidden until there is at least one).
+- WhatsApp number, TikTok and your Spotify artist profile, if you want them shown.
 - PayPal **Business** account + REST app credentials (Phase 4).
 
 ## Roadmap
 
-0. Foundation ← *here*
-1. Public site: design system, Home, Portfolio (Spotify/YouTube embeds loaded on click), Services, About, Achievements, FAQ, Contact
+0. Foundation
+1. Public site: design system, Home, Portfolio (Spotify/YouTube embeds loaded on click), Services, About, Achievements, FAQ, Contact ← *here*
 2. Auth (magic link) + admin dashboard
 3. Availability + bookings (`/book`)
 4. PayPal: deposit and balance checkouts, webhooks, refunds, emails

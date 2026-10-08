@@ -15,6 +15,14 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  images: {
+    formats: ["image/avif", "image/webp"],
+    // Release covers come from the platforms' own CDNs.
+    remotePatterns: [
+      { protocol: "https", hostname: "i.scdn.co", pathname: "/image/**" },
+      { protocol: "https", hostname: "i.ytimg.com", pathname: "/vi/**" },
+    ],
+  },
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
   },

@@ -1,50 +1,52 @@
+import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { getActiveServices } from "@/server/catalog";
-import { formatMoney } from "@/server/domain/money";
 import type { AppLocale } from "@/i18n/routing";
+import { HomeView } from "@/components/views/HomeView";
+import {
+  getAchievementsVM,
+  getBusinessVM,
+  getContactVM,
+  getPortfolioVM,
+  getServicesVM,
+  getTestimonialsVM,
+} from "@/server/site-data";
+import { alternates, jsonLdScript, personJsonLd } from "@/lib/seo";
 
-// Phase 0 foundation page: proves the database → domain → i18n path end to end.
-// Replaced by the real home page in Phase 1.
-export const dynamic = "force-dynamic";
+// Content changes from the dashboard should show up within a minute.
+export const revalidate = 60;
 
-export default async function FoundationPage({ params }: { params: Promise<{ locale: AppLocale }> }) {
+type Props = { params: Promise<{ locale: AppLocale }> };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params;
+  return { alternates: alternates(locale, "/") };
+}
+
+export default async function HomePage({ params }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const t = await getTranslations("foundation");
-  const services = await getActiveServices();
 
-  const unitLabel = { PER_SONG: t("perSong"), PER_HOUR: t("perHour"), FLAT: t("flat") } as const;
+  const [featured, services, achievements, testimonials, contact, business, t] = await Promise.all([
+    getPortfolioVM(locale, { featuredOnly: true }),
+    getServicesVM(locale),
+    getAchievementsVM(locale),
+    getTestimonialsVM(locale),
+    getContactVM(),
+    getBusinessVM(locale),
+    getTranslations({ locale, namespace: "meta" }),
+  ]);
+
+  const sameAs = [contact.instagram, contact.youtube, contact.spotify, contact.tiktok].filter(Boolean);
 
   return (
-    <main className="mx-auto max-w-3xl px-6 py-24">
-      <p className="text-xs uppercase tracking-[0.3em] text-mute">{t("eyebrow")}</p>
-      <h1 className="mt-4 text-5xl font-semibold tracking-tight">{t("headline")}</h1>
-      <p className="mt-2 text-mute">{t("roles")}</p>
-
-      <h2 className="mt-16 text-sm uppercase tracking-[0.2em] text-mute">{t("servicesTitle")}</h2>
-      {services.length === 0 ? (
-        <p className="mt-6 text-mute">{t("emptyServices")}</p>
-      ) : (
-        <ul className="mt-6 divide-y divide-line border-y border-line">
-          {services.map((s) => (
-            <li key={s.id} className="flex items-baseline justify-between gap-6 py-4">
-              <div>
-                <p className="font-medium">{locale === "es" ? s.nameEs : s.nameEn}</p>
-                <p className="text-sm text-mute">
-                  {s.bookingMode === "SESSION"
-                    ? t("remoteSession")
-                    : s.turnaroundDays !== null && t("workingDays", { count: s.turnaroundDays })}
-                </p>
-              </div>
-              <p className="whitespace-nowrap tabular-nums">
-                {formatMoney(s.priceCents, s.currency, locale)}{" "}
-                <span className="text-sm text-mute">{unitLabel[s.pricingUnit]}</span>
-              </p>
-            </li>
-          ))}
-        </ul>
-      )}
-      <p className="mt-10 text-sm text-mute">{t("note")}</p>
-    </main>
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: jsonLdScript(personJsonLd({ locale, sameAs, email: contact.email, description: t("description") })),
+        }}
+      />
+      <HomeView data={{ featured, services, achievements, testimonials, contact, business }} />
+    </>
   );
 }

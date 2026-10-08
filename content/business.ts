@@ -21,10 +21,10 @@ export const businessRulesSeed: BusinessRules = {
  * are hidden on the site and never mentioned by the assistant.
  */
 export const contactSeed = {
-  email: "",
+  email: "ymfreak@gmail.com",
   whatsapp: "",
-  instagram: "",
-  youtube: "",
+  instagram: "https://www.instagram.com/ymfreak_",
+  youtube: "https://www.youtube.com/@ymfreak",
   spotify: "",
   tiktok: "",
   other: [] as { label: string; url: string }[],

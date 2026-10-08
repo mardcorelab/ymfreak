@@ -362,7 +362,7 @@ model Achievement {
   titleEn       String
   detailEs      String
   detailEn      String
-  year          Int
+  year          Int?
   highlight     Boolean         @default(false)
   sortOrder     Int             @default(0)
   portfolioId   String?

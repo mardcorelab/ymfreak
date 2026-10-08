@@ -1,19 +1,133 @@
 {
   "meta": {
     "title": "YM Freak — Productor, ingeniero de mezcla y mastering",
-    "description": "Producción musical, mezcla y mastering con más de 13 años de experiencia. Co-productor nominado al Latin Grammy 2026."
+    "description": "Producción musical, mezcla y mastering con más de 13 años de experiencia. Co-productor nominado al Latin Grammy 2026. República Dominicana, para artistas de todo el mundo.",
+    "portfolio": "Trabajos",
+    "portfolioDescription": "Producciones, mezclas y masters de YM Freak. Escúchalos aquí.",
+    "services": "Servicios y precios",
+    "servicesDescription": "Mezcla y mastering, producción completa, pistas, arreglos y asesoría. Precios en USD y tiempos de entrega.",
+    "achievements": "Logros",
+    "achievementsDescription": "Nominación al Latin Grammy 2026 y Disco de Oro en España.",
+    "about": "Sobre YM Freak",
+    "aboutDescription": "Productor, ingeniero de mezcla y de mastering con más de 13 años de experiencia.",
+    "faq": "Preguntas frecuentes",
+    "faqDescription": "Pagos, revisiones, cancelaciones y tiempos de entrega.",
+    "contact": "Contacto",
+    "contactDescription": "Escríbele a YM Freak para producir, mezclar o masterizar tu música."
   },
-  "foundation": {
-    "eyebrow": "Fase 0 · base técnica",
-    "headline": "YM Freak",
+  "nav": {
+    "home": "Inicio",
+    "work": "Trabajos",
+    "services": "Servicios",
+    "achievements": "Logros",
+    "about": "Sobre mí",
+    "faq": "Preguntas",
+    "contact": "Contacto",
+    "menu": "Menú",
+    "language": "English",
+    "skip": "Saltar al contenido"
+  },
+  "hero": {
     "roles": "Producer • Mixing Engineer • Mastering Engineer",
-    "servicesTitle": "Servicios (leídos de la base de datos)",
+    "tagline": "Del demo al disco.",
+    "lede": "Produzco, mezclo y masterizo canciones para artistas, productores y sellos. Trece años llevando ideas hasta el lanzamiento.",
+    "ctaPrimary": "Trabaja conmigo",
+    "ctaSecondary": "Escuchar trabajos",
+    "photoAlt": "YM Freak de perfil, con chaqueta negra, en el estudio"
+  },
+  "credits": {
+    "label": "Créditos",
+    "years": "Años en producción, mezcla y mastering",
+    "yearsValue": "13+"
+  },
+  "work": {
+    "title": "Escucha el trabajo",
+    "intro": "Lanzamientos en los que he trabajado. Dale play y suenan aquí mismo.",
+    "play": "Escuchar «{title}»",
+    "loading": "Cargando reproductor…",
+    "openOn": "Abrir en {provider}",
+    "playerTitle": "Reproductor de {provider}: {title}",
+    "embedNote": "Sin sesión iniciada en Spotify, la plataforma reproduce una vista previa.",
+    "all": "Ver todos los trabajos",
+    "empty": "Pronto habrá trabajos publicados aquí.",
+    "coverAlt": "Portada de «{title}» de {artist}"
+  },
+  "services": {
+    "title": "Servicios",
+    "intro": "Precios en dólares. Pagas el {deposit} % para reservar tu fecha y el resto cuando recibes el trabajo.",
     "perSong": "por canción",
     "perHour": "por hora",
     "flat": "por pieza",
-    "workingDays": "{count, plural, one {# día laborable} other {# días laborables}}",
-    "remoteSession": "Sesión remota por videollamada",
-    "emptyServices": "No hay servicios activos. Ejecuta npm run db:seed.",
-    "note": "Esta página solo comprueba que la base de datos, los idiomas y los precios funcionan. El diseño llega en la Fase 1."
+    "turnaround": "{count, plural, one {Entrega en # día laborable} other {Entrega en # días laborables}}",
+    "session": "Bloques de {minutes} min, de lunes a viernes",
+    "revisions": "{count, plural, =0 {} one {# revisión incluida} other {# revisiones incluidas}}",
+    "extraRevision": "Revisión adicional: {fee}",
+    "includes": "Qué incluye",
+    "flagship": "El servicio más pedido",
+    "cta": "Pide tu fecha",
+    "all": "Ver todos los servicios y detalles",
+    "combine": "Si combinas servicios para la misma canción, los días de entrega se suman."
+  },
+  "highlights": {
+    "title": "Logros",
+    "nomination": "Nominación",
+    "certification": "Certificación",
+    "award": "Premio",
+    "milestone": "Hito",
+    "listen": "Escuchar el lanzamiento"
+  },
+  "about": {
+    "title": "Sobre YM Freak",
+    "p1": "YM Freak es productor, ingeniero de mezcla y de mastering. Lleva más de trece años trabajando canciones de principio a fin: desde la pista hasta el master que sale a las plataformas.",
+    "p2": "Ha trabajado del merengue y la bachata a la música urbana. En 2026 fue nominado al Latin Grammy como co-productor de «No Era El Plan» de Gabriel Pagán, y tiene un Disco de Oro en España.",
+    "p3": "Trabaja con artistas, productores y sellos de cualquier país, de forma remota.",
+    "photoAlt": "YM Freak sentado en el estudio"
+  },
+  "process": {
+    "title": "Cómo trabajamos",
+    "s1t": "Reserva tu fecha",
+    "s1d": "Eliges el servicio y pagas el {deposit} % para apartar tu lugar en el calendario.",
+    "s2t": "Envía tu material",
+    "s2d": "Me pasas los archivos de la canción y tus referencias.",
+    "s3t": "Trabajo y revisiones",
+    "s3d": "Recibes la primera versión y pides los cambios que necesites. Las primeras revisiones están incluidas.",
+    "s4t": "Entrega final",
+    "s4d": "Pagas el resto y recibes los archivos finales, listos para distribuir."
+  },
+  "testimonials": {
+    "title": "Lo que dicen los artistas"
+  },
+  "closing": {
+    "title": "¿Tu canción está lista para sonar a disco?",
+    "body": "Escríbeme con tu demo o tus pistas y te digo cómo la trabajaría.",
+    "email": "Escribir a {email}",
+    "instagram": "Mensaje por Instagram"
+  },
+  "footer": {
+    "rights": "© {year} YM Freak. Todos los derechos reservados.",
+    "follow": "Sígueme"
+  },
+  "faq": {
+    "title": "Preguntas frecuentes",
+    "intro": "Si tu pregunta no está aquí, escríbeme.",
+    "empty": "Aún no hay preguntas publicadas.",
+    "contact": "Escribir a YM Freak"
+  },
+  "contact": {
+    "title": "Hablemos de tu música",
+    "intro": "Cuéntame qué canción tienes, qué servicio necesitas y para cuándo. Te respondo con disponibilidad y los siguientes pasos.",
+    "emailLabel": "Correo",
+    "instagramLabel": "Instagram",
+    "youtubeLabel": "YouTube",
+    "whatsappLabel": "WhatsApp",
+    "spotifyLabel": "Spotify",
+    "tiktokLabel": "TikTok",
+    "hours": "Lunes a viernes, de {start} a {end} (hora de República Dominicana).",
+    "bookingSoon": "La reserva y el pago en línea se activarán próximamente. Mientras tanto, reserva tu fecha por correo o Instagram."
+  },
+  "notFound": {
+    "title": "Esta página no existe",
+    "body": "Puede que el enlace esté mal escrito o que la página se haya movido.",
+    "home": "Ir al inicio"
   }
 }
