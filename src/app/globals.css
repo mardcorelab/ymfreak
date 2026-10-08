@@ -1,0 +1,20 @@
+@import "tailwindcss";
+
+/* Design tokens. Phase 1 builds the full visual system on top of these. */
+@theme {
+  --color-ink: #0b0b0c;
+  --color-paper: #f2efe9;
+  --color-mute: #8d8a85;
+  --color-line: #232325;
+  --color-accent: #c8a46a;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

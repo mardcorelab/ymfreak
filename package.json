@@ -1,0 +1,43 @@
+{
+  "name": "ymfreak",
+  "version": "0.1.0",
+  "private": true,
+  "engines": { "node": ">=20.18" },
+  "scripts": {
+    "dev": "next dev",
+    "build": "prisma generate && next build",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test tests/unit/*.test.ts",
+    "db:migrate": "prisma migrate dev && npm run db:constraints",
+    "db:deploy": "prisma migrate deploy && npm run db:constraints",
+    "db:constraints": "prisma db execute --file prisma/sql/001_session_no_overlap.sql --schema prisma/schema.prisma",
+    "db:seed": "prisma db seed",
+    "db:studio": "prisma studio",
+    "check": "npm run typecheck && npm run lint && npm test"
+  },
+  "prisma": { "seed": "tsx prisma/seed.ts" },
+  "dependencies": {
+    "@prisma/client": "^6.16.0",
+    "next": "^15.5.0",
+    "next-intl": "^4.3.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "server-only": "^0.0.1",
+    "zod": "^3.25.0"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.3.0",
+    "@tailwindcss/postcss": "^4.1.0",
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "eslint": "^9.30.0",
+    "eslint-config-next": "^15.5.0",
+    "prisma": "^6.16.0",
+    "tailwindcss": "^4.1.0",
+    "tsx": "^4.20.0",
+    "typescript": "^5.9.0"
+  }
+}

@@ -1,0 +1,37 @@
+# Runs on every push: installs, type-checks, lints, tests the business rules,
+# builds the database on a real Postgres (with constraints + seed) and builds the app.
+name: CI
+on: [push, pull_request]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: ymfreak
+          POSTGRES_PASSWORD: ymfreak
+          POSTGRES_DB: ymfreak
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U ymfreak" --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      DATABASE_URL: postgresql://ymfreak:ymfreak@localhost:5432/ymfreak
+      NEXT_PUBLIC_SITE_URL: http://localhost:3000
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version-file: .nvmrc, cache: npm }
+      - run: npm ci
+      - run: npx prisma validate
+      - run: npx prisma generate
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm test
+      # Until the first migration is committed, push the schema directly.
+      - run: if [ -d prisma/migrations ]; then npx prisma migrate deploy; else npx prisma db push --skip-generate; fi
+      - run: npm run db:constraints
+      - run: npm run db:seed
+      - run: npm run db:seed # second run must be a no-op
+      - run: npm run build

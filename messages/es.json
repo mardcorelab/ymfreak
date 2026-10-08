@@ -1,0 +1,19 @@
+{
+  "meta": {
+    "title": "YM Freak — Productor, ingeniero de mezcla y mastering",
+    "description": "Producción musical, mezcla y mastering con más de 13 años de experiencia. Co-productor nominado al Latin Grammy 2026."
+  },
+  "foundation": {
+    "eyebrow": "Fase 0 · base técnica",
+    "headline": "YM Freak",
+    "roles": "Producer • Mixing Engineer • Mastering Engineer",
+    "servicesTitle": "Servicios (leídos de la base de datos)",
+    "perSong": "por canción",
+    "perHour": "por hora",
+    "flat": "por pieza",
+    "workingDays": "{count, plural, one {# día laborable} other {# días laborables}}",
+    "remoteSession": "Sesión remota por videollamada",
+    "emptyServices": "No hay servicios activos. Ejecuta npm run db:seed.",
+    "note": "Esta página solo comprueba que la base de datos, los idiomas y los precios funcionan. El diseño llega en la Fase 1."
+  }
+}

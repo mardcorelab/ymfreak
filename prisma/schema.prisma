@@ -1,0 +1,470 @@
+// YM Freak — database schema.
+// Money is always stored as integer cents. Every commercial value the site or
+// the assistant shows (prices, turnaround, rules, policies) comes from here.
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  extensions = [btree_gist]
+}
+
+// ───────────────────────── Auth ─────────────────────────
+
+enum Role {
+  ADMIN
+  CLIENT
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  emailVerified DateTime?
+  name          String?
+  role          Role      @default(CLIENT)
+  customer      Customer?
+  accounts      Account[]
+  sessions      Session[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+// Auth.js tables (magic-link login).
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ───────────────────────── Customers ─────────────────────────
+
+enum Locale {
+  es
+  en
+}
+
+model Customer {
+  id            String         @id @default(cuid())
+  userId        String?        @unique
+  user          User?          @relation(fields: [userId], references: [id], onDelete: SetNull)
+  name          String
+  artistName    String?
+  email         String         @unique
+  phone         String?
+  country       String?        @db.Char(2)
+  locale        Locale         @default(es)
+  bookings      Booking[]
+  orders        Order[]
+  conversations Conversation[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+}
+
+// ───────────────────────── Catalog ─────────────────────────
+
+enum PricingUnit {
+  FLAT
+  PER_SONG
+  PER_HOUR
+}
+
+enum BookingMode {
+  DELIVERY
+  SESSION
+}
+
+model Service {
+  id                String      @id @default(cuid())
+  slug              String      @unique
+  nameEs            String
+  nameEn            String
+  descriptionEs     String
+  descriptionEn     String
+  includesEs        String[]
+  includesEn        String[]
+  priceCents        Int
+  currency          String      @default("USD") @db.Char(3)
+  pricingUnit       PricingUnit
+  bookingMode       BookingMode
+  turnaroundDays    Int?
+  sessionMinutes    Int?
+  revisionsIncluded Int         @default(0)
+  active            Boolean     @default(true)
+  sortOrder         Int         @default(0)
+  bookingItems      BookingItem[]
+  orderItems        OrderItem[]
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+}
+
+// ───────────────────────── Bookings ─────────────────────────
+
+enum BookingStatus {
+  PENDING
+  AWAITING_PAYMENT
+  PAID
+  CONFIRMED
+  IN_PROGRESS
+  DELIVERED
+  REVISION
+  COMPLETED
+  CANCELLED
+  EXPIRED
+}
+
+enum BookingSource {
+  WEB
+  AGENT
+  ADMIN
+}
+
+model Booking {
+  id             String         @id @default(cuid())
+  /// Human-friendly code shown to the client, e.g. YMF-7K2Q.
+  code           String         @unique
+  customerId     String
+  customer       Customer       @relation(fields: [customerId], references: [id])
+  bookingMode    BookingMode
+  status         BookingStatus  @default(PENDING)
+  source         BookingSource  @default(WEB)
+  /// Songs (DELIVERY) or hours (SESSION).
+  quantity       Int
+  /// SESSION: the booked time, in UTC.
+  startsAt       DateTime?
+  endsAt         DateTime?
+  /// DELIVERY: first start day and promised delivery day (business time zone, stored as date).
+  firstStartDate DateTime?      @db.Date
+  deliveryDate   DateTime?      @db.Date
+  /// While AWAITING_PAYMENT, capacity is held until this instant.
+  holdExpiresAt  DateTime?
+  /// Song title, artist, references, links, notes — validated by Zod before saving.
+  projectDetails Json
+  revisionsUsed  Int            @default(0)
+  items          BookingItem[]
+  capacity       CapacityUse[]
+  events         BookingEvent[]
+  orderId        String?        @unique
+  order          Order?         @relation(fields: [orderId], references: [id])
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  @@index([status])
+  @@index([deliveryDate])
+  @@index([startsAt])
+}
+
+model BookingItem {
+  id        String  @id @default(cuid())
+  bookingId String
+  booking   Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  serviceId String
+  service   Service @relation(fields: [serviceId], references: [id])
+  quantity  Int
+}
+
+/// One row per start day a DELIVERY booking occupies. Summing `projects` per
+/// day gives the used capacity; checks run inside a serializable transaction.
+model CapacityUse {
+  id        String   @id @default(cuid())
+  bookingId String
+  booking   Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  day       DateTime @db.Date
+  projects  Int
+
+  @@unique([bookingId, day])
+  @@index([day])
+}
+
+model BookingEvent {
+  id        String         @id @default(cuid())
+  bookingId String
+  booking   Booking        @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  from      BookingStatus?
+  to        BookingStatus
+  actor     String
+  note      String?
+  createdAt DateTime       @default(now())
+
+  @@index([bookingId, createdAt])
+}
+
+// ───────────────────────── Orders & payments ─────────────────────────
+
+enum OrderStatus {
+  AWAITING_DEPOSIT
+  DEPOSIT_PAID
+  AWAITING_BALANCE
+  PAID_IN_FULL
+  PARTIALLY_REFUNDED
+  REFUNDED
+  CANCELLED
+}
+
+enum PaymentKind {
+  DEPOSIT
+  BALANCE
+  REVISION_FEE
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCEEDED
+  FAILED
+  CANCELLED
+  EXPIRED
+  REFUNDED
+}
+
+model Order {
+  id           String      @id @default(cuid())
+  customerId   String
+  customer     Customer    @relation(fields: [customerId], references: [id])
+  status       OrderStatus @default(AWAITING_DEPOSIT)
+  currency     String      @default("USD") @db.Char(3)
+  totalCents   Int
+  depositCents Int
+  balanceCents Int
+  items        OrderItem[]
+  payments     Payment[]
+  booking      Booking?
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+}
+
+/// Prices are frozen when the order is created: editing a service price later
+/// never changes existing orders.
+model OrderItem {
+  id             String  @id @default(cuid())
+  orderId        String
+  order          Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  serviceId      String?
+  service        Service? @relation(fields: [serviceId], references: [id])
+  /// e.g. "Mezcla + Mastering" or "Revisión adicional #3".
+  nameSnapshot   String
+  unitPriceCents Int
+  quantity       Int
+}
+
+model Payment {
+  id          String        @id @default(cuid())
+  orderId     String
+  order       Order         @relation(fields: [orderId], references: [id])
+  kind        PaymentKind
+  provider    String        // "paypal" today; the PaymentProvider interface allows others
+  /// Provider's order/checkout id (PayPal order id).
+  providerRef String        @unique
+  /// Provider's capture id, needed for refunds.
+  captureRef  String?       @unique
+  amountCents Int
+  status      PaymentStatus @default(PENDING)
+  rawStatus   String?
+  paidAt      DateTime?
+  refundedAt  DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@index([orderId, kind])
+}
+
+/// Webhook idempotency: each provider event is processed exactly once.
+model WebhookEvent {
+  id          String   @id // provider event id
+  provider    String
+  type        String
+  processedAt DateTime @default(now())
+}
+
+// ───────────────────────── Availability ─────────────────────────
+
+model BlockedPeriod {
+  id        String   @id @default(cuid())
+  fromDate  DateTime @db.Date
+  toDate    DateTime @db.Date
+  reason    String?
+  createdAt DateTime @default(now())
+}
+
+// ───────────────────────── Portfolio & credibility ─────────────────────────
+
+enum EmbedProvider {
+  SPOTIFY
+  YOUTUBE
+}
+
+model PortfolioItem {
+  id            String         @id @default(cuid())
+  slug          String         @unique
+  title         String
+  artist        String
+  /// e.g. ["Producción", "Mezcla", "Mastering"]
+  workTypes     String[]
+  year          Int?
+  creditEs      String?
+  creditEn      String?
+  descriptionEs String?
+  descriptionEn String?
+  coverUrl      String?
+  embedProvider EmbedProvider?
+  /// Spotify track/album id or YouTube video id — never a full iframe.
+  embedId       String?
+  externalUrl   String?
+  featured      Boolean        @default(false)
+  published     Boolean        @default(true)
+  sortOrder     Int            @default(0)
+  achievements  Achievement[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+}
+
+enum AchievementKind {
+  NOMINATION
+  AWARD
+  CERTIFICATION
+  MILESTONE
+}
+
+model Achievement {
+  id            String          @id @default(cuid())
+  kind          AchievementKind
+  titleEs       String
+  titleEn       String
+  detailEs      String
+  detailEn      String
+  year          Int
+  highlight     Boolean         @default(false)
+  sortOrder     Int             @default(0)
+  portfolioId   String?
+  portfolioItem PortfolioItem?  @relation(fields: [portfolioId], references: [id], onDelete: SetNull)
+  published     Boolean         @default(true)
+}
+
+model Testimonial {
+  id        String  @id @default(cuid())
+  author    String
+  role      String?
+  quoteEs   String
+  quoteEn   String
+  published Boolean @default(false)
+  sortOrder Int     @default(0)
+}
+
+// ───────────────────────── Knowledge base & settings ─────────────────────────
+
+enum KnowledgeKind {
+  FAQ
+  POLICY
+  PROCESS
+  DOC
+}
+
+model KnowledgeEntry {
+  id         String        @id @default(cuid())
+  kind       KnowledgeKind
+  questionEs String?
+  questionEn String?
+  answerEs   String
+  answerEn   String
+  tags       String[]
+  active     Boolean       @default(true)
+  sortOrder  Int           @default(0)
+  updatedAt  DateTime      @updatedAt
+}
+
+/// Typed key/value settings: business rules, contact links, payment info.
+/// Each key's shape is validated with Zod in src/server/settings.
+model Setting {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @updatedAt
+}
+
+// ───────────────────────── Assistant ─────────────────────────
+
+enum ConversationOutcome {
+  NONE
+  LEAD
+  BOOKING
+  PAID
+}
+
+model Conversation {
+  id             String              @id @default(cuid())
+  customerId     String?
+  customer       Customer?           @relation(fields: [customerId], references: [id])
+  locale         Locale              @default(es)
+  outcome        ConversationOutcome @default(NONE)
+  messages       Message[]
+  pendingActions PendingAction[]
+  startedAt      DateTime            @default(now())
+  lastMessageAt  DateTime            @default(now())
+}
+
+model Message {
+  id             String       @id @default(cuid())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  role           String       // user | assistant | tool
+  content        Json
+  createdAt      DateTime     @default(now())
+
+  @@index([conversationId, createdAt])
+}
+
+/// Write actions proposed by the assistant. They run only after the client
+/// clicks "Confirm" in the UI; the server re-validates price and availability.
+model PendingAction {
+  id             String       @id @default(cuid())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  type           String       // CREATE_BOOKING | CANCEL_BOOKING
+  payload        Json
+  summary        Json
+  expiresAt      DateTime
+  confirmedAt    DateTime?
+  executedAt     DateTime?
+  createdAt      DateTime     @default(now())
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  actorId   String?
+  action    String
+  entity    String
+  entityId  String?
+  data      Json?
+  createdAt DateTime @default(now())
+
+  @@index([entity, entityId])
+}
