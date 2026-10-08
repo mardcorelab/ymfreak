@@ -1,18 +1,21 @@
 "use client";
 
-import { useActionState, useEffect } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { useFormStatus } from "react-dom";
 import { useTranslations } from "next-intl";
 import { cancelMyBooking, payNow, type PayActionState } from "@/server/payments/actions";
 
 function PayButton({ label, leaving }: { label: string; leaving: boolean }) {
   const { pending: submitting } = useFormStatus();
+  // Disabled until the page is interactive: a click before that would submit without opening PayPal.
+  const [ready, setReady] = useState(false);
+  useEffect(() => setReady(true), []);
   const pending = submitting || leaving;
   const t = useTranslations("checkout");
   return (
     <button
       type="submit"
-      disabled={pending}
+      disabled={pending || !ready}
       className="inline-flex min-h-12 items-center rounded-full bg-bone px-8 font-semibold text-studio transition hover:bg-white disabled:cursor-wait disabled:opacity-60"
     >
       {pending ? t("redirecting") : label}
