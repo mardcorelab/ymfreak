@@ -52,13 +52,12 @@ Every price, credit, achievement, FAQ and contact link on the site is **read fro
 All of these are stored in the database (`Setting.business_rules` and `Service`) and editable without code.
 
 - **Payment:** 50 % deposit to book, 50 % balance on delivery; final files are released after the balance. Provider: PayPal.
-- **Turnaround (working days, Mon–Fri):** mixing + mastering 4 · mastering 4\* · beat 4 · arrangements 4 · DJ edits 4 · ads 4\* · full production 8. Combined services for one song add up.
+- **Turnaround (working days, Mon–Fri):** mixing + mastering 4 · mastering 4 · beat 4 · arrangements 4 · DJ edits 4 · ads 4 · full production 8. Combined services for one song add up.
 - **Capacity:** 2 new projects can start per working day; work starts the next working day after booking.
 - **Sessions** (vocal recording, producer coaching): remote by video call, per hour, 08:00–18:00 Santo Domingo time, 12 h notice, never overlapping (enforced by the database).
 - **Revisions:** 2 free per song, then $20 each.
 - **Cancellation:** full refund if cancelled within 24 h of paying the deposit; after that, manual handling by YM Freak.
 
-\* Provisional — waiting for YM Freak to confirm.
 
 ## Verification status
 
@@ -70,8 +69,7 @@ All of these are stored in the database (`Setting.business_rules` and `Service`)
 
 ## Pending from YM Freak
 
-- Confirm turnaround for **mastering only** and **ads**.
-- How clients send stems/files (seeded as an inactive FAQ until answered).
+- The 4 files needed for **mastering only** (only the a cappella received; that FAQ is seeded inactive until complete).
 - Your credit on **Fake Capo (Remix)** (production, mix, master…) and the year of the gold certification.
 - More releases for the portfolio (Spotify or YouTube links + your credit on each).
 - Platinum certifications, if any: which songs.

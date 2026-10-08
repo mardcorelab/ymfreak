@@ -70,7 +70,7 @@ export const serviceSeeds: ServiceSeed[] = [
     priceCents: 7000,
     pricingUnit: "PER_SONG",
     bookingMode: "DELIVERY",
-    turnaroundDays: 4, // TODO(YM Freak): confirm turnaround for mastering only
+    turnaroundDays: 4, // confirmed: 4 days leaves buffer even though it can be done in 1
     sessionMinutes: null,
     revisionsIncluded: 2,
     sortOrder: 20,
@@ -150,7 +150,7 @@ export const serviceSeeds: ServiceSeed[] = [
     priceCents: 5000,
     pricingUnit: "FLAT",
     bookingMode: "DELIVERY",
-    turnaroundDays: 4, // TODO(YM Freak): confirm turnaround for ads
+    turnaroundDays: 4, // confirmed
     sessionMinutes: null,
     revisionsIncluded: 2,
     sortOrder: 70,

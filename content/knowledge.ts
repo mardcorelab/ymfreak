@@ -92,13 +92,26 @@ export const knowledgeSeeds: KnowledgeSeed[] = [
     active: true,
   },
   {
-    key: "send-files",
+    key: "send-files-mix",
     kind: "PROCESS",
-    questionEs: "¿Cómo envío mis archivos?",
-    questionEn: "How do I send my files?",
-    answerEs: "TODO: YM Freak debe definir cómo recibe stems y archivos (formato, plataforma).",
-    answerEn: "TODO: YM Freak must define how stems and files are received (format, platform).",
-    tags: ["archivos", "files", "stems"],
+    questionEs: "¿Qué archivos necesito enviar para mezcla y mastering?",
+    questionEn: "What files do I need to send for mixing and mastering?",
+    answerEs:
+      "Las voces separadas por canales y totalmente crudas: sin ningún efecto (ni autotune, ni compresores, ni ecualizadores, nada). La pista, separada por canales (kick, snare, hi-hats, synths, bajo, etc.). A la pista no hace falta quitarle los efectos: envíala tal como la tienes, pero en stems.",
+    answerEn:
+      "Your vocals as separate tracks and completely dry: no effects at all (no autotune, no compression, no EQ, nothing). The beat as separate stems (kick, snare, hi-hats, synths, bass, etc.). You don't need to remove effects from the beat: send it as it is, just split into stems.",
+    tags: ["archivos", "files", "stems", "mezcla", "mixing", "voces", "vocals"],
+    active: true,
+  },
+  {
+    key: "send-files-mastering",
+    kind: "PROCESS",
+    questionEs: "¿Qué archivos necesito enviar para solo mastering?",
+    questionEn: "What files do I need to send for mastering only?",
+    // TODO(YM Freak): list the 4 files; only the first was received. Seeded inactive until complete.
+    answerEs: "Cuatro audios: 1) la acapella completa sola; 2) TODO; 3) TODO; 4) TODO.",
+    answerEn: "Four audio files: 1) the full a cappella on its own; 2) TODO; 3) TODO; 4) TODO.",
+    tags: ["archivos", "files", "mastering"],
     active: false,
   },
 ];
