@@ -37,7 +37,8 @@
     "lede": "I produce, mix and master songs for artists, producers and labels. Thirteen years taking ideas all the way to release.",
     "ctaPrimary": "Work with me",
     "ctaSecondary": "Listen to my work",
-    "photoAlt": "YM Freak in profile, wearing a black jacket, in the studio"
+    "photoAlt": "YM Freak in profile, wearing a black jacket, in the studio",
+    "nextAvailable": "Next available delivery: {date}"
   },
   "credits": {
     "label": "Credits",
@@ -54,7 +55,8 @@
     "embedNote": "Without a Spotify login, the platform plays a preview.",
     "all": "See all work",
     "empty": "Work will be published here soon.",
-    "coverAlt": "Cover of “{title}” by {artist}"
+    "coverAlt": "Cover of “{title}” by {artist}",
+    "allPlatforms": "Listen on your platform"
   },
   "services": {
     "title": "Services",
@@ -482,5 +484,27 @@
     "body": "It was an error on our side. Try again; if it keeps happening, write to us.",
     "retry": "Try again",
     "home": "Go to the home page"
+  },
+  "links": {
+    "title": "Links",
+    "description": "Everything YM Freak in one place: booking, work, socials and contact.",
+    "book": "Book your date",
+    "bookHint": "Mixing, mastering, production and more",
+    "agent": "Chat with YM Freak AI",
+    "agentHint": "Prices and dates in seconds",
+    "listen": "Listen to my work",
+    "latest": "Latest",
+    "account": "My account",
+    "follow": "Follow me",
+    "web": "See the full website"
+  },
+  "release": {
+    "listenOn": "Listen on",
+    "credit": "YM Freak's credit",
+    "cta": "Want your song to sound like this?",
+    "ctaButton": "Work with YM Freak",
+    "more": "More work",
+    "metaDescription": "“{title}” by {artist}. Listen on your favourite platform.",
+    "play": "Play here"
   }
 }

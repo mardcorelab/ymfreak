@@ -37,7 +37,8 @@
     "lede": "Produzco, mezclo y masterizo canciones para artistas, productores y sellos. Trece años llevando ideas hasta el lanzamiento.",
     "ctaPrimary": "Trabaja conmigo",
     "ctaSecondary": "Escuchar trabajos",
-    "photoAlt": "YM Freak de perfil, con chaqueta negra, en el estudio"
+    "photoAlt": "YM Freak de perfil, con chaqueta negra, en el estudio",
+    "nextAvailable": "Próxima entrega disponible: {date}"
   },
   "credits": {
     "label": "Créditos",
@@ -54,7 +55,8 @@
     "embedNote": "Sin sesión iniciada en Spotify, la plataforma reproduce una vista previa.",
     "all": "Ver todos los trabajos",
     "empty": "Pronto habrá trabajos publicados aquí.",
-    "coverAlt": "Portada de «{title}» de {artist}"
+    "coverAlt": "Portada de «{title}» de {artist}",
+    "allPlatforms": "Escúchalo en tu plataforma"
   },
   "services": {
     "title": "Servicios",
@@ -482,5 +484,27 @@
     "body": "Fue un error de nuestro lado. Prueba de nuevo; si sigue pasando, escríbenos.",
     "retry": "Intentar de nuevo",
     "home": "Ir al inicio"
+  },
+  "links": {
+    "title": "Enlaces",
+    "description": "Todo YM Freak en un solo lugar: reservas, trabajos, redes y contacto.",
+    "book": "Reserva tu fecha",
+    "bookHint": "Mezcla, mastering, producción y más",
+    "agent": "Habla con YM Freak AI",
+    "agentHint": "Precios y fechas al instante",
+    "listen": "Escucha mis trabajos",
+    "latest": "Lo último",
+    "account": "Mi cuenta",
+    "follow": "Sígueme",
+    "web": "Ver la web completa"
+  },
+  "release": {
+    "listenOn": "Escúchalo en",
+    "credit": "Crédito de YM Freak",
+    "cta": "¿Quieres que tu canción suene así?",
+    "ctaButton": "Trabaja con YM Freak",
+    "more": "Más trabajos",
+    "metaDescription": "«{title}» de {artist}. Escúchalo en tu plataforma favorita.",
+    "play": "Reproducir aquí"
   }
 }

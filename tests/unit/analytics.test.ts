@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { cleanUtm, dailyVisitor, deviceOf, isBot, normalizePath, referrerHost } from "../../src/server/analytics/classify";
+import { channelOf, cleanLabel, cleanUtm, dailyVisitor, deviceOf, isBot, normalizePath, referrerHost } from "../../src/server/analytics/classify";
 
 const CHROME = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0 Safari/537.36";
 const IPHONE = "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1";
@@ -48,4 +48,20 @@ test("utm source is sanitised", () => {
   assert.equal(cleanUtm(" Instagram "), "instagram");
   assert.equal(cleanUtm("<script>"), "script");
   assert.equal(cleanUtm(""), null);
+});
+
+
+test("channels come from utm_source first, then the referring site", () => {
+  assert.equal(channelOf("ig", null), "instagram");
+  assert.equal(channelOf("instagram", "google.com"), "instagram");
+  assert.equal(channelOf(null, "l.instagram.com"), "instagram");
+  assert.equal(channelOf(null, "m.youtube.com"), "youtube");
+  assert.equal(channelOf(null, "youtu.be"), "youtube");
+  assert.equal(channelOf(null, "google.com.do"), "google");
+  assert.equal(channelOf(null, "t.co"), "x");
+  assert.equal(channelOf(null, "lm.facebook.com"), "facebook");
+  assert.equal(channelOf(null, "somesite.com"), "somesite.com");
+  assert.equal(channelOf(null, null), null);
+  assert.equal(cleanLabel("Spotify"), "spotify");
+  assert.equal(cleanLabel("<x>"), "x");
 });

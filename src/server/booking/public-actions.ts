@@ -7,6 +7,7 @@ import { allowRate } from "../rate-limit";
 import { bookingRequestSchema } from "@/lib/validators/booking";
 import { createBooking, quoteDelivery, sessionAvailability, type DeliveryQuote, type EngineError, type SessionAvailability } from "./engine";
 import { z } from "zod";
+import { currentChannel } from "../analytics/attribution";
 
 /** Online booking is open to the public only when switched on; the admin can always preview it. */
 export async function bookingOpen(): Promise<boolean> {
@@ -64,5 +65,13 @@ export async function submitBooking(input: unknown, honeypot: string): Promise<C
   if (!(await underLimit("booking", 6, 60 * 60_000))) return { ok: false, error: "RATE_LIMITED" };
 
   const result = await createBooking(parsed.data, { source: "WEB" });
-  return result.ok ? { ok: true, orderId: result.orderId, code: result.code } : result;
+  if (!result.ok) return result;
+  await recordChannel(result.bookingId);
+  return { ok: true, orderId: result.orderId, code: result.code };
+}
+
+/** Remembers which channel (Instagram, YouTube…) brought this client, for the analytics. */
+async function recordChannel(bookingId: string) {
+  const channel = await currentChannel();
+  if (channel) await db.booking.update({ where: { id: bookingId }, data: { channel } }).catch(() => null);
 }

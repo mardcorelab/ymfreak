@@ -71,3 +71,30 @@ test("visits are counted without cookies and appear in the dashboard", async ({ 
   await expect(page.getByRole("cell", { name: "Servicios" })).toBeVisible();
   await expect(page.getByText("Visitas por día")).toBeVisible();
 });
+
+test("link-in-bio page and release pages", async ({ page }) => {
+  await page.goto("/links?utm_source=instagram");
+  await expect(page).toHaveURL(/\/(es|en)\/links\?utm_source=instagram$/);
+  await page.goto("/es/links?utm_source=instagram");
+  await expect(page.getByRole("heading", { level: 1, name: "YM Freak" })).toBeVisible();
+  await expect(page.getByRole("link", { name: /Reserva tu fecha/ })).toBeVisible();
+  await expect(page.getByRole("link", { name: /Instagram/ })).toBeVisible();
+  // No header/footer of the main site on this page.
+  await expect(page.getByRole("navigation", { name: "Principal" })).toHaveCount(0);
+
+  await page.getByRole("link", { name: /No Era El Plan/ }).click();
+  await expect(page).toHaveURL(/\/es\/r\/no-era-el-plan$/);
+  await expect(page.getByRole("heading", { level: 1, name: "No Era El Plan" })).toBeVisible();
+  await expect(page.getByText("Escúchalo en")).toBeVisible();
+  await expect(page.locator('[data-platform="spotify"]')).toHaveAttribute("href", /open\.spotify\.com/);
+  await expect(page.getByRole("link", { name: "Trabaja con YM Freak" })).toBeVisible();
+
+  await page.goto("/es/r/does-not-exist");
+  await expect(page.getByRole("heading", { level: 1, name: "No Era El Plan" })).toHaveCount(0);
+});
+
+test("the home page shows the next available delivery date from the calendar", async ({ page }) => {
+  await page.goto("/es");
+  await expect(page.getByTestId("next-available")).toContainText("Próxima entrega disponible:");
+  await expect(page.getByTestId("next-available")).toContainText("Mezcla + Mastering");
+});

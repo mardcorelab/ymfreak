@@ -1,3 +1,4 @@
+import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import type { PortfolioVM } from "@/lib/view-models";
 import { EmbedPlayer } from "@/components/media/EmbedPlayer";
@@ -35,14 +36,12 @@ export function WorkGrid({ items }: { items: PortfolioVM[] }) {
                 </p>
               </div>
               {item.externalUrl && provider && (
-                <a
-                  href={item.externalUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <Link
+                  href={`/r/${item.slug}`}
                   className="mt-2 shrink-0 text-sm text-ash underline decoration-ash/40 underline-offset-4 hover:text-bone"
                 >
-                  {t("openOn", { provider })}
-                </a>
+                  {t("allPlatforms")}
+                </Link>
               )}
             </div>
           </li>

@@ -21,3 +21,50 @@ export async function fetchCoverUrl(media: MediaLink): Promise<string | null> {
     return null;
   }
 }
+
+export interface PlatformLink {
+  platform: string;
+  url: string;
+}
+
+/** Platforms shown on release pages, in this order. */
+export const PLATFORMS: { key: string; label: string }[] = [
+  { key: "spotify", label: "Spotify" },
+  { key: "appleMusic", label: "Apple Music" },
+  { key: "youtubeMusic", label: "YouTube Music" },
+  { key: "youtube", label: "YouTube" },
+  { key: "amazonMusic", label: "Amazon Music" },
+  { key: "tidal", label: "Tidal" },
+  { key: "deezer", label: "Deezer" },
+  { key: "soundcloud", label: "SoundCloud" },
+  { key: "audiomack", label: "Audiomack" },
+];
+
+/**
+ * Finds the same release on every streaming platform through song.link
+ * (Odesli). Returns [] on any problem; the release page then falls back to
+ * the original link.
+ */
+export async function fetchPlatformLinks(url: string, fetchFn: typeof fetch = fetch): Promise<PlatformLink[]> {
+  try {
+    const res = await fetchFn(`https://api.song.link/v1-alpha.1/links?userCountry=US&url=${encodeURIComponent(url)}`, {
+      signal: AbortSignal.timeout(6000),
+      cache: "no-store",
+    });
+    if (!res.ok) return [];
+    const body = (await res.json()) as { linksByPlatform?: Record<string, { url?: unknown }> };
+    const links = body.linksByPlatform ?? {};
+    return PLATFORMS.flatMap(({ key }) => {
+      const u = links[key]?.url;
+      if (typeof u !== "string") return [];
+      try {
+        const parsed = new URL(u);
+        return parsed.protocol === "https:" ? [{ platform: key, url: parsed.toString() }] : [];
+      } catch {
+        return [];
+      }
+    });
+  } catch {
+    return [];
+  }
+}

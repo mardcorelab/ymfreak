@@ -2,13 +2,14 @@ import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { ButtonLink } from "@/components/ui/ButtonLink";
 import { Wordmark } from "@/components/brand/Logo";
+import type { NextAvailableVM } from "@/lib/view-models";
 import profile from "../../../public/images/ymfreak-profile.jpg";
 
 /**
  * The portrait's backdrop is the page colour, so the photo is masked into the
  * page rather than framed. YM Freak looks left, toward his name.
  */
-export function Hero() {
+export function Hero({ nextAvailable }: { nextAvailable: NextAvailableVM | null }) {
   const t = useTranslations("hero");
 
   return (
@@ -44,6 +45,17 @@ export function Hero() {
               {t("ctaSecondary")}
             </ButtonLink>
           </div>
+          {nextAvailable && (
+            <p className="mt-6 flex items-center gap-2.5 text-sm text-bone/80" data-testid="next-available">
+              <span aria-hidden className="relative flex size-2">
+                <span className="absolute inline-flex size-full animate-ping rounded-full bg-emerald-400/60 motion-reduce:animate-none" />
+                <span className="relative inline-flex size-2 rounded-full bg-emerald-400" />
+              </span>
+              <span>
+                {t("nextAvailable", { date: nextAvailable.label })} <span className="text-ash">· {nextAvailable.serviceName}</span>
+              </span>
+            </p>
+          )}
         </div>
       </div>
     </section>

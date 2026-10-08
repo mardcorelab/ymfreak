@@ -172,6 +172,8 @@ model Booking {
   /// Song title, artist, references, links, notes — validated by Zod before saving.
   projectDetails Json
   revisionsUsed  Int            @default(0)
+  /// Where the client came from the day they booked (instagram, youtube, direct…), when known.
+  channel        String?
   items          BookingItem[]
   links          ProjectLink[]
   capacity       CapacityUse[]
@@ -341,6 +343,8 @@ model PortfolioItem {
   /// Spotify track/album id or YouTube video id — never a full iframe.
   embedId       String?
   externalUrl   String?
+  /// Links to every platform (Spotify, Apple Music, YouTube…), from song.link: [{ platform, url }].
+  platformLinks Json?
   featured      Boolean        @default(false)
   published     Boolean        @default(true)
   sortOrder     Int            @default(0)
@@ -535,6 +539,10 @@ model AnalyticsEvent {
   utmSource String?
   country   String?  @db.Char(2)
   device    String?  // mobile | tablet | desktop
+  /// Where the visit came from (instagram, youtube, google…), on the first page view only.
+  channel   String?
+  /// For clicks: which button (e.g. "spotify" on a release page).
+  label     String?
   visitor   String
   createdAt DateTime @default(now())
 

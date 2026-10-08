@@ -72,3 +72,9 @@ export interface BusinessHoursVM {
   revisionFee: string;
   cancellationWindowHours: number;
 }
+
+export interface NextAvailableVM {
+  serviceName: string;
+  /** Already formatted, e.g. "miércoles, 14 de octubre". */
+  label: string;
+}

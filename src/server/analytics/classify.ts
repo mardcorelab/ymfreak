@@ -52,3 +52,51 @@ export function cleanUtm(value: unknown): string | null {
   const v = value.trim().toLowerCase().replace(/[^a-z0-9._\-]/g, "").slice(0, 40);
   return v || null;
 }
+
+const CHANNEL_ALIASES: Record<string, string> = {
+  ig: "instagram",
+  insta: "instagram",
+  instagram: "instagram",
+  yt: "youtube",
+  youtube: "youtube",
+  fb: "facebook",
+  facebook: "facebook",
+  tt: "tiktok",
+  tiktok: "tiktok",
+  wa: "whatsapp",
+  whatsapp: "whatsapp",
+  x: "x",
+  twitter: "x",
+  spotify: "spotify",
+  email: "email",
+  newsletter: "email",
+  google: "google",
+};
+
+const HOST_CHANNELS: [RegExp, string][] = [
+  [/(^|\.)instagram\.com$/, "instagram"],
+  [/(^|\.)(youtube\.com|youtu\.be)$/, "youtube"],
+  [/(^|\.)google\.[a-z.]+$/, "google"],
+  [/(^|\.)bing\.com$/, "bing"],
+  [/(^|\.)(facebook\.com|fb\.com|messenger\.com)$/, "facebook"],
+  [/(^|\.)(t\.co|x\.com|twitter\.com)$/, "x"],
+  [/(^|\.)tiktok\.com$/, "tiktok"],
+  [/(^|\.)(wa\.me|whatsapp\.com)$/, "whatsapp"],
+  [/(^|\.)spotify\.com$/, "spotify"],
+  [/(^|\.)linktr\.ee$/, "linktree"],
+  [/(^|\.)duckduckgo\.com$/, "duckduckgo"],
+];
+
+/** Groups a visit's origin into a channel: the utm_source when given, otherwise the referring site. */
+export function channelOf(utmSource: string | null, referrer: string | null): string | null {
+  if (utmSource) return CHANNEL_ALIASES[utmSource] ?? utmSource;
+  if (!referrer) return null;
+  for (const [re, name] of HOST_CHANNELS) if (re.test(referrer)) return name;
+  return referrer;
+}
+
+export function cleanLabel(value: unknown): string | null {
+  if (typeof value !== "string") return null;
+  const v = value.trim().toLowerCase().replace(/[^a-z0-9_\-]/g, "").slice(0, 40);
+  return v || null;
+}

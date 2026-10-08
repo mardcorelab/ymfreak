@@ -3,7 +3,7 @@ import { db } from "@/server/db";
 import { env } from "@/server/env";
 import { currentAdmin } from "@/server/auth/admin";
 import { siteUrl } from "@/lib/seo";
-import { cleanUtm, dailyVisitor, deviceOf, isBot, normalizePath, referrerHost } from "@/server/analytics/classify";
+import { channelOf, cleanLabel, cleanUtm, dailyVisitor, deviceOf, isBot, normalizePath, referrerHost } from "@/server/analytics/classify";
 
 export const dynamic = "force-dynamic";
 
@@ -18,21 +18,25 @@ export async function POST(request: Request) {
     if (isBot(ua) || h.get("sec-gpc") === "1" || h.get("dnt") === "1") return new Response(null, { status: 204 });
     const raw = await request.text();
     if (raw.length > 2000) return new Response(null, { status: 204 });
-    const body = JSON.parse(raw) as { t?: string; p?: string; r?: string; u?: string };
+    const body = JSON.parse(raw) as { t?: string; p?: string; r?: string; u?: string; l?: string };
     const page = normalizePath(body.p);
-    const type = body.t === "agent_open" ? "agent_open" : "pageview";
+    const type = body.t === "agent_open" || body.t === "click" ? body.t : "pageview";
     if (!page || (await currentAdmin())) return new Response(null, { status: 204 });
 
     const ip = (h.get("x-forwarded-for")?.split(",")[0]?.trim() || h.get("x-real-ip") || "0").slice(0, 64);
     const own = [new URL(siteUrl()).hostname, h.get("host") ?? "", "ymfreak.com", "ymfreak.vercel.app"];
     const country = h.get("x-vercel-ip-country");
+    const referrer = referrerHost(body.r, own);
+    const utmSource = cleanUtm(body.u);
     await db.analyticsEvent.create({
       data: {
         type,
         path: page.path,
         locale: page.locale,
-        referrer: referrerHost(body.r, own),
-        utmSource: cleanUtm(body.u),
+        referrer,
+        utmSource,
+        channel: type === "pageview" ? channelOf(utmSource, referrer) : null,
+        label: type === "click" ? cleanLabel(body.l) : null,
         country: country && /^[A-Z]{2}$/.test(country) ? country : null,
         device: deviceOf(ua ?? ""),
         visitor: dailyVisitor(env.AUTH_SECRET ?? env.DATABASE_URL, ip, ua ?? ""),

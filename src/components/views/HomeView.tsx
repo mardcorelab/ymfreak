@@ -1,5 +1,5 @@
 import { useTranslations } from "next-intl";
-import type { AchievementVM, BusinessHoursVM, ContactVM, PortfolioVM, ServiceVM, TestimonialVM } from "@/lib/view-models";
+import type { AchievementVM, BusinessHoursVM, ContactVM, NextAvailableVM, PortfolioVM, ServiceVM, TestimonialVM } from "@/lib/view-models";
 import { Hero } from "@/components/sections/Hero";
 import { Credits } from "@/components/sections/Credits";
 import { Section } from "@/components/sections/Section";
@@ -19,6 +19,7 @@ export interface HomeData {
   testimonials: TestimonialVM[];
   contact: ContactVM;
   business: BusinessHoursVM;
+  nextAvailable: NextAvailableVM | null;
 }
 
 export function HomeView({ data }: { data: HomeData }) {
@@ -26,7 +27,7 @@ export function HomeView({ data }: { data: HomeData }) {
 
   return (
     <>
-      <Hero />
+      <Hero nextAvailable={data.nextAvailable} />
       <Credits achievements={data.achievements} />
 
       <Section

@@ -7,6 +7,7 @@ import { getSetting } from "../settings";
 import { allowRate } from "../rate-limit";
 import { bookingOpen } from "../booking/public-actions";
 import { createBooking } from "../booking/engine";
+import { currentChannel } from "../analytics/attribution";
 import { formatMoney } from "../domain/money";
 import { bookingRequestSchema } from "@/lib/validators/booking";
 import { AGENT_LIMITS, type AgentCard, type ChatItem, type ChatResponse, type ConfirmResponse } from "@/lib/agent-types";
@@ -197,6 +198,8 @@ export async function confirmAction(input: { conversationId: string; actionId: s
     return { ok: false, error: result.error, items: [{ type: "text", role: "assistant", text }] };
   }
 
+  const channel = await currentChannel();
+  if (channel) await db.booking.update({ where: { id: result.bookingId }, data: { channel } }).catch(() => null);
   const booking = await db.booking.findUniqueOrThrow({ where: { id: result.bookingId }, include: { order: true } });
   await db.pendingAction.update({ where: { id: action.id }, data: { executedAt: new Date() } });
   await db.conversation.update({

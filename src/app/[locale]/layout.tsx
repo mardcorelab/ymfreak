@@ -3,9 +3,6 @@ import { notFound } from "next/navigation";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { routing } from "@/i18n/routing";
-import { SiteHeader } from "@/components/site/SiteHeader";
-import { SiteFooter } from "@/components/site/SiteFooter";
-import { getContactVM } from "@/server/site-data";
 import { agentAvailable } from "@/server/agent/model";
 import { AgentWidget } from "@/components/agent/AgentWidget";
 import { Analytics } from "@/components/site/Analytics";
@@ -47,15 +44,12 @@ export default async function LocaleLayout({
   const { locale } = await params;
   if (!hasLocale(routing.locales, locale)) notFound();
   setRequestLocale(locale);
-  const contact = await getContactVM();
 
   return (
     <html lang={locale} className={archivo.variable}>
       <body className="min-h-dvh antialiased">
         <NextIntlClientProvider>
-          <SiteHeader />
-          <main id="main">{children}</main>
-          <SiteFooter contact={contact} />
+          {children}
           {agentAvailable() && <AgentWidget />}
           <Analytics />
         </NextIntlClientProvider>

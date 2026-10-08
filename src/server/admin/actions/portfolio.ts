@@ -1,12 +1,13 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { Prisma } from "@prisma/client";
 import { db } from "@/server/db";
 import { audit, requireAdmin } from "@/server/auth/admin";
 import { portfolioSchema } from "@/lib/validators/admin";
 import { parseMediaLink } from "@/lib/media-link";
 import { checkbox, optionalInt, optionalText, slugify, text } from "@/lib/form-data";
-import { fetchCoverUrl } from "../media";
+import { fetchCoverUrl, fetchPlatformLinks } from "../media";
 import { failure, invalid, refreshSite, type ActionState } from "../common";
 
 export async function savePortfolioItem(id: string | null, _prev: ActionState, fd: FormData): Promise<ActionState> {
@@ -35,18 +36,21 @@ export async function savePortfolioItem(id: string | null, _prev: ActionState, f
 
   // Use the platform's own cover when none was given.
   const coverUrl = parsed.data.coverUrl ?? (media ? await fetchCoverUrl(media) : null);
+  // The same release on every platform, for its release page (ymfreak.com/r/…).
+  const platformLinks = media ? await fetchPlatformLinks(media.url) : [];
   const data = {
     ...parsed.data,
     coverUrl,
     embedProvider: media?.provider ?? null,
     embedId: media?.id ?? null,
     externalUrl: media?.url ?? null,
+    platformLinks: platformLinks.length ? platformLinks : Prisma.DbNull,
   };
 
   if (id) {
     if (!(await db.portfolioItem.findUnique({ where: { id }, select: { id: true } }))) return failure("Este trabajo ya no existe.");
     await db.portfolioItem.update({ where: { id }, data });
-    await audit("portfolio.update", "PortfolioItem", id, data);
+    await audit("portfolio.update", "PortfolioItem", id, { ...data, platformLinks: platformLinks.length });
     refreshSite();
     return { status: "ok", message: "Cambios guardados." };
   }
@@ -55,7 +59,7 @@ export async function savePortfolioItem(id: string | null, _prev: ActionState, f
   let slug = base;
   for (let i = 2; await db.portfolioItem.findUnique({ where: { slug } }); i++) slug = `${base}-${i}`;
   const created = await db.portfolioItem.create({ data: { ...data, slug } });
-  await audit("portfolio.create", "PortfolioItem", created.id, data);
+  await audit("portfolio.create", "PortfolioItem", created.id, { ...data, platformLinks: platformLinks.length });
   refreshSite();
   redirect("/dashboard/portfolio?saved=1");
 }
