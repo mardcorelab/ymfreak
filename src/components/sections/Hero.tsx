@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { ButtonLink } from "@/components/ui/ButtonLink";
+import { Wordmark } from "@/components/brand/Logo";
 import profile from "../../../public/images/ymfreak-profile.jpg";
 
 /**
@@ -27,12 +28,10 @@ export function Hero() {
       <div className="mx-auto flex min-h-[100svh] max-w-[90rem] flex-col justify-end px-5 pb-14 pt-[52svh] sm:px-8 lg:px-12 lg:pb-20 lg:pt-40">
         <p className="animate-fade text-sm text-bone/75 [animation-delay:500ms] sm:text-base">{t("roles")}</p>
 
-        <h1 className="type-name mt-4 text-[clamp(6.5rem,24vw,20rem)]">
-          <span className="block overflow-hidden pb-[0.04em]">
-            <span className="animate-rise block [animation-delay:120ms]">YM</span>
-          </span>
-          <span className="block overflow-hidden pb-[0.04em]">
-            <span className="animate-rise block [animation-delay:240ms]">Freak</span>
+        <h1 className="mt-5">
+          <span className="sr-only">YM Freak</span>
+          <span className="block overflow-hidden pb-[0.5%]">
+            <Wordmark className="animate-rise block h-auto w-[min(100%,62rem)] [animation-delay:150ms]" />
           </span>
         </h1>
 

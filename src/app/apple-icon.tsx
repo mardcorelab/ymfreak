@@ -1,26 +1,17 @@
 import { ImageResponse } from "next/og";
+import { MONOGRAM } from "@/components/brand/marks";
 
 export const size = { width: 180, height: 180 };
 export const contentType = "image/png";
 
-/** Home-screen icon: the same waveform mark as the favicon. */
+/** Home-screen icon: the YMF monogram on black (iOS rounds the corners itself). */
 export default function AppleIcon() {
-  const bars = [
-    { h: 28, x: 34 },
-    { h: 74, x: 58 },
-    { h: 112, x: 83 },
-    { h: 74, x: 108 },
-    { h: 28, x: 132 },
-  ];
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${MONOGRAM.viewBox}"><path fill="#fff" fill-rule="evenodd" d="${MONOGRAM.d}"/></svg>`;
   return new ImageResponse(
     (
-      <div style={{ width: "100%", height: "100%", background: "#242424", display: "flex", position: "relative" }}>
-        {bars.map((b) => (
-          <div
-            key={b.x}
-            style={{ position: "absolute", left: b.x, top: 90 - b.h / 2, width: 14, height: b.h, borderRadius: 7, background: "#ebe6dc" }}
-          />
-        ))}
+      <div style={{ width: "100%", height: "100%", background: "#000", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={`data:image/svg+xml;utf8,${encodeURIComponent(svg)}`} width={116} height={Math.round((116 * 345) / 395)} alt="" />
       </div>
     ),
     size,

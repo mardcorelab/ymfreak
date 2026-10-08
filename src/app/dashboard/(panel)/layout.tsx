@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { AdminNav } from "@/components/admin/AdminNav";
+import { MonogramTile, Wordmark } from "@/components/brand/Logo";
 import { requireAdmin } from "@/server/auth/admin";
 import { logoutAction } from "@/server/admin/actions/auth";
 
@@ -12,8 +13,9 @@ export default async function PanelLayout({ children }: { children: React.ReactN
     <div className="mx-auto grid min-h-dvh max-w-7xl lg:grid-cols-[15rem_minmax(0,1fr)]">
       <aside className="border-b border-rule p-4 lg:sticky lg:top-0 lg:h-dvh lg:border-b-0 lg:border-r lg:p-6">
         <div className="mb-4 flex items-center justify-between lg:mb-8 lg:block">
-          <Link href="/dashboard" className="type-name text-3xl">
-            YM Freak
+          <Link href="/dashboard" className="flex items-center gap-3" aria-label="YM Freak — panel">
+            <MonogramTile className="size-9" />
+            <Wordmark className="h-[0.95rem] w-auto" />
           </Link>
           <p className="text-xs text-ash lg:mt-2">{admin.email}</p>
         </div>

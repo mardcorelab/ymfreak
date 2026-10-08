@@ -1,6 +1,7 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { LocaleSwitch } from "./LocaleSwitch";
+import { Wordmark } from "@/components/brand/Logo";
 
 export const NAV_ITEMS = [
   { href: "/portfolio", key: "work" },
@@ -24,8 +25,8 @@ export function SiteHeader() {
         {t("skip")}
       </a>
       <div className="mx-auto flex max-w-[90rem] items-center justify-between px-5 py-5 sm:px-8 lg:px-12">
-        <Link href="/" className="type-name text-[1.6rem] tracking-[0.02em]" aria-label="YM Freak — inicio">
-          YM Freak
+        <Link href="/" className="block py-2 transition-opacity hover:opacity-80" aria-label="YM Freak">
+          <Wordmark className="h-[1.15rem] w-auto sm:h-[1.3rem]" />
         </Link>
 
         <nav aria-label="Principal" className="hidden items-center gap-7 text-[0.95rem] text-bone/80 lg:flex">

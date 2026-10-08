@@ -1,3 +1,4 @@
+import { MonogramTile, Wordmark } from "@/components/brand/Logo";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { AdminForm } from "@/components/admin/AdminForm";
@@ -14,7 +15,8 @@ export default async function LoginPage() {
 
   return (
     <main className="mx-auto flex min-h-dvh max-w-sm flex-col justify-center px-5 py-16">
-      <p className="type-name text-5xl">YM Freak</p>
+      <MonogramTile className="size-16" />
+      <Wordmark title="YM Freak" className="mt-6 h-6 w-auto self-start" />
       <h1 className="mt-6 text-xl font-semibold">Entrar al panel</h1>
 
       {!config.ok ? (

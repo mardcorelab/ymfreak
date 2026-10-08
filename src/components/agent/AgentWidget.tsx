@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { track } from "@/components/site/Analytics";
+import { Monogram } from "@/components/brand/Logo";
 import { AGENT_LIMITS, type AgentCard, type ChatItem, type ChatResponse, type ConfirmResponse } from "@/lib/agent-types";
 
 const STORAGE_KEY = "ymf-agent-conversation";
@@ -169,8 +170,8 @@ export function AgentWidget() {
           className="fixed right-4 bottom-4 z-40 inline-flex min-h-12 items-center gap-2.5 rounded-full bg-bone py-2 pr-5 pl-3 font-semibold text-studio shadow-[0_8px_30px_rgba(0,0,0,0.45)] transition hover:bg-white active:scale-[0.98] sm:right-6 sm:bottom-6"
           aria-haspopup="dialog"
         >
-          <span aria-hidden className="grid size-8 place-items-center rounded-full bg-studio text-bone">
-            <WaveIcon />
+          <span aria-hidden className="grid size-8 place-items-center rounded-full bg-black text-white">
+            <Monogram className="w-[60%]" />
           </span>
           <span className="hidden sm:inline">{t("open")}</span>
           <span className="sm:hidden">{t("openShort")}</span>
@@ -185,8 +186,8 @@ export function AgentWidget() {
           className="fixed inset-0 z-50 flex flex-col bg-studio-deep sm:inset-auto sm:right-6 sm:bottom-6 sm:h-[min(680px,calc(100dvh-3rem))] sm:w-[400px] sm:rounded-2xl sm:border sm:border-rule sm:shadow-[0_20px_60px_rgba(0,0,0,0.55)]"
         >
           <header className="flex items-center gap-3 border-b border-rule px-4 py-3">
-            <span aria-hidden className="grid size-9 place-items-center rounded-full bg-bone text-studio">
-              <WaveIcon />
+            <span aria-hidden className="grid size-9 place-items-center rounded-full bg-black text-white ring-1 ring-rule-key">
+              <Monogram className="w-[60%]" />
             </span>
             <div className="min-w-0 flex-1">
               <p className="type-sub text-lg leading-tight">{t("title")}</p>
@@ -301,14 +302,6 @@ export function AgentWidget() {
 
 function Dot({ d }: { d: string }) {
   return <span className="size-1.5 animate-pulse rounded-full bg-ash motion-reduce:animate-none" style={{ animationDelay: d }} />;
-}
-
-function WaveIcon() {
-  return (
-    <svg viewBox="0 0 20 20" className="size-4" aria-hidden>
-      <path d="M3 10v0M6.5 7v6M10 4v12M13.5 7v6M17 10v0" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-    </svg>
-  );
 }
 
 function Bubble({ role, children }: { role: "user" | "assistant"; children: React.ReactNode }) {

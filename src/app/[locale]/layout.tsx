@@ -32,7 +32,6 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       type: "website",
       siteName: "YM Freak",
       locale: locale === "es" ? "es_DO" : "en_US",
-      images: [{ url: "/images/ymfreak-portrait.jpg", width: 1468, height: 1274, alt: "YM Freak" }],
     },
     twitter: { card: "summary_large_image" },
   };

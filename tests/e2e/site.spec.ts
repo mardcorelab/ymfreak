@@ -24,6 +24,13 @@ test("SEO files: sitemap in both languages, robots, manifest, icons and structur
   expect((await request.get("/icon.svg")).ok()).toBe(true);
   expect((await request.get("/apple-icon")).headers()["content-type"]).toContain("image/png");
 
+  expect((await request.get("/es/opengraph-image")).headers()["content-type"]).toContain("image/png");
+  expect(await (await request.get("/icon.svg")).text()).toContain("<path");
+
+  await page.goto("/es");
+  await expect(page.getByRole("heading", { level: 1, name: "YM Freak" })).toBeVisible();
+  await expect(page.locator('meta[property="og:image"]')).toHaveAttribute("content", /opengraph-image/);
+
   await page.goto("/es/services");
   const ld = await page.locator('script[type="application/ld+json"]').first().textContent();
   expect(ld).toContain('"ProfessionalService"');

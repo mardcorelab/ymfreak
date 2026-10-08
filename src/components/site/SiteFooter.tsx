@@ -3,6 +3,7 @@ import { Link } from "@/i18n/navigation";
 import type { ContactVM } from "@/lib/view-models";
 import { NAV_ITEMS } from "./SiteHeader";
 import { socialLinks } from "./social";
+import { Wordmark } from "@/components/brand/Logo";
 
 export function SiteFooter({ contact }: { contact: ContactVM }) {
   const t = useTranslations();
@@ -12,7 +13,7 @@ export function SiteFooter({ contact }: { contact: ContactVM }) {
     <footer className="border-t border-rule bg-studio-deep">
       <div className="mx-auto grid max-w-[90rem] gap-12 px-5 py-16 sm:px-8 lg:grid-cols-[1fr_auto_auto] lg:gap-24 lg:px-12">
         <div>
-          <p className="type-name text-[clamp(3.5rem,9vw,6rem)]">YM Freak</p>
+          <Wordmark title="YM Freak" className="h-auto w-[min(100%,26rem)]" />
           <p className="mt-4 text-ash">{t("hero.roles")}</p>
         </div>
 
