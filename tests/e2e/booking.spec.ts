@@ -93,7 +93,9 @@ test("the admin can move a booking through its states and cancel it", async ({ p
   await page.getByLabel("Nuevo estado").selectOption({ label: "Cancelada" });
   await page.getByLabel("Nota (opcional)").fill("Prueba E2E");
   await page.getByRole("button", { name: "Cambiar estado" }).click();
-  await expect(page.getByRole("status").filter({ hasText: /\S/ })).toContainText("Cancelada");
+  // A cancelled booking is closed: the status form is replaced by a notice.
+  await expect(page.getByText("Esta reserva está cerrada")).toBeVisible();
+  await expect(page.getByText("Prueba E2E")).toBeVisible(); // note in the history
 
   // Capacity is released.
   await page.goto("/dashboard/availability");
@@ -126,5 +128,6 @@ test("a manual booking from the dashboard starts confirmed and can be completed 
   await expect(page.getByRole("status").filter({ hasText: "Saldo registrado" })).toBeVisible();
   await page.getByLabel("Nuevo estado").selectOption({ label: "Completada" });
   await page.getByRole("button", { name: "Cambiar estado" }).click();
-  await expect(page.getByRole("status").filter({ hasText: /\S/ })).toContainText("Completada");
+  await expect(page.getByText("Esta reserva está cerrada")).toBeVisible();
+  await expect(page.getByText("Completada").first()).toBeVisible();
 });
