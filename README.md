@@ -2,7 +2,7 @@
 
 Official site, booking and payments platform for YM Freak (producer, mixing & mastering engineer).
 
-**Current state: Phase 5 — public site, dashboard, bookings, PayPal payments and the YM Freak AI assistant.** Online booking opens to the public from the dashboard once PayPal is configured.
+**Current state: Phase 6 — public site, dashboard, bookings, PayPal payments, the YM Freak AI assistant and the client portal.** Online booking opens to the public from the dashboard once PayPal is configured.
 
 ## Stack
 
@@ -89,6 +89,24 @@ Private panel, in Spanish, to edit everything the site shows: services and price
   - Each conversation links to its client and booking.
 - **Tests:** unit tests for the Claude client, history handling, prompt (no hard-coded facts) and input validation. E2E in CI with a scripted stand-in for Claude (`AGENT_TEST_MODE=1`, impossible on Vercel): live prices and dates, refusal while booking is closed, Cancel books nothing, Confirm books and leads to the deposit, conversation visible in the dashboard, cross-site requests refused.
 
+## Client portal ("Mi cuenta", `/account`)
+
+- **Signing in:**
+  - From the booking page, with the "See all my projects" button.
+  - Or from the header, with the booking email and any booking code.
+  - It uses a signed, HTTP-only cookie for 30 days, and failed attempts are rate-limited.
+  - Magic-link emails come once there is an email provider and the domain.
+- **The client's projects:** status, delivery date or session time, total, paid and due (with the PayPal button), cancellation window and status history. Internal admin notes never show.
+- **Files:**
+  - The client pastes a link to their stems (WeTransfer, Drive, Dropbox), and the portal shows which files to send, taken from your FAQ.
+  - You share links on the booking page in the dashboard: **previews**, and **final files** that the client sees only after paying the balance.
+  - Nothing is uploaded to the site.
+- **Revisions:**
+  - After delivery, the client asks for changes with notes, and the booking moves to "En revisión" through the same state machine as the dashboard.
+  - From the third revision on, the extra-revision fee is added to the balance automatically.
+- **Privacy:** a client only reaches bookings made with their email. Other codes return "not found", and `/account` and `/checkout` are excluded from search engines.
+- **Tests:** E2E in CI covering the full cycle: deposit, portal, files link, preview, finals locked, revision, new delivery, balance paid, finals unlocked; plus wrong email/code refused and sign-out.
+
 ## Design
 
 - **Colour comes from the photos.** The page background is sampled from the studio backdrop of the portraits, so YM Freak's photos melt into the page instead of sitting in boxes. One lighter "key light" section matches the seated portrait.
@@ -136,6 +154,6 @@ All of these are stored in the database (`Setting.business_rules` and `Service`)
 2. Admin sign-in + dashboard
 3. Availability + bookings (`/book`)
 4. PayPal: deposit and balance checkouts, webhooks, refunds (emails pending)
-5. Assistant with tools + editable knowledge base ← *here*
-6. Client portal
+5. Assistant with tools + editable knowledge base
+6. Client portal ← *here*
 7. SEO, analytics, performance, security hardening
