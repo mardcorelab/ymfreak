@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import { db } from "@/server/db";
 import { expireStaleHolds } from "@/server/booking/calendar";
 import { getSetting } from "@/server/settings";
@@ -11,7 +12,7 @@ export const dynamic = "force-dynamic";
 
 export default async function DashboardHome() {
   await expireStaleHolds(db, new Date());
-  const [activeBookings, awaiting, clients, booking, services, activeServices, portfolio, achievements, testimonials, faqs, pendingReviews, yt] = await Promise.all([
+  const [activeBookings, awaiting, clients, booking, services, activeServices, portfolio, achievements, testimonials, faqs, pendingReviews] = await Promise.all([
     db.booking.count({ where: { status: { in: ["PAID", "CONFIRMED", "IN_PROGRESS", "DELIVERED", "REVISION"] } } }),
     db.booking.count({ where: { status: "AWAITING_PAYMENT" } }),
     db.customer.count(),
@@ -23,7 +24,6 @@ export default async function DashboardHome() {
     db.testimonial.count({ where: { published: true } }),
     db.knowledgeEntry.count({ where: { active: true } }),
     db.testimonial.count({ where: { fromClient: true, published: false } }),
-    youtubeStatus(),
   ]);
   const pay = paymentStatus();
 
@@ -60,11 +60,9 @@ export default async function DashboardHome() {
       <ul className="mt-4 grid gap-3 text-sm">
         <Status ok={pay.configured} label="PayPal" detail={pay.configured ? `Conectado (${pay.mode === "live" ? "dinero real" : pay.mode === "sandbox" ? "modo de prueba" : pay.mode})${pay.webhook ? "" : " · falta el webhook"}` : "Sin configurar"} />
         <Status ok={agentAvailable()} label="Asistente (Claude)" detail={agentAvailable() ? "Activo en la web" : "Falta ANTHROPIC_API_KEY"} />
-        <Status
-          ok={yt.ok}
-          label="YouTube"
-          detail={yt.ok ? `Canal ${yt.channelId}: ${yt.videos} videos${yt.shorts ? ` y ${yt.shorts} shorts` : ""} recientes${yt.videos === 0 ? " (la sección de la web aparece cuando subas un video)" : ""}` : yt.reason}
-        />
+        <Suspense fallback={<Status ok={false} label="YouTube" detail="Comprobando…" />}>
+          <YoutubeStatus />
+        </Suspense>
       </ul>
     </>
   );
@@ -78,5 +76,21 @@ function Status({ ok, label, detail }: { ok: boolean; label: string; detail: str
         <span className="font-medium">{label}</span> <span className="text-ash">· {detail}</span>
       </span>
     </li>
+  );
+}
+
+/** Streams in after the rest of the page, so a slow YouTube never delays the dashboard. */
+async function YoutubeStatus() {
+  const yt = await youtubeStatus();
+  return (
+    <Status
+      ok={yt.ok}
+      label="YouTube"
+      detail={
+        yt.ok
+          ? `Canal ${yt.channelId}: ${yt.videos} videos${yt.shorts ? ` y ${yt.shorts} shorts` : ""} recientes${yt.videos === 0 ? " (la sección de la web aparece cuando subas un video)" : ""}`
+          : yt.reason
+      }
+    />
   );
 }
