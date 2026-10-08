@@ -44,7 +44,7 @@ export async function savePortfolioItem(id: string | null, _prev: ActionState, f
     embedProvider: media?.provider ?? null,
     embedId: media?.id ?? null,
     externalUrl: media?.url ?? null,
-    platformLinks: platformLinks.length ? platformLinks : Prisma.DbNull,
+    platformLinks: platformLinks.length ? (platformLinks as unknown as Prisma.InputJsonValue) : Prisma.DbNull,
   };
 
   if (id) {
