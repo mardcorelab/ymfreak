@@ -35,7 +35,8 @@ test("wrong credentials are refused with a clear message", async ({ page }) => {
   await page.getByLabel("Correo").fill(EMAIL);
   await page.getByLabel("Contraseña").fill("definitely-not-the-password");
   await page.getByRole("button", { name: "Entrar" }).click();
-  await expect(page.getByRole("alert")).toContainText("Correo o contraseña incorrectos");
+  // (Next.js also renders an empty route-announcer alert, so match by text.)
+  await expect(page.getByRole("alert").filter({ hasText: "Correo o contraseña incorrectos" })).toBeVisible();
   await expect(page).toHaveURL(/\/dashboard\/login$/);
 });
 
@@ -48,7 +49,7 @@ test("a price changed in the dashboard shows on the public site", async ({ page 
   await expect(price).toHaveValue("70");
   await price.fill("75");
   await page.getByRole("button", { name: "Guardar cambios" }).click();
-  await expect(page.getByRole("status")).toContainText("Cambios guardados");
+  await expect(page.getByRole("status").filter({ hasText: /\S/ })).toContainText("Cambios guardados");
 
   await eventually(page, "/es/services", () =>
     expect(page.getByRole("listitem").filter({ hasText: "Master final de una canción" })).toContainText("$75", { timeout: 2000 }),
@@ -59,12 +60,12 @@ test("a price changed in the dashboard shows on the public site", async ({ page 
   await page.getByRole("link", { name: /^Mastering/ }).click();
   await page.getByLabel("Precio (USD)").fill("setenta");
   await page.getByRole("button", { name: "Guardar cambios" }).click();
-  await expect(page.getByRole("alert")).toContainText("Precio: escribe un monto válido");
+  await expect(page.getByRole("alert").filter({ hasText: "Precio: escribe un monto válido" })).toBeVisible();
 
   // Restore.
   await page.getByLabel("Precio (USD)").fill("70");
   await page.getByRole("button", { name: "Guardar cambios" }).click();
-  await expect(page.getByRole("status")).toContainText("Cambios guardados");
+  await expect(page.getByRole("status").filter({ hasText: /\S/ })).toContainText("Cambios guardados");
   await eventually(page, "/es/services", () =>
     expect(page.getByRole("listitem").filter({ hasText: "Master final de una canción" })).toContainText("$70", { timeout: 2000 }),
   );
@@ -78,7 +79,7 @@ test("an FAQ entry can be added, shown in both languages and removed", async ({ 
   await page.getByLabel("Respuesta (español)").fill("Respuesta de prueba.");
   await page.getByLabel("Respuesta (inglés)").fill("Test answer.");
   await page.getByRole("button", { name: "Añadir pregunta" }).click();
-  await expect(page.getByRole("status")).toContainText("Pregunta añadida");
+  await expect(page.getByRole("status").filter({ hasText: /\S/ })).toContainText("Pregunta añadida");
 
   await eventually(page, "/es/faq", () => expect(page.getByText("¿Pregunta de prueba E2E?")).toBeVisible({ timeout: 2000 }));
   await eventually(page, "/en/faq", () => expect(page.getByText("E2E test question?")).toBeVisible({ timeout: 2000 }));
@@ -87,7 +88,7 @@ test("an FAQ entry can be added, shown in both languages and removed", async ({ 
   await page.getByRole("link", { name: /Pregunta de prueba E2E/ }).click();
   page.once("dialog", (d) => d.accept());
   await page.getByRole("button", { name: "Eliminar" }).click();
-  await expect(page.getByRole("status")).toContainText("Pregunta eliminada");
+  await expect(page.getByRole("status").filter({ hasText: /\S/ })).toContainText("Pregunta eliminada");
   await eventually(page, "/es/faq", () => expect(page.getByText("¿Pregunta de prueba E2E?")).toHaveCount(0, { timeout: 2000 }));
 });
 
@@ -98,7 +99,7 @@ test("a pasted YouTube link becomes a release that plays inside the site", async
   await page.getByLabel("Título").fill("Tema de prueba E2E");
   await page.getByLabel("Artista").fill("Artista E2E");
   await page.getByRole("button", { name: "Añadir trabajo" }).click();
-  await expect(page.getByRole("status")).toContainText("Trabajo añadido");
+  await expect(page.getByRole("status").filter({ hasText: /\S/ })).toContainText("Trabajo añadido");
 
   await eventually(page, "/es/portfolio", () =>
     expect(page.getByRole("heading", { name: "Tema de prueba E2E" })).toBeVisible({ timeout: 2000 }),
@@ -110,7 +111,7 @@ test("a pasted YouTube link becomes a release that plays inside the site", async
   await page.getByRole("link", { name: /Tema de prueba E2E/ }).click();
   page.once("dialog", (d) => d.accept());
   await page.getByRole("button", { name: "Eliminar" }).click();
-  await expect(page.getByRole("status")).toContainText("Trabajo eliminado");
+  await expect(page.getByRole("status").filter({ hasText: /\S/ })).toContainText("Trabajo eliminado");
 });
 
 test("signing out closes the dashboard", async ({ page }) => {
