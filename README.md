@@ -57,19 +57,18 @@ All of these are stored in the database (`Setting.business_rules` and `Service`)
 - **Sessions** (vocal recording, producer coaching): remote by video call, per hour, 08:00–18:00 Santo Domingo time, 12 h notice, never overlapping (enforced by the database).
 - **Revisions:** 2 free per song, then $20 each.
 - **Cancellation:** full refund if cancelled within 24 h of paying the deposit; after that, manual handling by YM Freak.
-
+- **Files from clients:** WAV at 48 kHz. Mix & master: dry vocal tracks (no effects at all) + beat split into stems as-is. Mastering only: a cappella, bass, drums, melodies. (Stored as FAQ entries, so the site and the assistant use the same answer.)
 
 ## Verification status
 
 | Part | Status |
 |---|---|
-| Domain rules (`src/server/domain`), validators, settings schemas, seed data consistency | **Verified:** strict typecheck + 28 unit tests passing. |
+| Domain rules (`src/server/domain`), validators, settings schemas, seed data consistency | **Verified:** strict typecheck + 30 unit tests passing. |
 | Page layout and copy (home, contact, services) | **Rendered and reviewed** at desktop and mobile widths by server-rendering the real components with the seed data. The preview environment lacked the Archivo font and Spotify covers, so final type and covers will look better than the previews. |
 | Next.js build, Prisma schema, seed script, i18n routing, CI workflow | **Written, not yet run.** The build environment used for Phase 0 had no access to the npm registry. First real run: `npm install && npm run check` locally, or push to GitHub and let `.github/workflows/ci.yml` run it against a real Postgres. |
 
 ## Pending from YM Freak
 
-- The 4 files needed for **mastering only** (only the a cappella received; that FAQ is seeded inactive until complete).
 - Your credit on **Fake Capo (Remix)** (production, mix, master…) and the year of the gold certification.
 - More releases for the portfolio (Spotify or YouTube links + your credit on each).
 - Platinum certifications, if any: which songs.

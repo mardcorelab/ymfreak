@@ -97,10 +97,10 @@ export const knowledgeSeeds: KnowledgeSeed[] = [
     questionEs: "¿Qué archivos necesito enviar para mezcla y mastering?",
     questionEn: "What files do I need to send for mixing and mastering?",
     answerEs:
-      "Las voces separadas por canales y totalmente crudas: sin ningún efecto (ni autotune, ni compresores, ni ecualizadores, nada). La pista, separada por canales (kick, snare, hi-hats, synths, bajo, etc.). A la pista no hace falta quitarle los efectos: envíala tal como la tienes, pero en stems.",
+      "Las voces separadas por canales y totalmente crudas: sin ningún efecto (ni autotune, ni compresores, ni ecualizadores, nada). La pista, separada por canales (kick, snare, hi-hats, synths, bajo, etc.). A la pista no hace falta quitarle los efectos: envíala tal como la tienes, pero en stems. Todo en formato WAV a 48 kHz.",
     answerEn:
-      "Your vocals as separate tracks and completely dry: no effects at all (no autotune, no compression, no EQ, nothing). The beat as separate stems (kick, snare, hi-hats, synths, bass, etc.). You don't need to remove effects from the beat: send it as it is, just split into stems.",
-    tags: ["archivos", "files", "stems", "mezcla", "mixing", "voces", "vocals"],
+      "Your vocals as separate tracks and completely dry: no effects at all (no autotune, no compression, no EQ, nothing). The beat as separate stems (kick, snare, hi-hats, synths, bass, etc.). You don't need to remove effects from the beat: send it as it is, just split into stems. Everything as WAV at 48 kHz.",
+    tags: ["archivos", "files", "stems", "mezcla", "mixing", "voces", "vocals", "wav"],
     active: true,
   },
   {
@@ -108,10 +108,9 @@ export const knowledgeSeeds: KnowledgeSeed[] = [
     kind: "PROCESS",
     questionEs: "¿Qué archivos necesito enviar para solo mastering?",
     questionEn: "What files do I need to send for mastering only?",
-    // TODO(YM Freak): list the 4 files; only the first was received. Seeded inactive until complete.
-    answerEs: "Cuatro audios: 1) la acapella completa sola; 2) TODO; 3) TODO; 4) TODO.",
-    answerEn: "Four audio files: 1) the full a cappella on its own; 2) TODO; 3) TODO; 4) TODO.",
-    tags: ["archivos", "files", "mastering"],
-    active: false,
+    answerEs: "Cuatro audios: 1) la acapella completa sola, 2) el bajo, 3) los drums y 4) las melodías. Todo en formato WAV a 48 kHz.",
+    answerEn: "Four audio files: 1) the full a cappella on its own, 2) the bass, 3) the drums and 4) the melodies. Everything as WAV at 48 kHz.",
+    tags: ["archivos", "files", "stems", "mastering", "wav"],
+    active: true,
   },
 ];
