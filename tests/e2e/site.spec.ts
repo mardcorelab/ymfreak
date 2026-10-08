@@ -141,3 +141,14 @@ test("the master analyzer measures a reference tone in the browser", async ({ pa
   // The audio never left the browser.
   expect(uploads).toEqual([]);
 });
+
+test("press kit: bios, facts and downloadable logos", async ({ page, request }) => {
+  await page.goto("/es/press");
+  await expect(page.getByRole("heading", { level: 1, name: "Prensa" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Biografía corta" })).toBeVisible();
+  await expect(page.getByText("Nominación al Latin Grammy").first()).toBeVisible();
+  for (const f of ["ymfreak-logo-light.png", "ymfreak-logo-dark.svg", "ymfreak-monogram-light.png", "ymfreak-icon.png"]) {
+    await expect(page.locator(`a[href="/press/${f}"]`).first()).toBeAttached();
+    expect((await request.get(`/press/${f}`)).ok()).toBe(true);
+  }
+});

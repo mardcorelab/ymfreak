@@ -10,7 +10,8 @@ import { About } from "@/components/sections/About";
 import { Process } from "@/components/sections/Process";
 import { Testimonials } from "@/components/sections/Testimonials";
 import { ClosingCta } from "@/components/sections/ClosingCta";
-import { ButtonLink } from "@/components/ui/ButtonLink";
+import { ButtonAnchor, ButtonLink } from "@/components/ui/ButtonLink";
+import { VideoGrid } from "@/components/sections/VideoGrid";
 
 export interface HomeData {
   featured: PortfolioVM[];
@@ -20,6 +21,7 @@ export interface HomeData {
   contact: ContactVM;
   business: BusinessHoursVM;
   nextAvailable: NextAvailableVM | null;
+  videos: PortfolioVM[];
 }
 
 export function HomeView({ data }: { data: HomeData }) {
@@ -45,6 +47,23 @@ export function HomeView({ data }: { data: HomeData }) {
           <p className="mt-10 text-sm text-ash">{t("work.embedNote")}</p>
         )}
       </Section>
+
+      {data.videos.length > 0 && (
+        <Section
+          id="youtube"
+          title={t("youtube.title")}
+          intro={t("youtube.intro")}
+          aside={
+            data.contact.youtube ? (
+              <ButtonAnchor href={data.contact.youtube} variant="line">
+                {t("youtube.subscribe")}
+              </ButtonAnchor>
+            ) : undefined
+          }
+        >
+          <VideoGrid items={data.videos} />
+        </Section>
+      )}
 
       <Section
         id="servicios"

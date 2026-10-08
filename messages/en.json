@@ -29,7 +29,8 @@
     "language": "Español",
     "skip": "Skip to content",
     "book": "Book",
-    "account": "My account"
+    "account": "My account",
+    "press": "Press"
   },
   "hero": {
     "roles": "Producer • Mixing Engineer • Mastering Engineer",
@@ -102,7 +103,9 @@
     "s4d": "You pay the balance and receive the final files, ready for distribution."
   },
   "testimonials": {
-    "title": "What artists say"
+    "title": "What artists say",
+    "stars": "{count} out of 5 stars",
+    "verified": "Verified client"
   },
   "closing": {
     "title": "Is your song ready to sound like a record?",
@@ -425,7 +428,8 @@
     "ok": {
       "FILES_SENT": "Got it! Your link is now in the project.",
       "REVISION_REQUESTED": "Revision requested. I'll let you know when the new version is ready.",
-      "REVISION_REQUESTED_FEE": "Revision requested. You've used the included revisions, so the extra revision fee was added to your balance."
+      "REVISION_REQUESTED_FEE": "Revision requested. You've used the included revisions, so the extra revision fee was added to your balance.",
+      "REVIEW_SENT": "Thanks for your review! It will appear on the website once YM Freak approves it."
     },
     "errors": {
       "NO_MATCH": "That email and code don't match any booking. Check both.",
@@ -434,8 +438,21 @@
       "URL": "Paste the full link, starting with https://",
       "NOTE": "Tell me a bit more about what you want to change.",
       "NOT_ALLOWED": "That can't be done at the project's current stage.",
-      "SIGNED_OUT": "Your session ended. Please sign in again."
-    }
+      "SIGNED_OUT": "Your session ended. Please sign in again.",
+      "REVIEW": "Write at least 20 characters, pick stars and tick the box."
+    },
+    "reviewTitle": "How was working with me?",
+    "reviewIntro": "Your opinion helps other artists decide. YM Freak reviews it before publishing it on the website.",
+    "rating": "Your rating",
+    "ratingStar": "{count, plural, one {# star} other {# stars}}",
+    "reviewText": "Your review",
+    "reviewName": "Name to show",
+    "reviewRole": "Under your name (optional)",
+    "reviewRoleHint": "For example: Artist, Producer, Label…",
+    "reviewConsent": "I agree that YM Freak publishes this review with this name on the website.",
+    "reviewSend": "Send review",
+    "reviewThanks": "Thanks for your review! It will appear on the website once YM Freak approves it.",
+    "reviewSent": "You already sent your review for this project. Thank you!"
   },
   "legal": {
     "updated": "Last updated: {date}",
@@ -559,5 +576,40 @@
       "generic": "Something went wrong while analyzing. Please try again."
     },
     "navLabel": "Analyze your master for free"
+  },
+  "youtube": {
+    "title": "From the studio",
+    "intro": "My latest videos on YouTube.",
+    "subscribe": "Subscribe on YouTube",
+    "latest": "Latest video"
+  },
+  "press": {
+    "title": "Press",
+    "metaDescription": "YM Freak press kit: biography, facts, credits, logos and photos for media, labels and promoters.",
+    "intro": "Everything you need to write about YM Freak or announce a project: biography, facts, credits, logos and photos.",
+    "facts": "Quick facts",
+    "name": "Artist name",
+    "roles": "Roles",
+    "base": "Based in",
+    "baseValue": "Dominican Republic · works remotely with artists worldwide",
+    "experience": "Experience",
+    "experienceValue": "13+ years",
+    "highlights": "Achievements",
+    "bioShort": "Short bio",
+    "bioLong": "Biography",
+    "copy": "Copy",
+    "copied": "Copied",
+    "credits": "Selected credits",
+    "logos": "Logos",
+    "logoFull": "Full logo",
+    "logoShort": "Short logo (YMF)",
+    "logoIcon": "Icon",
+    "onDark": "For dark backgrounds",
+    "onLight": "For light backgrounds",
+    "photos": "Photos",
+    "photosNote": "Web versions. For print or covers, ask for the high-resolution originals.",
+    "download": "Download",
+    "contactTitle": "Press contact",
+    "contactBody": "Interviews, press releases and collaborations:"
   }
 }

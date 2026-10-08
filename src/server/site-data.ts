@@ -79,8 +79,15 @@ export const getAchievementsVM = cache(async (locale: Locale) => {
 });
 
 export const getTestimonialsVM = cache(async (locale: Locale): Promise<TestimonialVM[]> => {
-  const rows: Testimonial[] = await db.testimonial.findMany({ where: { published: true }, orderBy: { sortOrder: "asc" } });
-  return rows.map((t) => ({ id: t.id, author: t.author, role: t.role, quote: pick(locale, t.quoteEs, t.quoteEn) }));
+  const rows: Testimonial[] = await db.testimonial.findMany({ where: { published: true }, orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }] });
+  return rows.map((t) => ({
+    id: t.id,
+    author: t.author,
+    role: t.role,
+    quote: pick(locale, t.quoteEs, t.quoteEn),
+    rating: t.rating,
+    verified: t.fromClient && t.bookingId !== null,
+  }));
 });
 
 export const getFaqVM = cache(async (locale: Locale): Promise<FaqVM[]> => {

@@ -94,6 +94,7 @@ export interface PortalProject extends PortalBookingSummary {
   revisions: { included: number; used: number; fee: string };
   cancel: { deadline: string; amount: string } | null;
   filesHelp: { question: string; answer: string }[];
+  review: { canReview: boolean; sent: boolean; defaultName: string; defaultRole: string };
 }
 
 /** A booking of this customer, by its code. Returns null for codes that belong to someone else. */
@@ -108,6 +109,7 @@ export async function getClientProject(customerId: string, code: string, locale:
       items: { include: { service: true } },
       events: { orderBy: { createdAt: "asc" } },
       links: { orderBy: { createdAt: "asc" } },
+      customer: { select: { name: true } },
     },
   });
   if (!b) return null;
@@ -172,5 +174,15 @@ export async function getClientProject(customerId: string, code: string, locale:
     revisions: { included: Number.isFinite(included) ? included : 0, used: b.revisionsUsed, fee: money(rules.revisionFeeCents) },
     cancel: cancellation?.allowed && cancellation.deadline ? { deadline: dateTime(cancellation.deadline, tz, locale), amount: money(cancellation.refundCents) } : null,
     filesHelp,
+    review: await (async () => {
+      const existing = await db.testimonial.findUnique({ where: { bookingId: b.id }, select: { id: true } });
+      const details = (b.projectDetails ?? {}) as { artistName?: string };
+      return {
+        canReview: b.status === "COMPLETED" && !existing,
+        sent: Boolean(existing),
+        defaultName: details.artistName || b.customer.name,
+        defaultRole: "",
+      };
+    })(),
   };
 }

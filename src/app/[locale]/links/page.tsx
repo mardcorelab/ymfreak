@@ -5,6 +5,7 @@ import type { AppLocale } from "@/i18n/routing";
 import { alternates } from "@/lib/seo";
 import { getAchievementsVM, getContactVM } from "@/server/site-data";
 import { getLinkReleases } from "@/server/releases";
+import { getYoutubeVideos } from "@/server/youtube";
 import { getNextAvailable } from "@/server/booking/next-available";
 import { agentAvailable } from "@/server/agent/model";
 import { socialLinks } from "@/components/site/social";
@@ -28,14 +29,16 @@ const big =
 export default async function LinksPage({ params }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const [t, tAll, contact, releases, achievements, next] = await Promise.all([
+  const [t, tAll, contact, releases, achievements, next, videos] = await Promise.all([
     getTranslations("links"),
     getTranslations(),
     getContactVM(),
     getLinkReleases(locale),
     getAchievementsVM(locale),
     getNextAvailable(locale),
+    getYoutubeVideos(),
   ]);
+  const video = videos[0];
   const socials = socialLinks(contact, tAll);
   const highlight = achievements.find((a) => a.highlight);
   const other = locale === "es" ? "en" : "es";
@@ -85,12 +88,35 @@ export default async function LinksPage({ params }: Props) {
         </TrackedLink>
       </nav>
 
-      {releases.length > 0 && (
+      {(releases.length > 0 || video) && (
         <section className="mt-10" aria-labelledby="latest">
           <h2 id="latest" className="text-sm uppercase tracking-wider text-ash">
             {t("latest")}
           </h2>
           <ul className="mt-3 grid gap-3">
+            {video && (
+              <li>
+                <TrackedLink
+                  label="youtube-video"
+                  href={video.url || `https://www.youtube.com/watch?v=${video.id}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-4 rounded-2xl border border-rule p-3 hover:bg-bone/5"
+                >
+                  <Image
+                    src={`https://i.ytimg.com/vi/${video.id}/hqdefault.jpg`}
+                    alt=""
+                    width={96}
+                    height={64}
+                    className="h-16 w-24 shrink-0 rounded-lg object-cover"
+                  />
+                  <span className="min-w-0">
+                    <span className="block text-xs uppercase tracking-wider text-ash">{tAll("youtube.latest")}</span>
+                    <span className="line-clamp-2 font-semibold leading-snug">{video.title}</span>
+                  </span>
+                </TrackedLink>
+              </li>
+            )}
             {releases.map((r) => (
               <li key={r.slug}>
                 <TrackedLink label={`release-${r.slug}`.slice(0, 40)} href={`/${locale}/r/${r.slug}`} className="flex items-center gap-4 rounded-2xl border border-rule p-3 hover:bg-bone/5">

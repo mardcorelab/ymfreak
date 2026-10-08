@@ -13,10 +13,17 @@ export function Testimonials({ items }: { items: TestimonialVM[] }) {
         {items.map((q) => (
           <li key={q.id}>
             <figure>
+              {q.rating !== null && (
+                <p className="mb-3 text-lg tracking-widest text-brass" aria-label={t("stars", { count: q.rating })}>
+                  {"★".repeat(q.rating)}
+                  <span className="text-bone/20">{"★".repeat(5 - q.rating)}</span>
+                </p>
+              )}
               <blockquote className="type-sub text-2xl leading-snug">“{q.quote}”</blockquote>
               <figcaption className="mt-4 text-ash">
                 {q.author}
                 {q.role && <>, {q.role}</>}
+                {q.verified && <span className="ml-2 rounded-full border border-rule px-2 py-0.5 text-xs">{t("verified")}</span>}
               </figcaption>
             </figure>
           </li>

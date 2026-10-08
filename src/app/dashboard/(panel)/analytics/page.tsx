@@ -26,6 +26,7 @@ const PAGE_NAMES: Record<string, string> = {
   "/account/project": "Mi cuenta · proyecto",
   "/links": "Enlaces (bio)",
   "/analyzer": "Analizador de masters",
+  "/press": "Prensa",
 };
 
 const CHANNEL_NAMES: Record<string, string> = {

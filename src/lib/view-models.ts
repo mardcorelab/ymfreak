@@ -47,6 +47,9 @@ export interface TestimonialVM {
   author: string;
   role: string | null;
   quote: string;
+  rating: number | null;
+  /** True for reviews written by clients after a completed project. */
+  verified: boolean;
 }
 
 export interface FaqVM {

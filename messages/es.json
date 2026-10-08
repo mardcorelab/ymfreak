@@ -29,7 +29,8 @@
     "language": "English",
     "skip": "Saltar al contenido",
     "book": "Reservar",
-    "account": "Mi cuenta"
+    "account": "Mi cuenta",
+    "press": "Prensa"
   },
   "hero": {
     "roles": "Producer • Mixing Engineer • Mastering Engineer",
@@ -102,7 +103,9 @@
     "s4d": "Pagas el resto y recibes los archivos finales, listos para distribuir."
   },
   "testimonials": {
-    "title": "Lo que dicen los artistas"
+    "title": "Lo que dicen los artistas",
+    "stars": "{count} de 5 estrellas",
+    "verified": "Cliente verificado"
   },
   "closing": {
     "title": "¿Tu canción está lista para sonar a disco?",
@@ -425,7 +428,8 @@
     "ok": {
       "FILES_SENT": "¡Recibido! Tu enlace ya está en el proyecto.",
       "REVISION_REQUESTED": "Revisión pedida. Te aviso cuando la nueva versión esté lista.",
-      "REVISION_REQUESTED_FEE": "Revisión pedida. Como ya usaste las revisiones incluidas, se añadió el cargo de revisión adicional a tu saldo."
+      "REVISION_REQUESTED_FEE": "Revisión pedida. Como ya usaste las revisiones incluidas, se añadió el cargo de revisión adicional a tu saldo.",
+      "REVIEW_SENT": "¡Gracias por tu reseña! La verás en la web cuando YM Freak la apruebe."
     },
     "errors": {
       "NO_MATCH": "El correo y el código no coinciden con ninguna reserva. Revisa los dos.",
@@ -434,8 +438,21 @@
       "URL": "Pega el enlace completo, empezando por https://",
       "NOTE": "Cuéntame un poco más qué quieres cambiar.",
       "NOT_ALLOWED": "Esto no se puede hacer en el estado actual del proyecto.",
-      "SIGNED_OUT": "Tu sesión terminó. Vuelve a entrar."
-    }
+      "SIGNED_OUT": "Tu sesión terminó. Vuelve a entrar.",
+      "REVIEW": "Escribe al menos 20 caracteres, elige estrellas y marca la casilla."
+    },
+    "reviewTitle": "¿Cómo fue trabajar conmigo?",
+    "reviewIntro": "Tu opinión ayuda a otros artistas a decidirse. YM Freak la revisa antes de publicarla en la web.",
+    "rating": "Tu valoración",
+    "ratingStar": "{count, plural, one {# estrella} other {# estrellas}}",
+    "reviewText": "Tu reseña",
+    "reviewName": "Nombre que se mostrará",
+    "reviewRole": "Debajo de tu nombre (opcional)",
+    "reviewRoleHint": "Por ejemplo: Artista, Productor, Sello…",
+    "reviewConsent": "Acepto que YM Freak publique esta reseña con este nombre en su web.",
+    "reviewSend": "Enviar reseña",
+    "reviewThanks": "¡Gracias por tu reseña! La verás en la web cuando YM Freak la apruebe.",
+    "reviewSent": "Ya enviaste tu reseña de este proyecto. ¡Gracias!"
   },
   "legal": {
     "updated": "Última actualización: {date}",
@@ -559,5 +576,40 @@
       "generic": "Algo salió mal al analizar. Inténtalo de nuevo."
     },
     "navLabel": "Analiza tu master gratis"
+  },
+  "youtube": {
+    "title": "Desde el estudio",
+    "intro": "Mis videos más recientes en YouTube.",
+    "subscribe": "Suscríbete en YouTube",
+    "latest": "Último video"
+  },
+  "press": {
+    "title": "Prensa",
+    "metaDescription": "Kit de prensa de YM Freak: biografía, datos, créditos, logos y fotos para medios, sellos y organizadores.",
+    "intro": "Todo lo que necesitas para escribir sobre YM Freak o anunciar un proyecto: biografía, datos, créditos, logos y fotos.",
+    "facts": "Datos rápidos",
+    "name": "Nombre artístico",
+    "roles": "Roles",
+    "base": "Base",
+    "baseValue": "República Dominicana · trabaja en remoto con artistas de todo el mundo",
+    "experience": "Experiencia",
+    "experienceValue": "Más de 13 años",
+    "highlights": "Logros",
+    "bioShort": "Biografía corta",
+    "bioLong": "Biografía",
+    "copy": "Copiar",
+    "copied": "Copiado",
+    "credits": "Créditos seleccionados",
+    "logos": "Logos",
+    "logoFull": "Logo completo",
+    "logoShort": "Logo abreviado (YMF)",
+    "logoIcon": "Icono",
+    "onDark": "Para fondo oscuro",
+    "onLight": "Para fondo claro",
+    "photos": "Fotos",
+    "photosNote": "Versiones para web. Para impresión o portadas, pide las originales en alta resolución.",
+    "download": "Descargar",
+    "contactTitle": "Contacto de prensa",
+    "contactBody": "Entrevistas, notas de prensa y colaboraciones:"
   }
 }

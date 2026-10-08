@@ -376,13 +376,20 @@ model Achievement {
 }
 
 model Testimonial {
-  id        String  @id @default(cuid())
-  author    String
-  role      String?
-  quoteEs   String
-  quoteEn   String
-  published Boolean @default(false)
-  sortOrder Int     @default(0)
+  id         String   @id @default(cuid())
+  author     String
+  role       String?
+  quoteEs    String
+  quoteEn    String
+  /// 1–5 stars, when the client gave a rating.
+  rating     Int?
+  /// Written by the client from their portal (shown only after YM Freak approves it).
+  fromClient Boolean  @default(false)
+  /// The project it is about (one review per booking).
+  bookingId  String?  @unique
+  published  Boolean  @default(false)
+  sortOrder  Int      @default(0)
+  createdAt  DateTime @default(now())
 }
 
 // ───────────────────────── Knowledge base & settings ─────────────────────────

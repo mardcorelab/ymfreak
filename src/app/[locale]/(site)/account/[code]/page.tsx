@@ -5,7 +5,7 @@ import type { AppLocale } from "@/i18n/routing";
 import { Link } from "@/i18n/navigation";
 import { currentClient } from "@/server/portal/session";
 import { getClientProject } from "@/server/portal/data";
-import { FilesForm, RevisionForm } from "@/components/portal/PortalForms";
+import { FilesForm, ReviewForm, RevisionForm } from "@/components/portal/PortalForms";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { robots: { index: false, follow: false } };
@@ -121,6 +121,22 @@ export default async function ProjectPage({ params }: Props) {
           <p className="mt-2 text-bone/85">{t("revisionIntro")}</p>
           <p className="mt-2 text-sm text-ash">{t("revisionCount", { included: p.revisions.included, used: p.revisions.used, fee: p.revisions.fee })}</p>
           <RevisionForm code={p.code} locale={locale} />
+        </section>
+      )}
+
+      {(p.review.canReview || p.review.sent) && (
+        <section className="mt-12 rounded-xl border border-brass/40 p-5 sm:p-6" aria-labelledby="review">
+          <h2 id="review" className="type-sub text-2xl">
+            {t("reviewTitle")}
+          </h2>
+          {p.review.sent ? (
+            <p className="mt-2 text-bone/85">{t("reviewSent")}</p>
+          ) : (
+            <>
+              <p className="mt-2 text-bone/85">{t("reviewIntro")}</p>
+              <ReviewForm code={p.code} locale={locale} defaultName={p.review.defaultName} />
+            </>
+          )}
         </section>
       )}
 

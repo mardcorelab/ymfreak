@@ -150,3 +150,37 @@ test("the portal needs the right email and code, and never shows other people's 
   await expect(page.getByRole("heading", { name: "Entra a tu portal" })).toBeVisible();
   await ctx.close();
 });
+
+test("after the project is completed, the client's review appears on the site once approved", async ({ browser, page }) => {
+  const ctx = await browser.newContext({ storageState: "test-results/portal-client.json" });
+  const client = await ctx.newPage();
+  await client.goto(projectUrl);
+  await expect(client.getByRole("heading", { name: "¿Cómo fue trabajar conmigo?" })).toBeVisible();
+  await client.getByLabel("4 estrellas", { exact: true }).check({ force: true });
+  await client.getByLabel("Tu reseña").fill("Un trabajo increíble, la mezcla quedó enorme y muy clara.");
+  await client.getByLabel("Acepto que YM Freak publique").check();
+  await client.getByRole("button", { name: "Enviar reseña" }).click();
+  await expect(client.getByText("¡Gracias por tu reseña!")).toBeVisible();
+  await ctx.close();
+
+  // Not public until approved.
+  await page.goto("/es");
+  await expect(page.getByText("Un trabajo increíble, la mezcla quedó enorme")).toHaveCount(0);
+
+  await login(page);
+  await page.goto("/dashboard/testimonials");
+  await expect(page.getByText("Tienes 1 reseña de cliente pendiente de aprobar.")).toBeVisible();
+  await page.getByRole("link", { name: /Artista Portal/ }).click();
+  await page.getByLabel("Publicado").check();
+  await page.getByRole("button", { name: "Guardar cambios" }).click();
+  await expect(page.getByText("Cambios guardados.")).toBeVisible();
+
+  await expect
+    .poll(async () => {
+      await page.goto("/es");
+      return page.getByText("Un trabajo increíble, la mezcla quedó enorme").count();
+    }, { timeout: 30_000 })
+    .toBeGreaterThan(0);
+  await expect(page.getByText("Cliente verificado")).toBeVisible();
+  await expect(page.getByLabel("4 de 5 estrellas")).toBeVisible();
+});

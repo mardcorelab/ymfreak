@@ -11,8 +11,8 @@ import { currentClient, endClientSession, startClientSession } from "./session";
 
 export type PortalState =
   | { status: "idle" }
-  | { status: "ok"; code?: "FILES_SENT" | "REVISION_REQUESTED" | "REVISION_REQUESTED_FEE" }
-  | { status: "error"; error: "NO_MATCH" | "RATE_LIMITED" | "INVALID" | "URL" | "NOTE" | "NOT_ALLOWED" | "SIGNED_OUT" };
+  | { status: "ok"; code?: "FILES_SENT" | "REVISION_REQUESTED" | "REVISION_REQUESTED_FEE" | "REVIEW_SENT" }
+  | { status: "error"; error: "NO_MATCH" | "RATE_LIMITED" | "INVALID" | "URL" | "NOTE" | "NOT_ALLOWED" | "SIGNED_OUT" | "REVIEW" };
 
 const locale = (v: FormDataEntryValue | null) => (v === "en" ? "en" : "es");
 const str = (v: FormDataEntryValue | null) => (typeof v === "string" ? v.trim() : "");
@@ -93,4 +93,52 @@ export async function requestRevision(_prev: PortalState, form: FormData): Promi
   revalidatePath(`/${locale(form.get("locale"))}/account/${code}`);
   revalidatePath(`/dashboard/bookings/${own.booking.id}`);
   return { status: "ok", code: r.feeNote ? "REVISION_REQUESTED_FEE" : "REVISION_REQUESTED" };
+}
+
+const reviewSchema = z.object({
+  rating: z.coerce.number().int().min(1).max(5),
+  text: z.string().trim().min(20).max(800),
+  name: z.string().trim().min(2).max(80),
+  role: z.string().trim().max(80),
+  consent: z.literal("on"),
+});
+
+/** After a completed project, the client leaves a review. It stays hidden until YM Freak approves it in the dashboard. */
+export async function submitReview(_prev: PortalState, form: FormData): Promise<PortalState> {
+  const code = str(form.get("code"));
+  const parsed = reviewSchema.safeParse({
+    rating: form.get("rating"),
+    text: str(form.get("text")),
+    name: str(form.get("name")),
+    role: str(form.get("role")),
+    consent: form.get("consent"),
+  });
+  if (!parsed.success) return { status: "error", error: "REVIEW" };
+  const own = await ownBooking(code);
+  if (!own.ok) return { status: "error", error: own.error };
+  if (own.booking.status !== "COMPLETED") return { status: "error", error: "NOT_ALLOWED" };
+  if (!(await allowRate(`portal-review:${own.booking.id}`, 5, 60 * 60_000))) return { status: "error", error: "RATE_LIMITED" };
+  const clean = (t: string) => t.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, "");
+  try {
+    await db.testimonial.create({
+      data: {
+        author: clean(parsed.data.name),
+        role: parsed.data.role ? clean(parsed.data.role) : null,
+        // The client writes in one language; it is shown as written in both.
+        quoteEs: clean(parsed.data.text),
+        quoteEn: clean(parsed.data.text),
+        rating: parsed.data.rating,
+        fromClient: true,
+        bookingId: own.booking.id,
+        published: false,
+        sortOrder: 100,
+      },
+    });
+  } catch {
+    // Unique bookingId: a review already exists for this project.
+    return { status: "error", error: "NOT_ALLOWED" };
+  }
+  revalidatePath(`/${locale(form.get("locale"))}/account/${code}`);
+  revalidatePath("/dashboard/testimonials");
+  return { status: "ok", code: "REVIEW_SENT" };
 }
