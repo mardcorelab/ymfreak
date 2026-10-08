@@ -27,7 +27,7 @@ jobs:
       # Scripted stand-in for Claude so the assistant's tools are tested without an API key.
       AGENT_TEST_MODE: "1"
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v5
         with: { node-version-file: .nvmrc }
       # No lockfile yet (Phase 0 was written without registry access); see README.
