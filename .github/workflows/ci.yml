@@ -20,10 +20,11 @@ jobs:
       DATABASE_URL: postgresql://ymfreak:ymfreak@localhost:5432/ymfreak
       NEXT_PUBLIC_SITE_URL: http://localhost:3000
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with: { node-version-file: .nvmrc, cache: npm }
-      - run: npm ci
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with: { node-version-file: .nvmrc }
+      # No lockfile yet (Phase 0 was written without registry access); see README.
+      - run: npm install --no-audit --no-fund
       - run: npx prisma validate
       - run: npx prisma generate
       - run: npm run typecheck
