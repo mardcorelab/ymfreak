@@ -3,6 +3,7 @@
 import { clientIp } from "../auth/admin";
 import { allowRate } from "../rate-limit";
 import { cancelByClient, startPayment } from "./service";
+import { requestOrigin } from "../request-origin";
 
 export type PayActionState =
   | { status: "idle" }
@@ -19,7 +20,7 @@ const ORDER_ID = /^c[a-z0-9]{20,32}$/;
 export async function payNow(orderId: string, locale: "es" | "en", _prev: PayActionState): Promise<PayActionState> {
   if (!ORDER_ID.test(orderId)) return { status: "error", error: "NOT_FOUND" };
   if (!(await allowRate(`pay:${await clientIp()}`, 20, 60 * 60_000))) return { status: "error", error: "RATE_LIMITED" };
-  const result = await startPayment(orderId, locale === "en" ? "en" : "es");
+  const result = await startPayment(orderId, locale === "en" ? "en" : "es", await requestOrigin());
   if (!result.ok) return { status: "error", error: result.error };
   return { status: "redirect", url: result.approvalUrl };
 }

@@ -49,6 +49,7 @@ export function amountDue(order: OrderWithAll): { kind: PaymentKind; amountCents
 export async function startPayment(
   orderId: string,
   locale: "es" | "en",
+  origin: string = siteUrl(),
 ): Promise<{ ok: true; approvalUrl: string } | { ok: false; error: PayError }> {
   const provider = getPaymentProvider();
   if (!provider) return { ok: false, error: "NOT_CONFIGURED" };
@@ -83,7 +84,7 @@ export async function startPayment(
     },
   });
 
-  const base = siteUrl();
+  const base = origin.replace(/\/+$/, "");
   const label = due.kind === "DEPOSIT" ? (locale === "es" ? "Depósito" : "Deposit") : locale === "es" ? "Saldo" : "Balance";
   try {
     const session = await provider.createCheckout({
