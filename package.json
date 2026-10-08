@@ -22,7 +22,7 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
-    "@prisma/client": "^6.16.0",
+    "@prisma/client": "^7.10.0",
     "next": "^15.5.0",
     "next-intl": "^4.3.0",
     "react": "^19.1.0",
