@@ -7,7 +7,7 @@ import { audit, requireAdmin } from "@/server/auth/admin";
 import { portfolioSchema } from "@/lib/validators/admin";
 import { parseMediaLink } from "@/lib/media-link";
 import { checkbox, optionalInt, optionalText, slugify, text } from "@/lib/form-data";
-import { fetchCoverUrl, fetchPlatformLinks } from "../media";
+import { fetchCoverUrl, fetchPlatformLinks, lookupPlatformLinks, PLATFORMS } from "../media";
 import { failure, invalid, refreshSite, type ActionState } from "../common";
 
 export async function savePortfolioItem(id: string | null, _prev: ActionState, fd: FormData): Promise<ActionState> {
@@ -70,4 +70,19 @@ export async function deletePortfolioItem(id: string): Promise<void> {
   await audit("portfolio.delete", "PortfolioItem", id);
   refreshSite();
   redirect("/dashboard/portfolio?deleted=1");
+}
+
+/** Looks the release up again on every platform (for its page at /r/…) and says what was found. */
+export async function refreshPlatformLinks(id: string, _prev: ActionState): Promise<ActionState> {
+  await requireAdmin();
+  const item = await db.portfolioItem.findUnique({ where: { id } });
+  if (!item) return failure("Este trabajo ya no existe.");
+  if (!item.externalUrl) return failure("Primero pega el enlace de Spotify o YouTube del lanzamiento.");
+  const { links, error } = await lookupPlatformLinks(item.externalUrl);
+  if (!links.length) return failure(`${error ?? "No se encontraron enlaces"}. La página del lanzamiento seguirá mostrando el enlace original.`);
+  await db.portfolioItem.update({ where: { id }, data: { platformLinks: links as unknown as Prisma.InputJsonValue } });
+  await audit("portfolio.platform_links", "PortfolioItem", id, { count: links.length });
+  refreshSite();
+  const names = links.map((l) => PLATFORMS.find((p) => p.key === l.platform)?.label ?? l.platform).join(", ");
+  return { status: "ok", message: `Encontrado en: ${names}.` };
 }

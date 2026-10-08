@@ -42,20 +42,20 @@ export const PLATFORMS: { key: string; label: string }[] = [
 
 /**
  * Finds the same release on every streaming platform through song.link
- * (Odesli). Returns [] on any problem; the release page then falls back to
- * the original link.
+ * (Odesli). Never throws: on a problem it returns no links and says why.
  */
-export async function fetchPlatformLinks(url: string, fetchFn: typeof fetch = fetch): Promise<PlatformLink[]> {
+export async function lookupPlatformLinks(url: string, fetchFn: typeof fetch = fetch): Promise<{ links: PlatformLink[]; error: string | null }> {
   try {
     const res = await fetchFn(`https://api.song.link/v1-alpha.1/links?userCountry=US&url=${encodeURIComponent(url)}`, {
-      signal: AbortSignal.timeout(6000),
+      signal: AbortSignal.timeout(8000),
       cache: "no-store",
+      headers: { accept: "application/json" },
     });
-    if (!res.ok) return [];
+    if (!res.ok) return { links: [], error: `song.link respondió ${res.status}` };
     const body = (await res.json()) as { linksByPlatform?: Record<string, { url?: unknown }> };
-    const links = body.linksByPlatform ?? {};
-    return PLATFORMS.flatMap(({ key }) => {
-      const u = links[key]?.url;
+    const found = body.linksByPlatform ?? {};
+    const links = PLATFORMS.flatMap(({ key }) => {
+      const u = found[key]?.url;
       if (typeof u !== "string") return [];
       try {
         const parsed = new URL(u);
@@ -64,7 +64,14 @@ export async function fetchPlatformLinks(url: string, fetchFn: typeof fetch = fe
         return [];
       }
     });
-  } catch {
-    return [];
+    return { links, error: links.length ? null : "song.link no encontró este lanzamiento en otras plataformas" };
+  } catch (e) {
+    return { links: [], error: e instanceof Error && e.name === "TimeoutError" ? "song.link tardó demasiado" : "No se pudo contactar con song.link" };
   }
+}
+
+export async function fetchPlatformLinks(url: string, fetchFn: typeof fetch = fetch): Promise<PlatformLink[]> {
+  const r = await lookupPlatformLinks(url, fetchFn);
+  if (r.error) console.warn("[media] platform links:", r.error, url);
+  return r.links;
 }

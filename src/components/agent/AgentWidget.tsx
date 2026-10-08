@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
+import { usePathname } from "next/navigation";
 import { track } from "@/components/site/Analytics";
 import { Monogram } from "@/components/brand/Logo";
 import { AGENT_LIMITS, type AgentCard, type ChatItem, type ChatResponse, type ConfirmResponse } from "@/lib/agent-types";
@@ -40,6 +41,8 @@ export function AgentWidget() {
   const listRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const launcherRef = useRef<HTMLButtonElement>(null);
+  // The link-in-bio page has its own button for the assistant.
+  const hideLauncher = /^\/(es|en)\/links\/?$/.test(usePathname() ?? "");
 
   useEffect(() => {
     const onOpen = () => setOpen(true);
@@ -159,7 +162,7 @@ export function AgentWidget() {
 
   return (
     <>
-      {!open && (
+      {!open && !hideLauncher && (
         <button
           ref={launcherRef}
           type="button"
