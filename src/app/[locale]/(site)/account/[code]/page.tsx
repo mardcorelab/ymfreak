@@ -28,7 +28,7 @@ export default async function ProjectPage({ params }: Props) {
         ← {t("back")}
       </Link>
       <p className="num mt-6 text-sm text-ash">{p.code}</p>
-      <h1 className="type-head mt-1 text-[clamp(2.6rem,6vw,4rem)]">{p.title}</h1>
+      <h1 className="type-head mt-1 text-[clamp(1.5rem,3.6vw,2.4rem)]">{p.title}</h1>
       <div className="mt-4 flex flex-wrap items-center gap-3">
         <span className="inline-flex rounded-full border border-rule px-4 py-2 text-sm" data-status={p.status}>
           {tc(`status.${p.status}`)}
@@ -39,7 +39,7 @@ export default async function ProjectPage({ params }: Props) {
         <div className="mt-8 flex flex-wrap items-center justify-between gap-4 rounded-xl bg-key p-5">
           <p>
             <span className="text-bone/70">{t("dueNow", { amount: "" })}</span>
-            <span className="type-head num text-3xl">{p.due.amount}</span>
+            <span className="type-figure num text-3xl">{p.due.amount}</span>
           </p>
           <a href={p.checkoutPath} className="inline-flex min-h-12 items-center rounded-full bg-bone px-6 font-semibold text-studio hover:bg-white">
             {t("payDue", { amount: p.due.amount })}
@@ -198,7 +198,7 @@ function Row({ label, value, strong = false }: { label: string; value: string; s
   return (
     <div className="flex items-baseline justify-between gap-4">
       <dt className={strong ? "font-semibold" : "text-ash"}>{label}</dt>
-      <dd className={`text-right first-letter:uppercase ${strong ? "type-head num text-2xl" : ""}`}>{value}</dd>
+      <dd className={`text-right first-letter:uppercase ${strong ? "type-figure num text-2xl" : ""}`}>{value}</dd>
     </div>
   );
 }

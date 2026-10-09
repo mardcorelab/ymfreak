@@ -11,7 +11,7 @@ export default function ErrorPage({ error, reset }: { error: Error & { digest?: 
   }, [error]);
   return (
     <section className="mx-auto max-w-3xl px-5 pb-24 pt-36 sm:px-8 lg:pt-44">
-      <h1 className="type-name text-[clamp(3.4rem,8vw,6rem)] leading-[0.95]">{t("title")}</h1>
+      <h1 className="type-name text-[clamp(1.9rem,5.2vw,3.6rem)]">{t("title")}</h1>
       <p className="mt-6 max-w-[56ch] text-lg text-bone/85">{t("body")}</p>
       {error.digest && <p className="num mt-2 text-xs text-ash">Ref. {error.digest}</p>}
       <div className="mt-8 flex flex-wrap gap-3">

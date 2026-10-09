@@ -24,7 +24,7 @@ export default async function AccountPage({ params }: { params: Promise<{ locale
   if (!client) {
     return (
       <section className="mx-auto max-w-3xl px-5 pb-24 pt-36 sm:px-8 lg:pt-44">
-        <h1 className="type-name text-[clamp(3.4rem,8vw,6rem)] leading-[0.95]">{t("loginTitle")}</h1>
+        <h1 className="type-name text-[clamp(1.9rem,5.2vw,3.6rem)]">{t("loginTitle")}</h1>
         <p className="mt-6 max-w-[56ch] text-lg text-bone/85">{t("loginIntro")}</p>
         <LoginForm locale={locale} />
         <p className="mt-12 text-ash">
@@ -41,7 +41,7 @@ export default async function AccountPage({ params }: { params: Promise<{ locale
   return (
     <section className="mx-auto max-w-4xl px-5 pb-24 pt-36 sm:px-8 lg:pt-44">
       <div className="flex flex-wrap items-end justify-between gap-4">
-        <h1 className="type-name text-[clamp(3.2rem,7.5vw,5.6rem)] leading-[0.95]">{t("hello", { name: client.name.split(" ")[0] ?? client.name })}</h1>
+        <h1 className="type-name text-[clamp(1.8rem,5vw,3.4rem)]">{t("hello", { name: client.name.split(" ")[0] ?? client.name })}</h1>
         <form action={signOutClient}>
           <input type="hidden" name="locale" value={locale} />
           <button className="min-h-11 rounded-full border border-bone/30 px-5 text-sm hover:border-bone">{t("signOut")}</button>

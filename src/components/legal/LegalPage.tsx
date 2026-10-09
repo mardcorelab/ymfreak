@@ -8,7 +8,7 @@ export async function LegalPage({ kind, values, locale }: { kind: "privacy" | "t
   );
   return (
     <article className="mx-auto max-w-3xl px-5 pb-24 pt-36 sm:px-8 lg:pt-44">
-      <h1 className="type-name text-[clamp(3.4rem,8vw,6rem)] leading-[0.95]">{t(`${kind}.title`)}</h1>
+      <h1 className="type-name text-[clamp(1.9rem,5.2vw,3.6rem)]">{t(`${kind}.title`)}</h1>
       <p className="mt-4 text-sm text-ash">{t("updated", { date: updated })}</p>
       <p className="mt-8 max-w-[62ch] text-lg text-bone/90">{t(`${kind}.intro`)}</p>
       <ol className="mt-12 grid gap-10">

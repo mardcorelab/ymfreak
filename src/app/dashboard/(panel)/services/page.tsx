@@ -29,7 +29,7 @@ export default async function ServicesAdmin({ searchParams }: { searchParams: Pr
                 </span>
               </span>
               <span className="whitespace-nowrap text-right">
-                <span className="type-head num text-2xl">{formatMoney(s.priceCents, s.currency, "es")}</span>
+                <span className="type-figure num text-2xl">{formatMoney(s.priceCents, s.currency, "es")}</span>
                 <span className="block text-xs text-ash">{UNIT[s.pricingUnit]}</span>
               </span>
             </Link>

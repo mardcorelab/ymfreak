@@ -18,6 +18,7 @@
   --color-brass: #c9a75f;
 
   --font-sans: var(--font-archivo), "Archivo", ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-michroma), "Michroma", var(--font-archivo), ui-sans-serif, sans-serif;
 
   --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -47,17 +48,26 @@
   }
 }
 
-/* Archivo's width axis is the typographic voice: tall and condensed for the
-   name and headings, normal width for reading. */
+/* Titles use Michroma, wide and square like the slogan lettering; reading
+   text stays in Archivo at normal width. */
 @utility type-name {
-  font-weight: 800;
-  font-stretch: 62%;
-  font-variation-settings: "wdth" 62;
-  text-transform: uppercase;
-  line-height: 0.86;
-  letter-spacing: -0.012em;
+  font-family: var(--font-display);
+  font-weight: 400;
+  line-height: 1.12;
+  letter-spacing: 0.01em;
+  overflow-wrap: break-word;
+  text-wrap: balance;
 }
 @utility type-head {
+  font-family: var(--font-display);
+  font-weight: 400;
+  line-height: 1.16;
+  letter-spacing: 0.005em;
+  overflow-wrap: break-word;
+  text-wrap: balance;
+}
+/* Figures (prices, counters, codes): condensed Archivo, compact and tabular. */
+@utility type-figure {
   font-weight: 700;
   font-stretch: 75%;
   font-variation-settings: "wdth" 75;

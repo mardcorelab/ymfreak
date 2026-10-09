@@ -259,7 +259,7 @@ function Metric({ label, value, hint, big = false, warn = false, testId }: { lab
   return (
     <div className={`rounded-xl border p-5 ${warn ? "border-amber-400/50" : "border-rule"} ${big ? "sm:col-span-2 lg:col-span-1" : ""}`}>
       <dt className="text-sm text-ash">{label}</dt>
-      <dd className={`type-head num mt-2 ${big ? "text-5xl" : "text-4xl"} ${warn ? "text-amber-200" : ""}`} data-testid={testId}>
+      <dd className={`type-figure num mt-2 ${big ? "text-5xl" : "text-4xl"} ${warn ? "text-amber-200" : ""}`} data-testid={testId}>
         {value}
       </dd>
       {hint && <dd className="mt-2 text-xs text-ash">{hint}</dd>}

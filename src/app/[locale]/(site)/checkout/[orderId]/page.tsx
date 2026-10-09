@@ -72,7 +72,7 @@ export default async function CheckoutPage({ params, searchParams }: Props) {
 
   return (
     <section className="mx-auto max-w-3xl px-5 pb-24 pt-36 sm:px-8 lg:pt-44">
-      <h1 className="type-name text-[clamp(3.4rem,8vw,6rem)] leading-[0.95]">{t("title")}</h1>
+      <h1 className="type-name text-[clamp(1.9rem,5.2vw,3.6rem)]">{t("title")}</h1>
 
       {shownResult && (
         <p
@@ -86,7 +86,7 @@ export default async function CheckoutPage({ params, searchParams }: Props) {
       <dl className="mt-10 grid gap-6 sm:grid-cols-2">
         <div>
           <dt className="text-sm text-ash">{t("code")}</dt>
-          <dd className="type-head num mt-1 text-4xl tracking-wide">{b.code}</dd>
+          <dd className="type-figure num mt-1 text-4xl tracking-wide">{b.code}</dd>
         </div>
         <div>
           <dt className="sr-only">{t("title")}</dt>
@@ -147,7 +147,7 @@ export default async function CheckoutPage({ params, searchParams }: Props) {
           )}
           <div className="flex items-baseline justify-between gap-4 border-t border-rule pt-3">
             <dt className="font-semibold">Total</dt>
-            <dd className="type-head num text-3xl">{money(order.totalCents)}</dd>
+            <dd className="type-figure num text-3xl">{money(order.totalCents)}</dd>
           </div>
           <div className="flex justify-between gap-4 text-sm">
             <dt className="text-ash">{t("paidLabel")}</dt>

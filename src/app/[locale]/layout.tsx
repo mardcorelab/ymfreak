@@ -7,7 +7,7 @@ import { agentAvailable } from "@/server/agent/model";
 import { AgentWidget } from "@/components/agent/AgentWidget";
 import { Analytics } from "@/components/site/Analytics";
 import { siteUrl } from "@/lib/seo";
-import { archivo } from "@/lib/fonts";
+import { archivo, michroma } from "@/lib/fonts";
 import "../globals.css";
 
 
@@ -46,7 +46,7 @@ export default async function LocaleLayout({
   setRequestLocale(locale);
 
   return (
-    <html lang={locale} className={archivo.variable}>
+    <html lang={locale} className={`${archivo.variable} ${michroma.variable}`}>
       <body className="min-h-dvh antialiased">
         <NextIntlClientProvider>
           {children}

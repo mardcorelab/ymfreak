@@ -36,7 +36,7 @@ export default async function BookPage({ params, searchParams }: Props) {
 
   return (
     <section className="mx-auto max-w-[90rem] px-5 pb-24 pt-36 sm:px-8 lg:px-12 lg:pb-32 lg:pt-44">
-      <h1 className="type-name max-w-[12ch] text-[clamp(3.4rem,8vw,7rem)] leading-[0.95]">{t("title")}</h1>
+      <h1 className="type-name text-[clamp(1.9rem,5.2vw,3.6rem)]">{t("title")}</h1>
 
       {!open ? (
         <>

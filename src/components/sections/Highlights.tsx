@@ -26,7 +26,7 @@ export function Highlights({ achievements }: { achievements: AchievementVM[] }) 
             </p>
           </div>
           <div>
-            <h3 className="type-head text-[clamp(2.4rem,6vw,5rem)]">{a.title}</h3>
+            <h3 className="type-head text-[clamp(1.6rem,3.6vw,2.8rem)]">{a.title}</h3>
             <p className="mt-3 max-w-[52ch] text-lg text-bone/80">{a.detail}</p>
           </div>
         </li>

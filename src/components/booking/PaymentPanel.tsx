@@ -45,7 +45,7 @@ export function PayForm({ orderId, locale, label, amount }: { orderId: string; l
   return (
     <form action={action} className="rounded-lg bg-key p-6">
       <p className="text-sm text-bone/70">{t("amountNow")}</p>
-      <p className="type-head num mt-1 text-5xl">{amount}</p>
+      <p className="type-figure num mt-1 text-5xl">{amount}</p>
       <div className="mt-5">
         <PayButton label={label} leaving={leaving} />
       </div>

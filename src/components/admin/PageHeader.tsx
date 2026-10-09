@@ -20,7 +20,7 @@ export function PageHeader({
             ← {back.label}
           </Link>
         )}
-        <h1 className="type-head mt-1 text-4xl sm:text-5xl">{title}</h1>
+        <h1 className="type-figure mt-1 text-4xl sm:text-5xl">{title}</h1>
         {description && <p className="mt-2 max-w-[62ch] text-ash">{description}</p>}
       </div>
       {actions}

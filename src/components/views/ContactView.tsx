@@ -11,7 +11,7 @@ export function ContactView({ contact, business }: { contact: ContactVM; busines
   return (
     <section className="mx-auto grid max-w-[90rem] gap-12 px-5 pb-24 pt-36 sm:px-8 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:gap-20 lg:px-12 lg:pb-32 lg:pt-44">
       <div>
-        <h1 className="type-name max-w-[12ch] text-[clamp(3.4rem,8vw,7rem)] leading-[0.95]">{t("contact.title")}</h1>
+        <h1 className="type-name text-[clamp(1.9rem,5.2vw,3.6rem)]">{t("contact.title")}</h1>
         <p className="mt-8 max-w-[52ch] text-lg text-bone/80">{t("contact.intro")}</p>
 
         <ul className="mt-12 divide-y divide-rule border-y border-rule">

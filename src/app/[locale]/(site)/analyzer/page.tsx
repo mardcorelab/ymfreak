@@ -23,7 +23,7 @@ export default async function AnalyzerPage({ params }: Props) {
   const [t, mastering] = await Promise.all([getTranslations("analyzer"), getServiceBySlug("mastering")]);
   return (
     <section className="mx-auto max-w-4xl px-5 pb-24 pt-36 sm:px-8 lg:pt-44">
-      <h1 className="type-name text-[clamp(3.2rem,8vw,6rem)] leading-[0.95]">{t("title")}</h1>
+      <h1 className="type-name text-[clamp(1.9rem,5.2vw,3.6rem)]">{t("title")}</h1>
       <p className="mt-6 max-w-[60ch] text-lg text-bone/85">{t("intro")}</p>
       <div className="mt-10">
         <Analyzer masteringPrice={mastering ? formatMoney(mastering.priceCents, "USD", locale) : null} agent={agentAvailable()} />

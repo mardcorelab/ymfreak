@@ -7,7 +7,7 @@ export function ClosingCta({ contact }: { contact: ContactVM }) {
 
   return (
     <section className="mx-auto max-w-[90rem] px-5 py-28 sm:px-8 lg:px-12 lg:py-36">
-      <h2 className="type-name max-w-[14ch] text-[clamp(3.4rem,9vw,8rem)] leading-[0.95]">{t("closing.title")}</h2>
+      <h2 className="type-name max-w-[22ch] text-[clamp(2rem,5.6vw,4rem)]">{t("closing.title")}</h2>
       <p className="mt-8 max-w-[46ch] text-lg text-bone/80">{t("closing.body")}</p>
       <div className="mt-10 flex flex-wrap gap-3">
         {contact.email ? (

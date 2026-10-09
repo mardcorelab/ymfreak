@@ -23,7 +23,7 @@ export function About({ headingLevel = "h2" }: { headingLevel?: "h1" | "h2" }) {
         />
       </div>
       <div className="pb-4 md:pb-16">
-        <Heading className="type-head text-[clamp(2.8rem,6vw,5rem)]">{t("title")}</Heading>
+        <Heading className="type-head text-[clamp(1.6rem,3.6vw,2.8rem)]">{t("title")}</Heading>
         <div className="mt-8 max-w-[58ch] space-y-5 text-lg text-bone/85">
           <p>{t("p1")}</p>
           <p>{t("p2")}</p>

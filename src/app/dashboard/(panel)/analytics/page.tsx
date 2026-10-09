@@ -296,7 +296,7 @@ function Stat({ label, value, hint }: { label: string; value: number | string; h
   return (
     <div className="rounded-lg border border-rule p-5">
       <p className="text-sm text-ash">{label}</p>
-      <p className="type-head num mt-2 text-4xl">{value}</p>
+      <p className="type-figure num mt-2 text-4xl">{value}</p>
       <p className="mt-1 text-xs text-ash">{hint}</p>
     </div>
   );

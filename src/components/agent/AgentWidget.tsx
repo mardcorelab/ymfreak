@@ -451,7 +451,7 @@ function Card({
       return (
         <div className="rounded-xl border border-emerald-400/30 bg-emerald-500/10 p-4" data-card="booked">
           <p className="text-xs text-ash uppercase">{t("code")}</p>
-          <p className="type-head num mt-1 text-3xl">{card.code}</p>
+          <p className="type-figure num mt-1 text-3xl">{card.code}</p>
           {card.holdUntil && <p className="mt-2 text-sm text-bone/80">{t("holdUntil", { time: card.holdUntil })}</p>}
           <a
             href={card.checkoutPath}

@@ -20,7 +20,7 @@ function Step({ n, title, children }: { n: number; title: string; children: Reac
   return (
     <fieldset className="border-t border-rule pt-8">
       <legend className="float-left mb-6 flex w-full items-baseline gap-4">
-        <span className="type-head num text-4xl text-bone/35">{n}</span>
+        <span className="type-figure num text-4xl text-bone/35">{n}</span>
         <span className="type-sub text-2xl">{title}</span>
       </legend>
       <div className="clear-both">{children}</div>
@@ -193,7 +193,7 @@ export function BookingForm({
                   <span className="block text-sm text-ash">{s.description}</span>
                 </span>
               </span>
-              <span className="type-head num whitespace-nowrap text-xl">{s.price}</span>
+              <span className="type-figure num whitespace-nowrap text-xl">{s.price}</span>
             </label>
           ))}
         </div>
@@ -204,7 +204,7 @@ export function BookingForm({
             <button type="button" aria-label={t("less")} disabled={qty <= 1} onClick={() => setQty((q) => q - 1)} className="size-11 text-xl disabled:opacity-30">
               −
             </button>
-            <output aria-live="polite" className="type-head num w-10 text-center text-2xl">
+            <output aria-live="polite" className="type-figure num w-10 text-center text-2xl">
               {qty}
             </output>
             <button type="button" aria-label={t("more")} disabled={qty >= maxQty} onClick={() => setQty((q) => q + 1)} className="size-11 text-xl disabled:opacity-30">
@@ -339,7 +339,7 @@ export function BookingForm({
               </div>
               <div className="flex items-baseline justify-between gap-4">
                 <dt className="font-semibold">{t("depositNow", { percent: quote.depositPercent })}</dt>
-                <dd className="type-head num text-3xl">{money(quote.depositCents)}</dd>
+                <dd className="type-figure num text-3xl">{money(quote.depositCents)}</dd>
               </div>
               <div className="flex justify-between gap-4 text-sm text-ash">
                 <dt>{t("balanceLater")}</dt>

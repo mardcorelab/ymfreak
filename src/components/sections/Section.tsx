@@ -29,7 +29,7 @@ export function Section({
       >
         <div className="mb-12 flex flex-wrap items-end justify-between gap-6 lg:mb-16">
           <div>
-            <Heading className="type-head text-[clamp(2.8rem,6vw,5rem)]">{title}</Heading>
+            <Heading className="type-head text-[clamp(1.6rem,3.6vw,2.8rem)]">{title}</Heading>
             {intro && <p className="mt-4 max-w-[56ch] text-lg text-bone/75">{intro}</p>}
           </div>
           {aside}

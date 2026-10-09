@@ -32,11 +32,11 @@ export default async function OrdersAdmin() {
       <dl className="mb-8 grid gap-4 sm:grid-cols-2">
         <div className="rounded-lg border border-rule p-4">
           <dt className="text-sm text-ash">Cobrado en total</dt>
-          <dd className="type-head num mt-1 text-3xl">{fmtMoney(totals._sum.amountCents ?? 0)}</dd>
+          <dd className="type-figure num mt-1 text-3xl">{fmtMoney(totals._sum.amountCents ?? 0)}</dd>
         </div>
         <div className="rounded-lg border border-rule p-4">
           <dt className="text-sm text-ash">De eso, en línea por PayPal</dt>
-          <dd className="type-head num mt-1 text-3xl">{fmtMoney(online)}</dd>
+          <dd className="type-figure num mt-1 text-3xl">{fmtMoney(online)}</dd>
         </div>
       </dl>
       {orders.length === 0 ? (

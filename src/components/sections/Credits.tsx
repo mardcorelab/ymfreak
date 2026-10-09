@@ -28,7 +28,7 @@ export function Credits({ achievements }: { achievements: AchievementVM[] }) {
         ))}
         <div className="flex items-baseline gap-4 py-7 md:px-8">
           <dt className="sr-only">{t("credits.years")}</dt>
-          <dd className="type-head num text-5xl">{t("credits.yearsValue")}</dd>
+          <dd className="type-figure num text-5xl">{t("credits.yearsValue")}</dd>
           <dd className="text-[0.95rem] text-bone/75">{t("credits.years")}</dd>
         </div>
       </dl>

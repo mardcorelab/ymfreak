@@ -10,7 +10,7 @@ export function Process({ depositPercent }: { depositPercent: number }) {
       {steps.map((n) => (
         <li key={n} className="relative border-t border-bone/30 pt-6">
           <span aria-hidden="true" className="absolute -top-[5px] left-0 size-[9px] rounded-full bg-bone" />
-          <p className="type-head num text-5xl text-bone/35">{n}</p>
+          <p className="type-figure num text-5xl text-bone/35">{n}</p>
           <h3 className="type-sub mt-4 text-2xl">{t(`s${n}t`)}</h3>
           <p className="mt-2 text-bone/75">{t(`s${n}d`, { deposit: depositPercent })}</p>
         </li>

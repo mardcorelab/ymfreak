@@ -28,7 +28,7 @@ export function WorkGrid({ items }: { items: PortfolioVM[] }) {
             />
             <div className="mt-5 flex items-start justify-between gap-6">
               <div>
-                <h3 className="type-head text-[clamp(1.9rem,3vw,2.6rem)]">{item.title}</h3>
+                <h3 className="type-head text-[clamp(1.1rem,2vw,1.5rem)]">{item.title}</h3>
                 <p className="mt-1 text-lg">{item.artist}</p>
                 <p className="mt-2 text-ash">
                   {item.credit && <span className="text-bone/90">{item.credit}. </span>}

@@ -63,7 +63,7 @@ export default async function ReleasePage({ params }: Props) {
           ) : null}
         </div>
 
-        <h1 className="type-head mt-6 text-4xl">{release.title}</h1>
+        <h1 className="type-head mt-6 text-2xl">{release.title}</h1>
         <p className="mt-1 text-lg text-bone/85">
           {release.artist}
           {release.year !== null && <span className="num text-ash"> · {release.year}</span>}

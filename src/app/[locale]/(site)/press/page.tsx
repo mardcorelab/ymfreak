@@ -43,7 +43,7 @@ export default async function PressPage({ params }: Props) {
 
   return (
     <section className="mx-auto max-w-5xl px-5 pb-24 pt-36 sm:px-8 lg:pt-44">
-      <h1 className="type-name text-[clamp(3.4rem,8vw,6rem)] leading-[0.95]">{t("title")}</h1>
+      <h1 className="type-name text-[clamp(1.9rem,5.2vw,3.6rem)]">{t("title")}</h1>
       <p className="mt-6 max-w-[60ch] text-lg text-bone/85">{t("intro")}</p>
 
       <div className="mt-14 grid gap-10 lg:grid-cols-[minmax(0,1fr)_20rem]">

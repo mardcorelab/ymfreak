@@ -20,7 +20,7 @@ function useServiceLabels() {
 function Price({ service, unit }: { service: ServiceVM; unit: string }) {
   return (
     <p className="whitespace-nowrap text-right">
-      <span className="type-head num text-3xl">{service.price}</span>
+      <span className="type-figure num text-3xl">{service.price}</span>
       <span className="block text-sm text-ash">{unit}</span>
     </p>
   );
@@ -49,7 +49,7 @@ export function ServiceList({
         <article className="self-start rounded-lg bg-key p-7 sm:p-9 lg:sticky lg:top-8">
           <p className="text-sm text-bone/70">{t("flagship")}</p>
           <div className="mt-3 flex items-start justify-between gap-6">
-            <h3 className="type-head text-[clamp(2.2rem,4vw,3.2rem)]">{flagship.name}</h3>
+            <h3 className="type-head text-[clamp(1.15rem,2.2vw,1.7rem)]">{flagship.name}</h3>
             <Price service={flagship} unit={unit(flagship)} />
           </div>
           <p className="mt-3 text-bone/80">{flagship.description}</p>
