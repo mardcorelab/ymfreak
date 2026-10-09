@@ -5,6 +5,8 @@ import { useLocale, useTranslations } from "next-intl";
 import { usePathname } from "next/navigation";
 import { track } from "@/components/site/Analytics";
 import { Monogram } from "@/components/brand/Logo";
+import { platformVerdicts } from "@/lib/audio/loudness";
+import { AnalyzeError, analyzeAudioFile } from "@/components/analyzer/analyze";
 import { AGENT_LIMITS, type AgentCard, type ChatItem, type ChatResponse, type ConfirmResponse } from "@/lib/agent-types";
 
 const STORAGE_KEY = "ymf-agent-conversation";
@@ -25,6 +27,20 @@ function writeStored(id: string | null) {
   }
 }
 
+/** Which part of the site the visitor is on, so the assistant can greet and suggest accordingly. */
+const PAGES = ["services", "book", "analyzer", "portfolio", "release", "account", "checkout", "faq", "contact", "press", "about", "achievements", "links"] as const;
+type PageKey = (typeof PAGES)[number] | "home" | "other";
+function pageKeyOf(path: string): PageKey {
+  const seg = path.replace(/^\/(es|en)/, "").split("/")[1] ?? "";
+  if (seg === "") return "home";
+  if (seg === "r") return "release";
+  return (PAGES as readonly string[]).includes(seg) ? (seg as PageKey) : "other";
+}
+/** Pages with their own greeting, suggestions and a gentle nudge. */
+const GUIDED: PageKey[] = ["home", "services", "book", "analyzer", "portfolio", "release", "account"];
+const NUDGE: PageKey[] = ["services", "book", "analyzer", "release"];
+const NUDGE_KEY = "ymf-agent-nudged";
+
 /** Opens the assistant from anywhere on the site: window.dispatchEvent(new Event("ymf:agent-open")). */
 export const OPEN_EVENT = "ymf:agent-open";
 
@@ -41,8 +57,45 @@ export function AgentWidget({ name = "" }: { name?: string }) {
   const listRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const launcherRef = useRef<HTMLButtonElement>(null);
+  const pathname = usePathname() ?? "";
+  const page = pageKeyOf(pathname);
+  const guided = GUIDED.includes(page);
   // The link-in-bio page has its own button for the assistant.
-  const hideLauncher = /^\/(es|en)\/links\/?$/.test(usePathname() ?? "");
+  const hideLauncher = page === "links";
+  const [firstName, setFirstName] = useState<string | null>(null);
+  const [nudge, setNudge] = useState(false);
+  const [analyzing, setAnalyzing] = useState<number | null>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  // A returning client signed in to "My account" is greeted by name.
+  useEffect(() => {
+    if (!open) return;
+    fetch("/api/agent/me", { cache: "no-store" })
+      .then((r) => r.json() as Promise<{ firstName: string | null }>)
+      .then((d) => setFirstName(d.firstName))
+      .catch(() => undefined);
+  }, [open]);
+
+  // On pages where people decide, offer help once per visit after a while.
+  useEffect(() => {
+    setNudge(false);
+    if (open || !NUDGE.includes(page)) return;
+    try {
+      if (window.sessionStorage.getItem(NUDGE_KEY)) return;
+    } catch {
+      /* no storage: still fine */
+    }
+    const timer = setTimeout(() => setNudge(true), 20_000);
+    return () => clearTimeout(timer);
+  }, [page, open]);
+  const dismissNudge = () => {
+    setNudge(false);
+    try {
+      window.sessionStorage.setItem(NUDGE_KEY, "1");
+    } catch {
+      /* ignore */
+    }
+  };
 
   useEffect(() => {
     const onOpen = () => setOpen(true);
@@ -100,7 +153,7 @@ export function AgentWidget({ name = "" }: { name?: string }) {
         const res = await fetch("/api/agent/chat", {
           method: "POST",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({ conversationId, text, locale }),
+          body: JSON.stringify({ conversationId, text, locale, page }),
         });
         const data = (await res.json()) as ChatResponse;
         if (data.conversationId) {
@@ -116,7 +169,7 @@ export function AgentWidget({ name = "" }: { name?: string }) {
         inputRef.current?.focus();
       }
     },
-    [busy, conversationId, locale, say, t],
+    [busy, conversationId, locale, page, say, t],
   );
 
   const decide = useCallback(
@@ -150,6 +203,45 @@ export function AgentWidget({ name = "" }: { name?: string }) {
     [conversationId, locale, say, t],
   );
 
+  /** Measures a song in the browser and sends the numbers to the assistant. */
+  const analyzeSong = useCallback(
+    async (file: File) => {
+      if (busy) return;
+      setAnalyzing(0);
+      try {
+        const { result: r } = await analyzeAudioFile(file, (step, p) => setAnalyzing(step === "decoding" ? 0 : p));
+        const fmt = (n: number) => (Number.isFinite(n) ? n.toLocaleString(locale === "es" ? "es-DO" : "en-US", { maximumFractionDigits: 1, minimumFractionDigits: 1 }) : "−∞");
+        const spotify = platformVerdicts(r).find((v) => v.name === "Spotify")!;
+        const gap = spotify.target - r.integrated;
+        const spotifyText =
+          spotify.change < -0.05
+            ? t("analysis.down", { db: fmt(-spotify.change) })
+            : gap > 0.05 && !spotify.canReachTarget
+              ? t("analysis.quieter", { db: fmt(gap - spotify.change) })
+              : spotify.change > 0.05
+                ? t("analysis.up", { db: fmt(spotify.change) })
+                : t("analysis.same");
+        setAnalyzing(null);
+        track("click", window.location.pathname, "chat-analyzed");
+        await send(
+          t("analysis.message", {
+            file: file.name.slice(0, 80),
+            lufs: fmt(r.integrated),
+            tp: fmt(r.truePeak),
+            lra: fmt(r.lra),
+            clip: r.clippedRuns > 0 ? t("analysis.clip", { count: r.clippedRuns }) : "",
+            spotify: spotifyText,
+          }),
+        );
+      } catch (e) {
+        setAnalyzing(null);
+        const code = e instanceof AnalyzeError ? e.code : "generic";
+        say(t(`analysis.errors.${code}`));
+      }
+    },
+    [busy, locale, say, send, t],
+  );
+
   const reset = () => {
     writeStored(null);
     setConversationId(null);
@@ -162,11 +254,32 @@ export function AgentWidget({ name = "" }: { name?: string }) {
 
   return (
     <>
+      {!open && !hideLauncher && nudge && (
+        <div className="fixed right-4 bottom-[5.25rem] z-40 flex max-w-[17rem] items-start gap-2 rounded-xl border border-rule-key bg-studio-deep p-3 text-sm shadow-[0_10px_30px_rgba(0,0,0,0.5)] sm:right-6 sm:bottom-[5.75rem]" role="status">
+          <button
+            type="button"
+            onClick={() => {
+              dismissNudge();
+              setOpen(true);
+              track("agent_open");
+            }}
+            className="text-left text-bone/90 hover:text-bone"
+          >
+            {t(`pages.${page}.nudge`)}
+          </button>
+          <button type="button" onClick={dismissNudge} aria-label={t("close")} className="-mt-1 -mr-1 grid size-7 shrink-0 place-items-center rounded-full text-ash hover:text-bone">
+            <svg viewBox="0 0 20 20" className="size-4" aria-hidden>
+              <path d="M5 5l10 10M15 5L5 15" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+            </svg>
+          </button>
+        </div>
+      )}
       {!open && !hideLauncher && (
         <button
           ref={launcherRef}
           type="button"
           onClick={() => {
+            dismissNudge();
             setOpen(true);
             track("agent_open");
           }}
@@ -228,19 +341,32 @@ export function AgentWidget({ name = "" }: { name?: string }) {
           </header>
 
           <div ref={listRef} className="flex-1 space-y-3 overflow-y-auto overscroll-contain px-4 py-4" aria-live="polite" data-testid="agent-log">
-            <Bubble role="assistant">{name ? t("greetingNamed", { name }) : t("greeting")}</Bubble>
+            <Bubble role="assistant">
+              {firstName ? t("welcomeBack", { first: firstName }) : name ? t("greetingNamed", { name }) : t("greeting")}
+            </Bubble>
+            {items.length === 0 && guided && page !== "home" && <Bubble role="assistant">{t(`pages.${page}.hint`)}</Bubble>}
             {items.length === 0 && (
               <div className="flex flex-wrap gap-2 pt-1">
-                {(["s1", "s2", "s3"] as const).map((k) => (
-                  <button
-                    key={k}
-                    type="button"
-                    onClick={() => send(t(`suggestions.${k}`))}
-                    className="min-h-10 rounded-full border border-rule-key px-3.5 text-left text-sm text-bone/90 hover:border-bone/60 hover:bg-bone/5"
-                  >
-                    {t(`suggestions.${k}`)}
-                  </button>
-                ))}
+                {(["s1", "s2", "s3"] as const).map((k) => {
+                  const label = guided ? t(`pages.${page}.${k}`) : t(`suggestions.${k}`);
+                  return (
+                    <button
+                      key={k}
+                      type="button"
+                      onClick={() => send(label)}
+                      className="min-h-10 rounded-full border border-rule-key px-3.5 text-left text-sm text-bone/90 hover:border-bone/60 hover:bg-bone/5"
+                    >
+                      {label}
+                    </button>
+                  );
+                })}
+                <button
+                  type="button"
+                  onClick={() => fileRef.current?.click()}
+                  className="min-h-10 rounded-full border border-dashed border-rule-key px-3.5 text-left text-sm text-bone/90 hover:border-bone/60 hover:bg-bone/5"
+                >
+                  {t("analysis.suggest")}
+                </button>
               </div>
             )}
             {items.map((item, i) =>
@@ -251,6 +377,11 @@ export function AgentWidget({ name = "" }: { name?: string }) {
               ) : (
                 <Card key={i} card={item.card} busy={busy} onSend={send} onDecide={decide} />
               ),
+            )}
+            {analyzing !== null && (
+              <p className="text-sm text-ash" role="status">
+                {t("analysis.progress", { percent: Math.round(analyzing * 100) })}
+              </p>
             )}
             {busy && (
               <p className="flex items-center gap-2 text-sm text-ash" role="status">
@@ -275,6 +406,32 @@ export function AgentWidget({ name = "" }: { name?: string }) {
               <p className="px-1 pb-2 text-sm text-ash">{t("errors.CONVERSATION_LIMIT")}</p>
             ) : (
               <div className="flex items-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => fileRef.current?.click()}
+                  disabled={busy || analyzing !== null}
+                  aria-label={t("analysis.attach")}
+                  title={t("analysis.attach")}
+                  className="grid size-11 shrink-0 place-items-center rounded-full border border-rule-key text-ash transition hover:border-bone/60 hover:text-bone disabled:opacity-40"
+                >
+                  <svg viewBox="0 0 20 20" className="size-5" aria-hidden>
+                    <path d="M3 10v0M6 7v6M9 4v12M12 7v6M15 9v2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+                  </svg>
+                </button>
+                <input
+                  ref={fileRef}
+                  type="file"
+                  accept="audio/*,.wav,.aif,.aiff,.flac,.mp3,.m4a"
+                  className="sr-only"
+                  tabIndex={-1}
+                  aria-hidden
+                  data-testid="agent-audio-input"
+                  onChange={(e) => {
+                    const f = e.target.files?.[0];
+                    e.target.value = "";
+                    if (f) void analyzeSong(f);
+                  }}
+                />
                 <label htmlFor="agent-input" className="sr-only">
                   {t("placeholder")}
                 </label>

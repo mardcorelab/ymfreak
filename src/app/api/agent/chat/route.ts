@@ -21,6 +21,7 @@ export async function POST(request: Request) {
     text: body.text,
     locale: asLocale(body.locale),
     ip: await clientIp(),
+    page: typeof body.page === "string" && /^[a-z-]{1,20}$/.test(body.page) ? body.page : null,
   });
   return noStore(result, result.ok ? 200 : result.error === "RATE_LIMITED" ? 429 : result.error === "MODEL_ERROR" ? 502 : 200);
 }

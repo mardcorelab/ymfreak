@@ -14,6 +14,7 @@ import { AGENT_LIMITS, type AgentCard, type ChatItem, type ChatResponse, type Co
 import { recentWindow, toApiMessages, type Block, type ToolResultBlock, type ToolUseBlock } from "./llm";
 import { getAgentModel } from "./model";
 import { getAgentSettings } from "./settings";
+import { currentClient } from "../portal/session";
 import { dynamicPrompt, STABLE_PROMPT } from "./prompt";
 import { fmtTime, runTool, TOOL_DEFS, type Locale } from "./tools";
 
@@ -78,7 +79,7 @@ export async function loadConversation(id: string): Promise<{ conversationId: st
   return { conversationId: id, items: await withProposalState(id, visibleItems(rows), new Date()) };
 }
 
-export async function handleChat(input: { conversationId?: string | null; text: string; locale: Locale; ip: string }): Promise<ChatResponse> {
+export async function handleChat(input: { conversationId?: string | null; text: string; locale: Locale; ip: string; page?: string | null }): Promise<ChatResponse> {
   const model = getAgentModel();
   if (!model) return { ok: false, error: "NOT_CONFIGURED" };
   const text = input.text.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, "").trim();
@@ -100,10 +101,22 @@ export async function handleChat(input: { conversationId?: string | null; text: 
   await addRow(conversationId, "user", [{ type: "text", text }]);
   await db.conversation.update({ where: { id: conversationId }, data: { userMessages: { increment: 1 }, lastMessageAt: now } });
 
-  const [rules, open, agent] = await Promise.all([getSetting("business_rules"), bookingOpen(), getAgentSettings()]);
+  const [rules, open, agent, client] = await Promise.all([getSetting("business_rules"), bookingOpen(), getAgentSettings(), currentClient()]);
+  if (client && !conversation.customerId) {
+    await db.conversation.update({ where: { id: conversationId }, data: { customerId: client.id } }).catch(() => null);
+  }
   const system = {
     stable: STABLE_PROMPT,
-    dynamic: dynamicPrompt({ now, timeZone: rules.timeZone, bookingOpen: open, pageLocale: input.locale, name: agent.name, ownerNotes: agent.notes }),
+    dynamic: dynamicPrompt({
+      now,
+      timeZone: rules.timeZone,
+      bookingOpen: open,
+      pageLocale: input.locale,
+      name: agent.name,
+      ownerNotes: agent.notes,
+      page: input.page ?? null,
+      client: client ? await clientSummary(client.id, client.name, client.artistName) : null,
+    }),
   };
 
   const rows = (await db.message.findMany({ where: { conversationId, role: { not: "card" } }, orderBy: { seq: "desc" }, take: 80 })).reverse();
@@ -219,4 +232,19 @@ export async function confirmAction(input: { conversationId: string; actionId: s
   await addRow(input.conversationId, "assistant", [{ type: "text", text }]);
   await addRow(input.conversationId, "card", card);
   return { ok: true, items: [{ type: "text", role: "assistant", text }, { type: "card", card }] };
+}
+
+/** A short, private summary of a signed-in client's own projects for the assistant. */
+async function clientSummary(customerId: string, name: string, artist: string | null): Promise<string> {
+  const bookings = await db.booking.findMany({
+    where: { customerId },
+    include: { items: { include: { service: true } } },
+    orderBy: { createdAt: "desc" },
+    take: 5,
+  });
+  const lines = bookings.map((b) => {
+    const d = (b.projectDetails ?? {}) as { songTitle?: string };
+    return `• ${b.code}: ${b.items.map((i) => i.service.nameEs).join(" + ")}${d.songTitle ? ` («${d.songTitle}»)` : ""}, status ${b.status}`;
+  });
+  return [`Name: ${name}${artist ? ` (artist: ${artist})` : ""}`, ...(lines.length ? ["Projects:", ...lines] : ["No projects yet."])].join("\n");
 }

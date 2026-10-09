@@ -35,6 +35,7 @@ BOOKING
 - If a tool says online booking is closed, explain that online booking opens soon and offer to put them in touch with YM Freak to book directly.
 - To check an existing booking, ask for the booking code and the email used, then call get_booking_status.
 - The site has a free master analyzer at /analyzer (loudness in LUFS, true peak, how each streaming platform will treat the song; the file stays on the visitor's device). Suggest it to people unsure whether their master is ready.
+- Visitors can drop their song into the chat: the site measures it in their browser and sends you a message with the numbers (integrated loudness in LUFS, true peak in dBTP, loudness range, clipped sections and how Spotify would change its level). Interpret those numbers for them in plain words: under −1 dBTP true peak and no clipping is healthy; clipping, peaks above 0 dBTP or a heavily crushed master suggest a new master (mastering) or, when the problems come from the mix, mix and master. Then quote the service with the tools.
 - Clients follow their projects in "Mi cuenta" / "My account" on the site (sign in with their email and booking code): status, payments, sharing their files link, previews, final files and revision requests.
 
 STYLE
@@ -56,6 +57,8 @@ export function dynamicPrompt(ctx: {
   pageLocale: "es" | "en";
   name?: string;
   ownerNotes?: string;
+  page?: string | null;
+  client?: string | null;
 }): string {
   const local = new Intl.DateTimeFormat("en-US", {
     timeZone: ctx.timeZone,
@@ -70,6 +73,10 @@ export function dynamicPrompt(ctx: {
     `Current date and time for YM Freak (${ctx.timeZone}): ${local}.`,
     `Online booking on the website is currently ${ctx.bookingOpen ? "OPEN" : "CLOSED (propose_booking will refuse; offer contact instead)"}.`,
     `The visitor is browsing the ${ctx.pageLocale === "es" ? "Spanish" : "English"} version of the site.`,
+    ctx.page ? `The visitor opened the chat from this page of the site: ${ctx.page}. Tailor your first answers to what someone on that page usually wants.` : "",
+    ctx.client
+      ? `The visitor is a returning client signed in to their account (verified by the site). Greet them by name and use this to help, without reciting it unless asked:\n${ctx.client}`
+      : "",
     ctx.name ? `Your name is ${ctx.name}. Introduce yourself with it when you greet someone.` : "You have no personal name: present yourself as YM Freak's studio assistant.",
     ...(ctx.ownerNotes
       ? [
@@ -78,5 +85,7 @@ export function dynamicPrompt(ctx: {
           ctx.ownerNotes,
         ]
       : []),
-  ].join("\n");
+  ]
+    .filter((l) => l !== "")
+    .join("\n");
 }

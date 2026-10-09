@@ -1,14 +1,12 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { platformVerdicts, readWavInfo, type LoudnessResult } from "@/lib/audio/loudness";
+import { platformVerdicts, type LoudnessResult } from "@/lib/audio/loudness";
+import { AnalyzeError, analyzeAudioFile, type FileInfo } from "./analyze";
 import { track } from "@/components/site/Analytics";
 import { OPEN_EVENT } from "@/components/agent/AgentWidget";
 
-const MAX_BYTES = 500 * 1024 * 1024;
-
-type FileInfo = { name: string; format: string; bitDepth: number | null };
 type State =
   | { step: "idle" }
   | { step: "decoding" }
@@ -22,9 +20,6 @@ export function Analyzer({ masteringPrice, agent }: { masteringPrice: string | n
   const [state, setState] = useState<State>({ step: "idle" });
   const [dragging, setDragging] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  const workerRef = useRef<Worker | null>(null);
-
-  useEffect(() => () => workerRef.current?.terminate(), []);
 
   const fmt = useCallback(
     (n: number, digits = 1) => (Number.isFinite(n) ? n.toLocaleString(locale === "es" ? "es-DO" : "en-US", { minimumFractionDigits: digits, maximumFractionDigits: digits }) : "−∞"),
@@ -32,50 +27,15 @@ export function Analyzer({ masteringPrice, agent }: { masteringPrice: string | n
   );
 
   const analyze = useCallback(async (file: File) => {
-    if (file.size > MAX_BYTES) return setState({ step: "error", error: "tooBig" });
-    setState({ step: "decoding" });
-    let channels: Float32Array[];
-    let sampleRate: number;
-    let info: FileInfo;
     try {
-      const buffer = await file.arrayBuffer();
-      const wav = readWavInfo(new Uint8Array(buffer, 0, Math.min(buffer.byteLength, 1 << 16)));
-      const ext = file.name.split(".").pop()?.toUpperCase() ?? "";
-      info = { name: file.name, format: wav ? "WAV" : ext, bitDepth: wav?.bitDepth ?? null };
-      // Decode at the file's own rate when we know it, so nothing is resampled.
-      const Ctx = window.AudioContext ?? (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-      let ctx: AudioContext;
-      try {
-        ctx = new Ctx({ sampleRate: wav?.sampleRate ?? 48000 });
-      } catch {
-        ctx = new Ctx();
-      }
-      const audio = await ctx.decodeAudioData(buffer);
-      void ctx.close();
-      sampleRate = audio.sampleRate;
-      channels = Array.from({ length: Math.min(2, audio.numberOfChannels) }, (_, i) => new Float32Array(audio.getChannelData(i)));
-      if (audio.duration < 3) return setState({ step: "error", error: "short" });
-    } catch {
-      return setState({ step: "error", error: "decode" });
+      const { result, info } = await analyzeAudioFile(file, (step, p) =>
+        setState(step === "decoding" ? { step: "decoding" } : { step: "analyzing", progress: p }),
+      );
+      setState({ step: "done", result, file: info });
+      track("click", window.location.pathname, "analyzed");
+    } catch (e) {
+      setState({ step: "error", error: e instanceof AnalyzeError ? e.code : "generic" });
     }
-
-    setState({ step: "analyzing", progress: 0 });
-    workerRef.current?.terminate();
-    const worker = new Worker(new URL("./analyzer.worker.ts", import.meta.url));
-    workerRef.current = worker;
-    worker.onmessage = (e: MessageEvent<{ type: "progress"; p: number } | { type: "done"; result: LoudnessResult } | { type: "error" }>) => {
-      if (e.data.type === "progress") setState({ step: "analyzing", progress: e.data.p });
-      else if (e.data.type === "done") {
-        setState({ step: "done", result: e.data.result, file: info });
-        track("click", window.location.pathname, "analyzed");
-        worker.terminate();
-      } else {
-        setState({ step: "error", error: "generic" });
-        worker.terminate();
-      }
-    };
-    worker.onerror = () => setState({ step: "error", error: "generic" });
-    worker.postMessage({ channels, sampleRate }, channels.map((c) => c.buffer));
   }, []);
 
   const pick = (files: FileList | null) => {

@@ -366,7 +366,76 @@
       "whatsapp": "WhatsApp"
     },
     "openSub": "Your studio assistant · instant answers",
-    "greetingNamed": "Welcome to YM Freak's studio! I'm {name}, the studio assistant: ask me anything, get real prices and dates, and book your date right here. What are we making today?"
+    "greetingNamed": "Welcome to YM Freak's studio! I'm {name}, the studio assistant: ask me anything, get real prices and dates, and book your date right here. What are we making today?",
+    "welcomeBack": "Great to see you again, {first}! Shall we keep going with your project or start something new?",
+    "pages": {
+      "home": {
+        "hint": "",
+        "s1": "How much is mixing and mastering?",
+        "s2": "When would my song be ready?",
+        "s3": "What files do I need to send?",
+        "nudge": ""
+      },
+      "services": {
+        "hint": "Not sure which service you need? Tell me what stage your song is at and I'll tell you which one, with real price and date.",
+        "s1": "Which service do I need?",
+        "s2": "What does mixing and mastering include?",
+        "s3": "When would it be ready?",
+        "nudge": "Torn between services? I'll help you choose."
+      },
+      "book": {
+        "hint": "If you like, I can book it right here: tell me what you need and I'll prepare everything for you to confirm.",
+        "s1": "Book it for me here",
+        "s2": "How does the deposit work?",
+        "s3": "What's the next available date?",
+        "nudge": "Want help with your booking?"
+      },
+      "analyzer": {
+        "hint": "Drop your song here in the chat and I'll explain the numbers in plain words.",
+        "s1": "What do LUFS mean?",
+        "s2": "Is my master ready for Spotify?",
+        "s3": "How much is a master?",
+        "nudge": "Want me to explain your result?"
+      },
+      "portfolio": {
+        "hint": "Like one of these? I'll tell you how to get that sound for your song.",
+        "s1": "I want a sound like this",
+        "s2": "Which artists has he worked with?",
+        "s3": "How much is producing a song?",
+        "nudge": ""
+      },
+      "release": {
+        "hint": "Like how it sounds? I'll tell you how to get that sound for your song.",
+        "s1": "I want a sound like this",
+        "s2": "How much is mixing and mastering?",
+        "s3": "When would my song be ready?",
+        "nudge": "Want to sound like this? I'll show you how."
+      },
+      "account": {
+        "hint": "I can tell you your booking's status or what's next in your project.",
+        "s1": "How is my project going?",
+        "s2": "How do I request a revision?",
+        "s3": "I want another song",
+        "nudge": ""
+      }
+    },
+    "analysis": {
+      "suggest": "Analyze my song",
+      "attach": "Attach a song to analyze",
+      "progress": "Analyzing your song… {percent}%",
+      "message": "I analyzed my song “{file}”: {lufs} LUFS integrated, true peak {tp} dBTP, range {lra} LU{clip}. On Spotify {spotify}. What do you recommend?",
+      "clip": "{count, plural, one {, # clipped section} other {, # clipped sections}}",
+      "down": "it would be turned down {db} dB",
+      "quieter": "it would sound {db} dB quieter than other songs",
+      "up": "it would be turned up {db} dB",
+      "same": "it would play at its level, unchanged",
+      "errors": {
+        "tooBig": "That file is too big. Try one under 500 MB (WAV, MP3, FLAC or M4A).",
+        "decode": "I couldn't read that file. Try WAV, MP3, FLAC or M4A.",
+        "short": "The song is too short to measure. I need at least a few seconds.",
+        "generic": "I couldn't analyze the song. Try again or use the analyzer page."
+      }
+    }
   },
   "account": {
     "title": "My account",

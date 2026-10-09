@@ -366,7 +366,76 @@
       "whatsapp": "WhatsApp"
     },
     "openSub": "Tu asistente del estudio · responde al instante",
-    "greetingNamed": "¡Bienvenido al estudio de YM Freak! Soy {name}, el asistente del estudio: te respondo lo que quieras, te doy precios y fechas reales y te reservo tu fecha aquí mismo. ¿Qué quieres crear hoy?"
+    "greetingNamed": "¡Bienvenido al estudio de YM Freak! Soy {name}, el asistente del estudio: te respondo lo que quieras, te doy precios y fechas reales y te reservo tu fecha aquí mismo. ¿Qué quieres crear hoy?",
+    "welcomeBack": "¡Qué bueno verte de nuevo, {first}! ¿Seguimos con tu proyecto o empezamos algo nuevo?",
+    "pages": {
+      "home": {
+        "hint": "",
+        "s1": "¿Cuánto cuesta mezcla y mastering?",
+        "s2": "¿Para cuándo estaría lista mi canción?",
+        "s3": "¿Qué archivos tengo que enviar?",
+        "nudge": ""
+      },
+      "services": {
+        "hint": "¿No sabes qué servicio te toca? Dime en qué etapa está tu canción y te digo cuál, con precio y fecha reales.",
+        "s1": "¿Qué servicio necesito?",
+        "s2": "¿Qué incluye mezcla y mastering?",
+        "s3": "¿Para cuándo estaría lista?",
+        "nudge": "¿Dudas entre servicios? Te ayudo a elegir."
+      },
+      "book": {
+        "hint": "Si quieres, te hago la reserva aquí mismo: me dices qué necesitas y te preparo todo para confirmar.",
+        "s1": "Resérvame por aquí",
+        "s2": "¿Cómo funciona el depósito?",
+        "s3": "¿Cuál es la próxima fecha disponible?",
+        "nudge": "¿Te ayudo con la reserva?"
+      },
+      "analyzer": {
+        "hint": "Suelta tu canción aquí en el chat y te explico los números en palabras sencillas.",
+        "s1": "¿Qué significan los LUFS?",
+        "s2": "¿Mi master está listo para Spotify?",
+        "s3": "¿Cuánto cuesta un master?",
+        "nudge": "¿Quieres que te explique tu resultado?"
+      },
+      "portfolio": {
+        "hint": "¿Te gustó algún trabajo? Te digo cómo lograr ese sonido para tu canción.",
+        "s1": "Quiero un sonido así",
+        "s2": "¿Con qué artistas ha trabajado?",
+        "s3": "¿Cuánto cuesta producir una canción?",
+        "nudge": ""
+      },
+      "release": {
+        "hint": "¿Te gustó cómo suena? Te digo cómo lograr ese sonido para tu canción.",
+        "s1": "Quiero un sonido así",
+        "s2": "¿Cuánto cuesta mezcla y mastering?",
+        "s3": "¿Para cuándo estaría lista mi canción?",
+        "nudge": "¿Quieres sonar así? Te digo cómo."
+      },
+      "account": {
+        "hint": "Puedo decirte el estado de tu reserva o qué sigue en tu proyecto.",
+        "s1": "¿Cómo va mi proyecto?",
+        "s2": "¿Cómo pido una revisión?",
+        "s3": "Quiero otra canción",
+        "nudge": ""
+      }
+    },
+    "analysis": {
+      "suggest": "Analiza mi canción",
+      "attach": "Adjuntar canción para analizar",
+      "progress": "Analizando tu canción… {percent}%",
+      "message": "Analicé mi canción «{file}»: {lufs} LUFS integrados, pico real {tp} dBTP, rango {lra} LU{clip}. En Spotify {spotify}. ¿Qué me recomiendas?",
+      "clip": "{count, plural, one {, # zona con clipping} other {, # zonas con clipping}}",
+      "down": "le bajarían el volumen {db} dB",
+      "quieter": "sonaría {db} dB más bajito que el resto",
+      "up": "le subirían el volumen {db} dB",
+      "same": "sonaría a su nivel, sin cambios",
+      "errors": {
+        "tooBig": "Ese archivo es muy grande. Prueba con uno de menos de 500 MB (WAV, MP3, FLAC o M4A).",
+        "decode": "No pude leer ese archivo. Prueba con WAV, MP3, FLAC o M4A.",
+        "short": "La canción es muy corta para medirla. Necesito al menos unos segundos.",
+        "generic": "No pude analizar la canción. Inténtalo de nuevo o usa el analizador de la página."
+      }
+    }
   },
   "account": {
     "title": "Mi cuenta",
