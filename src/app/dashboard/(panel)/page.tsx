@@ -3,6 +3,7 @@ import { db } from "@/server/db";
 import { expireStaleHolds } from "@/server/booking/calendar";
 import { getSetting } from "@/server/settings";
 import { PageHeader } from "@/components/admin/PageHeader";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { YoutubeStatusRow } from "@/components/admin/YoutubeStatus";
 import { agentAvailable } from "@/server/agent/model";
 import { paymentStatus } from "@/server/payments";
@@ -59,7 +60,7 @@ export default async function DashboardHome() {
       <ul className="mt-4 grid gap-3 text-sm">
         <Status ok={pay.configured} label="PayPal" detail={pay.configured ? `Conectado (${pay.mode === "live" ? "dinero real" : pay.mode === "sandbox" ? "modo de prueba" : pay.mode})${pay.webhook ? "" : " · falta el webhook"}` : "Sin configurar"} />
         <Status ok={agentAvailable()} label="Asistente (Claude)" detail={agentAvailable() ? "Activo en la web" : "Falta ANTHROPIC_API_KEY"} />
-        <YoutubeStatusRow />
+        {/* <YoutubeStatusRow /> bisect */}
       </ul>
     </>
   );
