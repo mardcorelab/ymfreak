@@ -44,7 +44,8 @@
   "credits": {
     "label": "Credits",
     "years": "Years in production, mixing and mastering",
-    "yearsValue": "13+"
+    "yearsValue": "13+",
+    "views": "YouTube plays of the songs I've worked on"
   },
   "work": {
     "title": "Hear the work",
@@ -57,7 +58,8 @@
     "all": "See all work",
     "empty": "Work will be published here soon.",
     "coverAlt": "Cover of “{title}” by {artist}",
-    "allPlatforms": "Listen on your platform"
+    "allPlatforms": "Listen on your platform",
+    "views": "{count} plays on YouTube"
   },
   "services": {
     "title": "Services",
@@ -610,6 +612,8 @@
     "photosNote": "Web versions. For print or covers, ask for the high-resolution originals.",
     "download": "Download",
     "contactTitle": "Press contact",
-    "contactBody": "Interviews, press releases and collaborations:"
+    "contactBody": "Interviews, press releases and collaborations:",
+    "views": "YouTube plays",
+    "viewsValue": "{count} on the songs he has worked on (updated hourly)"
   }
 }

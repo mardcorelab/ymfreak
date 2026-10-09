@@ -22,6 +22,7 @@ export interface HomeData {
   business: BusinessHoursVM;
   nextAvailable: NextAvailableVM | null;
   videos: PortfolioVM[];
+  youtubeViews: { total: number; bySlug: Record<string, number> } | null;
 }
 
 export function HomeView({ data }: { data: HomeData }) {
@@ -30,7 +31,7 @@ export function HomeView({ data }: { data: HomeData }) {
   return (
     <>
       <Hero nextAvailable={data.nextAvailable} />
-      <Credits achievements={data.achievements} />
+      <Credits achievements={data.achievements} youtubeViews={data.youtubeViews?.total ?? null} />
 
       <Section
         id="trabajos"
@@ -42,7 +43,7 @@ export function HomeView({ data }: { data: HomeData }) {
           </ButtonLink>
         }
       >
-        <WorkGrid items={data.featured} />
+        <WorkGrid items={data.featured} views={data.youtubeViews?.bySlug} />
         {data.featured.some((f) => f.embed?.provider === "SPOTIFY") && (
           <p className="mt-10 text-sm text-ash">{t("work.embedNote")}</p>
         )}

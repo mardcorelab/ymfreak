@@ -33,6 +33,8 @@ const schema = z.object({
   /** Optional: Claude model id for the assistant (defaults in src/server/agent/model.ts). */
   ANTHROPIC_MODEL: z.string().optional(),
 
+  /** Optional: YouTube Data API key, to show real view counts of the releases. */
+  YOUTUBE_API_KEY: z.string().optional(),
   /** Optional: song.link API key, to find releases on every platform automatically. */
   SONGLINK_API_KEY: z.string().optional(),
 

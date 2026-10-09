@@ -1,12 +1,14 @@
 import { Link } from "@/i18n/navigation";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import type { PortfolioVM } from "@/lib/view-models";
 import { EmbedPlayer } from "@/components/media/EmbedPlayer";
 
 const PROVIDER_NAME = { SPOTIFY: "Spotify", YOUTUBE: "YouTube" } as const;
 
 /** Release cards: cover → in-page player, plus liner-note credits. */
-export function WorkGrid({ items }: { items: PortfolioVM[] }) {
+export function WorkGrid({ items, views }: { items: PortfolioVM[]; views?: Record<string, number> }) {
+  const locale = useLocale();
+  const fmt = new Intl.NumberFormat(locale === "es" ? "es-DO" : "en-US");
   const t = useTranslations("work");
 
   if (items.length === 0) return <p className="text-ash">{t("empty")}</p>;
@@ -34,6 +36,11 @@ export function WorkGrid({ items }: { items: PortfolioVM[] }) {
                   {item.credit && <span className="text-bone/90">{item.credit}. </span>}
                   {item.year !== null && <span className="num">{item.year}</span>}
                 </p>
+                {views?.[item.slug] ? (
+                  <p className="mt-1 text-sm text-ash" data-testid="release-views">
+                    {t("views", { count: fmt.format(views[item.slug]!) })}
+                  </p>
+                ) : null}
               </div>
               {item.externalUrl && provider && (
                 <Link

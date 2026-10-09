@@ -13,6 +13,7 @@ import {
 import { alternates, jsonLdScript, personJsonLd } from "@/lib/seo";
 import { getNextAvailable } from "@/server/booking/next-available";
 import { getYoutubeVideos, videoToVM } from "@/server/youtube";
+import { getYoutubeViews } from "@/server/youtube-stats";
 
 // Content changes from the dashboard should show up within a minute.
 export const revalidate = 60;
@@ -28,7 +29,7 @@ export default async function HomePage({ params }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const [featured, services, achievements, testimonials, contact, business, t, nextAvailable, videos] = await Promise.all([
+  const [featured, services, achievements, testimonials, contact, business, t, nextAvailable, videos, ytViews] = await Promise.all([
     getPortfolioVM(locale, { featuredOnly: true }),
     getServicesVM(locale),
     getAchievementsVM(locale),
@@ -38,6 +39,7 @@ export default async function HomePage({ params }: Props) {
     getTranslations({ locale, namespace: "meta" }),
     getNextAvailable(locale),
     getYoutubeVideos(),
+    getYoutubeViews(),
   ]);
 
   const sameAs = [contact.instagram, contact.youtube, contact.spotify, contact.tiktok].filter(Boolean);
@@ -50,7 +52,7 @@ export default async function HomePage({ params }: Props) {
           __html: jsonLdScript(personJsonLd({ locale, sameAs, email: contact.email, description: t("description") })),
         }}
       />
-      <HomeView data={{ featured, services, achievements, testimonials, contact, business, nextAvailable: nextAvailable ? { serviceName: nextAvailable.serviceName, label: nextAvailable.label } : null, videos: videos.filter((v) => !v.short).slice(0, 3).map(videoToVM) }} />
+      <HomeView data={{ featured, services, achievements, testimonials, contact, business, nextAvailable: nextAvailable ? { serviceName: nextAvailable.serviceName, label: nextAvailable.label } : null, videos: videos.filter((v) => !v.short).slice(0, 3).map(videoToVM), youtubeViews: ytViews ? { total: ytViews.total, bySlug: Object.fromEntries(ytViews.releases.map((r) => [r.slug, r.views])) } : null }} />
     </>
   );
 }

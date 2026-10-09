@@ -40,7 +40,7 @@ export default async function EditPortfolioItem({ params }: { params: Promise<{ 
         </div>
         <div className="mt-6">
           <AdminForm action={savePlatformLinks.bind(null, item.id)} submitLabel="Guardar enlaces">
-            <p className="text-xs text-ash">Pega el enlace del lanzamiento en cada plataforma donde esté. Los vacíos no se muestran.</p>
+            <p className="text-xs text-ash">Pega el enlace del lanzamiento en cada plataforma donde esté. Los vacíos no se muestran. El de YouTube (un video, o el álbum completo en YouTube Music) también suma sus reproducciones a la web.</p>
             <div className="grid gap-4 sm:grid-cols-2">
               {PLATFORMS.map((p) => (
                 <TextField key={p.key} name={`pl_${p.key}`} label={p.label} type="url" defaultValue={current.get(p.key) ?? (p.key === "spotify" && item.embedProvider === "SPOTIFY" ? item.externalUrl : p.key === "youtube" && item.embedProvider === "YOUTUBE" ? item.externalUrl : "")} />

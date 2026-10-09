@@ -11,6 +11,7 @@ import { quoteDelivery, sessionAvailability, type QuoteSummary } from "../bookin
 import { bookingOpen } from "../booking/public-actions";
 import { fromDateColumn } from "../booking/code";
 import { amountDue } from "../payments/service";
+import { getYoutubeViews } from "../youtube-stats";
 import { allowRate } from "../rate-limit";
 import type { BookingRequest } from "@/lib/validators/booking";
 import { proposeInput, toBookingRequest } from "./booking-input";
@@ -202,15 +203,16 @@ const getPortfolio = tool({
   kind: "read",
   def: {
     name: "get_portfolio",
-    description: "YM Freak's published releases (title, artist, year, his credit, link) and achievements (nominations, certifications).",
+    description: "YM Freak's published releases (title, artist, year, his credit, link, YouTube plays when available) and achievements (nominations, certifications). youtubeViewsTotal is the real sum of YouTube plays of those releases, read from YouTube.",
     input_schema: { type: "object", properties: {}, additionalProperties: false },
   },
   input: z.object({}).passthrough(),
   async run(_input, ctx) {
     const es = ctx.locale === "es";
-    const [items, achievements] = await Promise.all([
+    const [items, achievements, yt] = await Promise.all([
       db.portfolioItem.findMany({ where: { published: true }, orderBy: [{ sortOrder: "asc" }, { year: "desc" }], take: 30 }),
       db.achievement.findMany({ where: { published: true }, orderBy: { sortOrder: "asc" } }),
+      getYoutubeViews(),
     ]);
     return {
       result: {
@@ -220,7 +222,9 @@ const getPortfolio = tool({
           year: p.year,
           credit: es ? p.creditEs : p.creditEn,
           link: p.externalUrl,
+          youtubeViews: yt?.releases.find((r) => r.slug === p.slug)?.views ?? null,
         })),
+        youtubeViewsTotal: yt?.total ?? null,
         achievements: achievements.map((a) => ({ kind: a.kind, title: es ? a.titleEs : a.titleEn, detail: es ? a.detailEs : a.detailEn, year: a.year })),
         listen: `/${ctx.locale}/portfolio`,
       },

@@ -44,7 +44,8 @@
   "credits": {
     "label": "Créditos",
     "years": "Años en producción, mezcla y mastering",
-    "yearsValue": "13+"
+    "yearsValue": "13+",
+    "views": "reproducciones en YouTube de los temas en los que he trabajado"
   },
   "work": {
     "title": "Escucha el trabajo",
@@ -57,7 +58,8 @@
     "all": "Ver todos los trabajos",
     "empty": "Pronto habrá trabajos publicados aquí.",
     "coverAlt": "Portada de «{title}» de {artist}",
-    "allPlatforms": "Escúchalo en tu plataforma"
+    "allPlatforms": "Escúchalo en tu plataforma",
+    "views": "{count} reproducciones en YouTube"
   },
   "services": {
     "title": "Servicios",
@@ -610,6 +612,8 @@
     "photosNote": "Versiones para web. Para impresión o portadas, pide las originales en alta resolución.",
     "download": "Descargar",
     "contactTitle": "Contacto de prensa",
-    "contactBody": "Entrevistas, notas de prensa y colaboraciones:"
+    "contactBody": "Entrevistas, notas de prensa y colaboraciones:",
+    "views": "Reproducciones en YouTube",
+    "viewsValue": "{count} en los temas en los que ha trabajado (se actualiza cada hora)"
   }
 }

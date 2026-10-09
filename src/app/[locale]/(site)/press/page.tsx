@@ -7,6 +7,7 @@ import { getAchievementsVM, getContactVM, getPortfolioVM } from "@/server/site-d
 import { CopyButton } from "@/components/site/CopyButton";
 import { MonogramTile, Wordmark, Monogram } from "@/components/brand/Logo";
 import { RecordMark } from "@/components/ui/RecordMark";
+import { getYoutubeViews } from "@/server/youtube-stats";
 
 export const revalidate = 60;
 type Props = { params: Promise<{ locale: AppLocale }> };
@@ -27,12 +28,13 @@ const PHOTOS = [
 export default async function PressPage({ params }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const [t, tAll, achievements, credits, contact] = await Promise.all([
+  const [t, tAll, achievements, credits, contact, yt] = await Promise.all([
     getTranslations("press"),
     getTranslations(),
     getAchievementsVM(locale),
     getPortfolioVM(locale),
     getContactVM(),
+    getYoutubeViews(),
   ]);
   const bioShort = tAll("about.p1");
   const bioLong = [tAll("about.p1"), tAll("about.p2"), tAll("about.p3")].join("\n\n");
@@ -114,6 +116,12 @@ export default async function PressPage({ params }: Props) {
                 <dt className="text-ash">{t("experience")}</dt>
                 <dd>{t("experienceValue")}</dd>
               </div>
+              {yt && yt.total > 0 && (
+                <div>
+                  <dt className="text-ash">{t("views")}</dt>
+                  <dd>{t("viewsValue", { count: new Intl.NumberFormat(locale === "es" ? "es-DO" : "en-US").format(yt.total) })}</dd>
+                </div>
+              )}
               {achievements.length > 0 && (
                 <div>
                   <dt className="text-ash">{t("highlights")}</dt>

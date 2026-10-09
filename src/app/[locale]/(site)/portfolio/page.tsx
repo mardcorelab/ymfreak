@@ -5,6 +5,7 @@ import { Section } from "@/components/sections/Section";
 import { WorkGrid } from "@/components/sections/WorkGrid";
 import { getPortfolioVM } from "@/server/site-data";
 import { alternates } from "@/lib/seo";
+import { getYoutubeViews } from "@/server/youtube-stats";
 
 export const revalidate = 60;
 type Props = { params: Promise<{ locale: AppLocale }> };
@@ -18,11 +19,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function PortfolioPage({ params }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const [items, t] = await Promise.all([getPortfolioVM(locale), getTranslations("work")]);
+  const [items, t, yt] = await Promise.all([getPortfolioVM(locale), getTranslations("work"), getYoutubeViews()]);
+  const views = yt ? Object.fromEntries(yt.releases.map((r) => [r.slug, r.views])) : undefined;
 
   return (
     <Section headingLevel="h1" title={t("title")} intro={t("intro")}>
-      <WorkGrid items={items} />
+      <WorkGrid items={items} views={views} />
       {items.some((i) => i.embed?.provider === "SPOTIFY") && <p className="mt-10 text-sm text-ash">{t("embedNote")}</p>}
     </Section>
   );
