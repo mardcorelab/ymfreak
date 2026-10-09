@@ -517,7 +517,7 @@ const proposeBooking = tool({
         name: req.customer.name,
         email: req.customer.email,
         phone: req.customer.phone ?? null,
-        services: rows[0].value,
+        services: rows[0]?.value ?? "",
         artist: req.project.artistName,
         song: req.project.songTitle ?? null,
         total: summary.total,
