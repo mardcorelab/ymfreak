@@ -47,6 +47,9 @@ jobs:
           npx next start -p 3000 > /tmp/next.log 2>&1 &
           for i in $(seq 1 60); do curl -sf http://localhost:3000/es > /dev/null && break; sleep 1; done
           scripts/ci-run.sh e2e npx playwright test || { tail -50 /tmp/next.log | sed 's/^/::error title=server::/'; exit 1; }
+      - name: Summarise failed traces
+        if: failure()
+        run: node scripts/trace-summary.mjs
       - name: Keep Playwright traces of failed tests
         if: failure()
         uses: actions/upload-artifact@v4
