@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { ButtonLink } from "@/components/ui/ButtonLink";
-import { Wordmark } from "@/components/brand/Logo";
+import { Slogan, Wordmark } from "@/components/brand/Logo";
 import type { NextAvailableVM } from "@/lib/view-models";
 import profile from "../../../public/images/ymfreak-profile.jpg";
 
@@ -35,10 +35,12 @@ export function Hero({ nextAvailable }: { nextAvailable: NextAvailableVM | null 
             <Wordmark className="animate-rise block h-auto w-[min(100%,62rem)] lg:w-[min(40vw,44rem)] [animation-delay:150ms]" />
           </span>
         </h1>
+        <p className="animate-fade mt-[clamp(0.75rem,1.6vw,1.4rem)] [animation-delay:450ms]">
+          <Slogan className="block h-auto w-[min(100%,62rem)] text-bone/90 lg:w-[min(40vw,44rem)]" />
+        </p>
 
         <div className="animate-fade mt-8 max-w-xl [animation-delay:700ms]">
-          <p className="type-sub text-[clamp(1.6rem,3.2vw,2.4rem)]">{t("tagline")}</p>
-          <p className="mt-4 max-w-[46ch] text-bone/75">{t("lede")}</p>
+          <p className="max-w-[46ch] text-bone/75">{t("lede")}</p>
           <div className="mt-8 flex flex-wrap gap-3">
             <ButtonLink href="/book">{t("ctaPrimary")}</ButtonLink>
             <ButtonLink href="/#trabajos" variant="line">

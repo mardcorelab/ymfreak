@@ -1,4 +1,6 @@
-import { MONOGRAM, WORDMARK } from "./marks";
+import { MONOGRAM, SLOGAN, WORDMARK } from "./marks";
+
+export const SLOGAN_TEXT = "El Producto Perfecto";
 
 type Props = { className?: string; title?: string };
 
@@ -26,5 +28,19 @@ export function MonogramTile({ className = "" }: { className?: string }) {
     <span className={`inline-grid place-items-center rounded-[22%] bg-black text-white ${className}`} aria-hidden>
       <Monogram className="w-[66%]" />
     </span>
+  );
+}
+
+/** The slogan "El Producto Perfecto" in its own lettering. Readable by screen readers and search engines. */
+export function Slogan({ className = "", decorative = false }: { className?: string; decorative?: boolean }) {
+  return (
+    <svg
+      viewBox={SLOGAN.viewBox}
+      className={className}
+      fill="currentColor"
+      {...(decorative ? { "aria-hidden": true } : { role: "img", "aria-label": SLOGAN_TEXT })}
+    >
+      <path fillRule="evenodd" d={SLOGAN.d} />
+    </svg>
   );
 }

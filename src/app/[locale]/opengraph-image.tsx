@@ -1,7 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { ImageResponse } from "next/og";
-import { WORDMARK } from "@/components/brand/marks";
+import { SLOGAN, WORDMARK } from "@/components/brand/marks";
 import { routing } from "@/i18n/routing";
 
 export const size = { width: 1200, height: 630 };
@@ -23,6 +23,10 @@ export default async function OpenGraphImage({ params }: { params: Promise<{ loc
     `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${WORDMARK.viewBox}"><path fill="#ebe6dc" fill-rule="evenodd" d="${WORDMARK.d}"/></svg>`,
   )}`;
   const [, , w, h] = WORDMARK.viewBox.split(" ").map(Number) as [number, number, number, number];
+  const slogan = `data:image/svg+xml;utf8,${encodeURIComponent(
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${SLOGAN.viewBox}"><path fill="#ebe6dc" fill-rule="evenodd" d="${SLOGAN.d}"/></svg>`,
+  )}`;
+  const [, , sw, sh] = SLOGAN.viewBox.split(" ").map(Number) as [number, number, number, number];
   const logoWidth = 640;
 
   return new ImageResponse(
@@ -44,6 +48,8 @@ export default async function OpenGraphImage({ params }: { params: Promise<{ loc
           </div>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={logo} alt="" width={logoWidth} height={Math.round((logoWidth * h) / w)} style={{ marginTop: 24 }} />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={slogan} alt="" width={logoWidth} height={Math.round((logoWidth * sh) / sw)} style={{ marginTop: 16 }} />
           <div style={{ display: "flex", color: "#c9a75f", fontSize: 24, marginTop: 30 }}>
             {locale === "es" ? "Nominado al Latin Grammy 2026" : "2026 Latin Grammy nominee"}
           </div>

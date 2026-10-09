@@ -9,7 +9,7 @@ import { getYoutubeVideos } from "@/server/youtube";
 import { getNextAvailable } from "@/server/booking/next-available";
 import { agentAvailable } from "@/server/agent/model";
 import { socialLinks } from "@/components/site/social";
-import { MonogramTile, Wordmark } from "@/components/brand/Logo";
+import { MonogramTile, Slogan, Wordmark } from "@/components/brand/Logo";
 import { OpenAgentButton, TrackedLink } from "@/components/site/TrackedLink";
 import { RecordMark } from "@/components/ui/RecordMark";
 
@@ -51,6 +51,7 @@ export default async function LinksPage({ params }: Props) {
           <span className="sr-only">YM Freak</span>
           <Wordmark className="mx-auto h-auto w-[78%]" />
         </h1>
+        <Slogan className="mx-auto mt-3 h-auto w-[78%] text-bone/85" />
         <p className="mt-4 text-sm text-ash">{tAll("hero.roles")}</p>
         {highlight && (
           <p className="mt-3 flex items-center gap-2 text-sm text-brass">
