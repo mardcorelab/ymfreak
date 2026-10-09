@@ -13,6 +13,7 @@ import { fromDateColumn } from "../booking/code";
 import { amountDue } from "../payments/service";
 import { getYoutubeViews } from "../youtube-stats";
 import { allowRate } from "../rate-limit";
+import { alertOwner } from "../notify";
 import type { BookingRequest } from "@/lib/validators/booking";
 import { proposeInput, toBookingRequest } from "./booking-input";
 import type { AgentCard } from "@/lib/agent-types";
@@ -508,7 +509,20 @@ const proposeBooking = tool({
     const action = await db.pendingAction.create({
       data: { conversationId: ctx.conversationId, type: "CREATE_BOOKING", payload: req as unknown as Prisma.InputJsonValue, summary: summary as unknown as Prisma.InputJsonValue, expiresAt },
     });
-    await db.conversation.updateMany({ where: { id: ctx.conversationId, outcome: "NONE" }, data: { outcome: "LEAD" } });
+    const lead = await db.conversation.updateMany({ where: { id: ctx.conversationId, outcome: "NONE" }, data: { outcome: "LEAD" } });
+    if (lead.count === 1) {
+      alertOwner({
+        kind: "lead",
+        conversationId: ctx.conversationId,
+        name: req.customer.name,
+        email: req.customer.email,
+        phone: req.customer.phone ?? null,
+        services: rows[0].value,
+        artist: req.project.artistName,
+        song: req.project.songTitle ?? null,
+        total: summary.total,
+      });
+    }
 
     return {
       result: {

@@ -21,6 +21,8 @@ const schema = z.object({
   AUTH_SECRET: z.string().optional(),
   RESEND_API_KEY: z.string().optional(),
   EMAIL_FROM: z.string().optional(),
+  /** Optional: where owner alerts go (defaults to ADMIN_EMAIL). */
+  ALERT_EMAIL: z.string().optional(),
 
   // Phase 4 — PayPal
   PAYPAL_ENV: z.enum(["sandbox", "live"]).default("sandbox"),

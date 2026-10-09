@@ -11,6 +11,7 @@ import type { ServiceRule } from "../domain/types";
 import type { BookingRequest } from "@/lib/validators/booking";
 import { expireStaleHolds, loadCalendar, type Db } from "./calendar";
 import { dateColumn, newBookingCode } from "./code";
+import { alertBooking } from "../notify";
 
 /** How far ahead clients can pick a session date. */
 export const SESSION_HORIZON_DAYS = 60;
@@ -175,7 +176,7 @@ export async function createBooking(
 
   for (let attempt = 1; attempt <= 3; attempt++) {
     try {
-      return await db.$transaction(
+      const res = await db.$transaction(
         async (tx) => {
           await expireStaleHolds(tx, now);
           const slugs = req.mode === "DELIVERY" ? req.services : [req.service];
@@ -305,6 +306,8 @@ export async function createBooking(
         },
         { isolationLevel: Prisma.TransactionIsolationLevel.Serializable, timeout: 15_000 },
       );
+      if (res.ok && opts.source !== "ADMIN") await alertBooking(res.bookingId, "booking");
+      return res;
     } catch (e) {
       if (e instanceof Abort) return { ok: false, error: e.code };
       // Serialization conflict: another booking landed at the same time. Retry with fresh data.

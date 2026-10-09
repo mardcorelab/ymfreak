@@ -80,6 +80,23 @@ test("the assistant answers from live data and cannot book while booking is clos
   await expect(log(page).locator('[data-card="quote"]')).toBeVisible();
 });
 
+test("an unconfirmed proposal shows up as a hot lead in the dashboard", async ({ page }) => {
+  await login(page);
+  await page.goto("/es");
+  await openChat(page);
+  const lead = JSON.stringify({ ...JSON.parse(PROPOSAL), name: "Cliente Caliente", email: "caliente@example.com", phone: "809 555 1234" });
+  await say(page, `TOOL propose_booking ${lead}`);
+  await expect(log(page).locator('[data-card="proposal"]').getByText("Tu reserva")).toBeVisible();
+
+  await page.goto("/dashboard");
+  await expect(page.getByRole("heading", { name: "Clientes calientes" })).toBeVisible();
+  const row = page.getByTestId("hot-lead").filter({ hasText: "Cliente Caliente" });
+  await expect(row.getByText("Mezcla + Mastering")).toBeVisible();
+  await expect(row.getByRole("link", { name: "WhatsApp" })).toHaveAttribute("href", "https://wa.me/18095551234");
+  await row.getByRole("link", { name: "Ver conversación" }).click();
+  await expect(page.getByText("preparó una reserva para confirmar").first()).toBeVisible();
+});
+
 test("other websites can't drive the assistant", async ({ request }) => {
   const res = await request.post("/api/agent/chat", { headers: { origin: "https://evil.example" }, data: { text: "hola", locale: "es" } });
   expect(res.status()).toBe(403);

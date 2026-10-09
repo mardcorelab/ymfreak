@@ -8,6 +8,7 @@ import { evaluateClientCancellation } from "../domain/cancellation";
 import { expireStaleHolds } from "../booking/calendar";
 import { getPaymentProvider } from "./index";
 import { PaymentProviderError, type CaptureResult, type PaymentKind, type ProviderEvent } from "./provider";
+import { alertBooking } from "../notify";
 
 export type PayError =
   | "NOT_CONFIGURED"
@@ -144,6 +145,7 @@ async function addEvent(tx: Prisma.TransactionClient, booking: Booking, to: Book
 
 /** Applies a capture outcome to payment, order and booking in one transaction. */
 export async function applyCapture(paymentId: string, result: CaptureResult): Promise<void> {
+  let captured: { bookingId: string; amountCents: number } | null = null;
   await db.$transaction(async (tx) => {
     const payment = await tx.payment.findUnique({ where: { id: paymentId }, include: { order: { include: { booking: true, payments: true } } } });
     if (!payment || payment.status === "SUCCEEDED" || payment.status === "REFUNDED") return;
@@ -171,6 +173,7 @@ export async function applyCapture(paymentId: string, result: CaptureResult): Pr
 
     const order = payment.order;
     const booking = order.booking;
+    if (booking) captured = { bookingId: booking.id, amountCents: payment.amountCents };
     const paid = order.payments.filter((p) => p.status === "SUCCEEDED" && p.id !== paymentId).reduce((s, p) => s + p.amountCents, 0) + payment.amountCents;
 
     if (payment.kind === "DEPOSIT") {
@@ -195,6 +198,8 @@ export async function applyCapture(paymentId: string, result: CaptureResult): Pr
       }
     }
   });
+  const done = captured as { bookingId: string; amountCents: number } | null;
+  if (done) await alertBooking(done.bookingId, "payment", done.amountCents);
 }
 
 /** Refunds every online payment of an order through the provider. Manual payments are not touched. */
