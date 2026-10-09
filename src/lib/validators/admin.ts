@@ -25,6 +25,10 @@ const year = z
   .max(2100, "Año: no válido")
   .nullable();
 
+/** Stages of a song in the home-page guide "Encuentra tu servicio". */
+export const GUIDE_STAGES = ["idea", "vocals", "recorded", "mixed", "other"] as const;
+export type GuideStage = (typeof GUIDE_STAGES)[number];
+
 export const serviceSchema = z
   .object({
     nameEs: t(80, "Nombre (ES)"),
@@ -33,6 +37,9 @@ export const serviceSchema = z
     descriptionEn: t(300, "Descripción (EN)"),
     includesEs: z.array(z.string().max(120)).max(20, "Qué incluye: máximo 20 líneas"),
     includesEn: z.array(z.string().max(120)).max(20, "Qué incluye: máximo 20 líneas"),
+    promiseEs: z.string().trim().max(160, "Frase de venta (ES): máximo 160 caracteres"),
+    promiseEn: z.string().trim().max(160, "Frase de venta (EN): máximo 160 caracteres"),
+    guideStages: z.array(z.enum(GUIDE_STAGES)).max(GUIDE_STAGES.length),
     priceCents: z
       .number({ invalid_type_error: "Precio: escribe un monto válido, por ejemplo 150 o 75.50" })
       .refine((n) => Number.isInteger(n), "Precio: escribe un monto válido, por ejemplo 150 o 75.50")

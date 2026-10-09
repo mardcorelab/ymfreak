@@ -114,6 +114,11 @@ model Service {
   descriptionEn     String
   includesEs        String[]
   includesEn        String[]
+  /// One line that sells the result (home page cards). Empty: the description is used.
+  promiseEs         String      @default("")
+  promiseEn         String      @default("")
+  /// Stages of the song this service is recommended for in the home guide: idea | vocals | recorded | mixed | other.
+  guideStages       String[]    @default([])
   priceCents        Int
   currency          String      @default("USD") @db.Char(3)
   pricingUnit       PricingUnit

@@ -235,3 +235,54 @@ test("the owner can hide the site behind a coming-soon page and still preview it
   await expect(v.getByTestId("coming-soon")).toHaveCount(0);
   await visitor.close();
 });
+
+test("home services: no prices at first, investment on demand, and the guide recommends with real numbers", async ({ page }) => {
+  await page.goto("/es");
+  const cards = page.getByTestId("service-cards");
+  const mastering = cards.locator('[data-service="mastering"]');
+  await expect(mastering.getByText("El toque final")).toBeVisible();
+  // The price is there but hidden until the visitor asks for it.
+  await expect(mastering.getByText("$70")).toBeHidden();
+  await mastering.getByRole("button", { name: "Ver detalles e inversión" }).click();
+  await expect(mastering.getByText("$70")).toBeVisible();
+  await expect(mastering.getByRole("link", { name: "Reservar" })).toHaveAttribute("href", "/es/book?service=mastering");
+
+  // Asking about a service opens the assistant with the question ready.
+  await mastering.getByRole("button", { name: "¿Dudas? Pregúntale al asistente" }).click();
+  await expect(page.getByLabel("Escribe tu mensaje…")).toHaveValue("Hola, me interesa Mastering. ¿Qué me recomiendas para mi canción?");
+  await page.getByRole("button", { name: "Cerrar el chat" }).click();
+
+  // Guide (booking closed for visitors in CI: unit price and an invitation to write).
+  const guide = page.getByTestId("service-guide");
+  await guide.getByRole("button", { name: "Ya está mezclada" }).click();
+  await guide.getByRole("button", { name: "Una canción más" }).click();
+  await guide.getByRole("button", { name: "Continuar" }).click();
+  await guide.getByRole("button", { name: "Lo antes posible" }).click();
+  const result = page.getByTestId("guide-result");
+  await expect(result.getByText("Mastering", { exact: true })).toBeVisible();
+  await expect(result.getByText("$70")).toBeVisible();
+  await expect(result.getByText("Escríbeme y te confirmo la fecha de entrega.")).toBeVisible();
+});
+
+test("the guide quotes the real total and delivery date when booking is open", async ({ page }) => {
+  // Signed in, booking is open in preview mode.
+  await page.goto("/dashboard/login");
+  await page.getByLabel("Correo").fill(EMAIL);
+  await page.getByLabel("Contraseña").fill(PASSWORD);
+  await page.getByRole("button", { name: "Entrar" }).click();
+  await expect(page.getByRole("heading", { name: "Tu panel" })).toBeVisible();
+
+  await page.goto("/es");
+  const guide = page.getByTestId("service-guide");
+  await guide.getByRole("button", { name: "Ya está grabada" }).click();
+  await guide.getByRole("button", { name: "Una canción más" }).click();
+  await guide.getByRole("button", { name: "Continuar" }).click();
+  await guide.getByRole("button", { name: "Lo antes posible" }).click();
+  const result = page.getByTestId("guide-result");
+  await expect(result.getByText("Mezcla + Mastering", { exact: true })).toBeVisible();
+  await expect(result.getByText("$300")).toBeVisible();
+  await expect(result.getByText("2 canciones · $150 para reservar tu fecha")).toBeVisible();
+  await expect(result.getByText("Te la entrego el")).toBeVisible();
+  await result.getByRole("button", { name: "Hablarlo con el asistente" }).click();
+  await expect(page.getByLabel("Escribe tu mensaje…")).toHaveValue("Hola, quiero Mezcla + Mastering para 2 canciones. ¿Cómo empezamos?");
+});

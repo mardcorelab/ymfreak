@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation";
 import { db } from "@/server/db";
 import { audit, requireAdmin } from "@/server/auth/admin";
-import { serviceSchema } from "@/lib/validators/admin";
+import { GUIDE_STAGES, serviceSchema } from "@/lib/validators/admin";
 import { checkbox, dollarsToCents, lines, optionalInt, slugify, text } from "@/lib/form-data";
 import { failure, invalid, refreshSite, type ActionState } from "../common";
 
@@ -15,6 +15,9 @@ function read(fd: FormData) {
     descriptionEn: text(fd, "descriptionEn"),
     includesEs: lines(fd, "includesEs"),
     includesEn: lines(fd, "includesEn"),
+    promiseEs: text(fd, "promiseEs"),
+    promiseEn: text(fd, "promiseEn"),
+    guideStages: GUIDE_STAGES.filter((st) => checkbox(fd, `stage_${st}`)),
     priceCents: dollarsToCents(text(fd, "price")),
     pricingUnit: text(fd, "pricingUnit"),
     bookingMode: text(fd, "bookingMode"),

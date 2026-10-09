@@ -4,6 +4,14 @@ import { Checkbox, Group, Pair, Select, TextArea, TextField } from "@/components
 import { centsToDollars } from "@/lib/form-data";
 import { saveService } from "@/server/admin/actions/services";
 
+const STAGES = [
+  ["idea", "…es una idea o una letra"],
+  ["vocals", "…tiene pista y falta grabar la voz"],
+  ["recorded", "…ya está grabada"],
+  ["mixed", "…ya está mezclada"],
+  ["other", "…necesita otra cosa (arreglos, DJ, anuncios, asesoría)"],
+] as const;
+
 export function ServiceForm({ service }: { service: Service | null }) {
   const s = service;
   return (
@@ -51,6 +59,26 @@ export function ServiceForm({ service }: { service: Service | null }) {
           <TextArea name="includesEs" label="Qué incluye (español)" defaultValue={s?.includesEs.join("\n")} rows={6} hint="Una cosa por línea. Déjalo vacío si no aplica." />
           <TextArea name="includesEn" label="Qué incluye (inglés)" defaultValue={s?.includesEn.join("\n")} rows={6} hint="Mismo número de líneas que en español." />
         </Pair>
+      </Group>
+
+      <Group title="Página de inicio">
+        <Pair>
+          <TextField
+            name="promiseEs"
+            label="Frase de venta (español)"
+            defaultValue={s?.promiseEs}
+            hint="Lo que el cliente gana, en una línea. Sale en la tarjeta del inicio. Vacío: se usa la descripción."
+          />
+          <TextField name="promiseEn" label="Frase de venta (inglés)" defaultValue={s?.promiseEn} />
+        </Pair>
+        <fieldset>
+          <legend className="text-[0.95rem]">Recomendar en la guía «Encuentra tu servicio» cuando la canción…</legend>
+          <div className="mt-3 grid gap-1 sm:grid-cols-2">
+            {STAGES.map(([value, label]) => (
+              <Checkbox key={value} name={`stage_${value}`} label={label} defaultChecked={s?.guideStages.includes(value) ?? false} />
+            ))}
+          </div>
+        </fieldset>
       </Group>
 
       <div className="grid gap-6 sm:grid-cols-[1fr_12rem]">

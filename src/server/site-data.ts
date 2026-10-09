@@ -25,6 +25,8 @@ export function toServiceVM(s: Service, locale: Locale): ServiceVM {
     slug: s.slug,
     name: pick(locale, s.nameEs, s.nameEn),
     description: pick(locale, s.descriptionEs, s.descriptionEn),
+    promise: pick(locale, s.promiseEs, s.promiseEn) || pick(locale, s.descriptionEs, s.descriptionEn),
+    stages: s.guideStages,
     includes: pick(locale, s.includesEs, s.includesEn),
     price: formatMoney(s.priceCents, s.currency, locale),
     pricingUnit: s.pricingUnit,

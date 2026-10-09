@@ -10,6 +10,10 @@ export interface ServiceVM {
   slug: string;
   name: string;
   description: string;
+  /** One line that sells the result; falls back to the description. */
+  promise: string;
+  /** Guide stages this service is recommended for (see GUIDE_STAGES). */
+  stages: string[];
   includes: string[];
   /** Already formatted, e.g. "$150". */
   price: string;

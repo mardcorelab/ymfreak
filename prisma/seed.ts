@@ -19,6 +19,26 @@ async function main() {
     await prisma.service.upsert({ where: { slug: s.slug }, update: {}, create: s });
   }
 
+  // One-time: give services created before the home-page guide existed their
+  // initial promise and guide stages. Runs once (marker row), and only fills
+  // empty fields, so anything edited in the dashboard is kept.
+  const marker = "migration:service-guide-v1";
+  if (!(await prisma.setting.findUnique({ where: { key: marker } }))) {
+    for (const s of serviceSeeds) {
+      const row = await prisma.service.findUnique({ where: { slug: s.slug } });
+      if (!row) continue;
+      await prisma.service.update({
+        where: { id: row.id },
+        data: {
+          ...(row.promiseEs ? {} : { promiseEs: s.promiseEs }),
+          ...(row.promiseEn ? {} : { promiseEn: s.promiseEn }),
+          ...(row.guideStages.length ? {} : { guideStages: s.guideStages }),
+        },
+      });
+    }
+    await prisma.setting.create({ data: { key: marker, value: { ranAt: new Date().toISOString() } } });
+  }
+
   const settings = {
     business_rules: parseSetting("business_rules", businessRulesSeed),
     contact: parseSetting("contact", contactSeed),

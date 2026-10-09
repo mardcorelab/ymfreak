@@ -7,6 +7,7 @@ import { track } from "@/components/site/Analytics";
 import { Monogram } from "@/components/brand/Logo";
 import { platformVerdicts } from "@/lib/audio/loudness";
 import { AnalyzeError, analyzeAudioFile } from "@/components/analyzer/analyze";
+import { OPEN_EVENT } from "./open";
 import { AGENT_LIMITS, type AgentCard, type ChatItem, type ChatResponse, type ConfirmResponse } from "@/lib/agent-types";
 
 const STORAGE_KEY = "ymf-agent-conversation";
@@ -41,8 +42,8 @@ const GUIDED: PageKey[] = ["home", "services", "book", "analyzer", "portfolio", 
 const NUDGE: PageKey[] = ["services", "book", "analyzer", "release"];
 const NUDGE_KEY = "ymf-agent-nudged";
 
-/** Opens the assistant from anywhere on the site: window.dispatchEvent(new Event("ymf:agent-open")). */
-export const OPEN_EVENT = "ymf:agent-open";
+/** Opens the assistant from anywhere on the site: see ./open.ts. */
+export { OPEN_EVENT };
 
 type Item = ChatItem & { local?: boolean };
 const MAX_NOTE_SECONDS = 120;
@@ -107,7 +108,12 @@ export function AgentWidget({ name = "", voice = false }: { name?: string; voice
   };
 
   useEffect(() => {
-    const onOpen = () => setOpen(true);
+    const onOpen = (e: Event) => {
+      setOpen(true);
+      // A page can hand over a question ready to send (the visitor still presses Send).
+      const prompt = (e as CustomEvent<{ prompt?: string } | undefined>).detail?.prompt;
+      if (prompt) setInput(prompt.slice(0, AGENT_LIMITS.messageChars));
+    };
     window.addEventListener(OPEN_EVENT, onOpen);
     return () => window.removeEventListener(OPEN_EVENT, onOpen);
   }, []);

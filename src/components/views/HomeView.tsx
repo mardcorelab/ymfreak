@@ -4,7 +4,8 @@ import { Hero } from "@/components/sections/Hero";
 import { Credits } from "@/components/sections/Credits";
 import { Section } from "@/components/sections/Section";
 import { WorkGrid } from "@/components/sections/WorkGrid";
-import { ServiceList } from "@/components/sections/ServiceList";
+import { ServiceCards } from "@/components/sections/ServiceCards";
+import { ServiceGuide } from "@/components/sections/ServiceGuide";
 import { Highlights } from "@/components/sections/Highlights";
 import { About } from "@/components/sections/About";
 import { Process } from "@/components/sections/Process";
@@ -70,9 +71,10 @@ export function HomeView({ data }: { data: HomeData }) {
         id="servicios"
         tone="deep"
         title={t("services.title")}
-        intro={t("services.intro", { deposit: data.business.depositPercent })}
+        intro={t("services.introHome")}
       >
-        <ServiceList services={data.services} business={data.business} />
+        <ServiceGuide services={data.services} />
+        <ServiceCards services={data.services} />
         <div className="mt-12 flex flex-wrap items-center gap-x-8 gap-y-4">
           <ButtonLink href="/book">{t("services.cta")}</ButtonLink>
           <ButtonLink href="/services" variant="line">
