@@ -435,6 +435,24 @@
         "short": "La canción es muy corta para medirla. Necesito al menos unos segundos.",
         "generic": "No pude analizar la canción. Inténtalo de nuevo o usa el analizador de la página."
       }
+    },
+    "voice": {
+      "record": "Grabar nota de voz",
+      "stop": "Enviar nota de voz",
+      "cancel": "Cancelar",
+      "recording": "Grabando… {time}",
+      "transcribing": "Escuchando tu nota de voz…",
+      "listen": "Escuchar",
+      "listenLabel": "Escuchar esta respuesta (voz generada con IA)",
+      "stopPlay": "Detener",
+      "aiVoice": "voz IA",
+      "errors": {
+        "mic": "No pude usar el micrófono. Revisa el permiso del navegador o escríbeme.",
+        "EMPTY": "No escuché nada en la nota. ¿Lo intentas de nuevo?",
+        "TOO_BIG": "La nota es muy larga. Prueba con una de menos de 2 minutos.",
+        "RATE_LIMITED": "Muchas notas seguidas. Espera unos minutos o escríbeme.",
+        "generic": "No pude procesar la nota de voz. ¿Me lo escribes?"
+      }
     }
   },
   "account": {

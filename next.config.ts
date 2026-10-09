@@ -17,7 +17,7 @@ const csp = [
   "font-src 'self' https://vercel.live",
   "connect-src 'self' https://vercel.live wss://ws-us3.pusher.com",
   "frame-src https://open.spotify.com https://www.youtube-nocookie.com https://vercel.live",
-  "media-src 'self'",
+  "media-src 'self' blob:",
   "worker-src 'self' blob:",
   "object-src 'none'",
   "base-uri 'self'",
@@ -32,7 +32,7 @@ const securityHeaders = [
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
   { key: "X-Frame-Options", value: "DENY" },
-  { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
+  { key: "Permissions-Policy", value: "camera=(), microphone=(self), geolocation=()" },
 ];
 
 const nextConfig: NextConfig = {

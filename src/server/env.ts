@@ -37,6 +37,11 @@ const schema = z.object({
 
   /** Optional: YouTube Data API key, to show real view counts of the releases. */
   YOUTUBE_API_KEY: z.string().optional(),
+  /** Optional: ElevenLabs, for voice notes and replies in YM Freak's cloned voice. */
+  ELEVENLABS_API_KEY: z.string().optional(),
+  ELEVENLABS_VOICE_ID: z.string().optional(),
+  ELEVENLABS_TTS_MODEL: z.string().optional(),
+  ELEVENLABS_STT_MODEL: z.string().optional(),
   /** Optional: song.link API key, to find releases on every platform automatically. */
   SONGLINK_API_KEY: z.string().optional(),
 

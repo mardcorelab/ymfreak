@@ -44,11 +44,14 @@ const NUDGE_KEY = "ymf-agent-nudged";
 /** Opens the assistant from anywhere on the site: window.dispatchEvent(new Event("ymf:agent-open")). */
 export const OPEN_EVENT = "ymf:agent-open";
 
-export function AgentWidget({ name = "" }: { name?: string }) {
+type Item = ChatItem & { local?: boolean };
+const MAX_NOTE_SECONDS = 120;
+
+export function AgentWidget({ name = "", voice = false }: { name?: string; voice?: boolean }) {
   const t = useTranslations("agent");
   const locale = useLocale();
   const [open, setOpen] = useState(false);
-  const [items, setItems] = useState<ChatItem[]>([]);
+  const [items, setItems] = useState<Item[]>([]);
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [restored, setRestored] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -66,6 +69,12 @@ export function AgentWidget({ name = "" }: { name?: string }) {
   const [nudge, setNudge] = useState(false);
   const [analyzing, setAnalyzing] = useState<number | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+  // Voice notes (only when the studio switched voice on).
+  const [recording, setRecording] = useState<number | null>(null);
+  const [transcribing, setTranscribing] = useState(false);
+  const [playing, setPlaying] = useState<string | null>(null);
+  const recorderRef = useRef<{ rec: MediaRecorder; stream: MediaStream; chunks: Blob[]; keep: boolean; timer: ReturnType<typeof setInterval> } | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   // A returning client signed in to "My account" is greeted by name.
   useEffect(() => {
@@ -138,10 +147,40 @@ export function AgentWidget({ name = "" }: { name?: string }) {
     if (el) el.scrollTop = el.scrollHeight;
   }, [items, busy, open]);
 
-  const say = useCallback((text: string) => setItems((prev) => [...prev, { type: "text", role: "assistant", text }]), []);
+  const say = useCallback((text: string) => setItems((prev): Item[] => [...prev, { type: "text", role: "assistant", text, local: true }]), []);
+
+  const stopPlaying = useCallback(() => {
+    audioRef.current?.pause();
+    audioRef.current = null;
+    setPlaying(null);
+  }, []);
+
+  /** Plays one of the assistant's replies in the studio's AI voice. */
+  const play = useCallback(
+    async (text: string, convId: string | null) => {
+      stopPlaying();
+      if (!convId) return;
+      setPlaying(text);
+      try {
+        const res = await fetch("/api/agent/voice/speak", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ conversationId: convId, text }) });
+        if (!res.ok) throw new Error(String(res.status));
+        const url = URL.createObjectURL(await res.blob());
+        const audio = new Audio(url);
+        audioRef.current = audio;
+        audio.onended = () => {
+          URL.revokeObjectURL(url);
+          if (audioRef.current === audio) stopPlaying();
+        };
+        await audio.play();
+      } catch {
+        setPlaying(null);
+      }
+    },
+    [stopPlaying],
+  );
 
   const send = useCallback(
-    async (raw: string) => {
+    async (raw: string, opts?: { voice?: boolean }) => {
       const text = raw.trim();
       if (!text || busy) return;
       if (text.length > AGENT_LIMITS.messageChars) return say(t("errors.TOO_LONG"));
@@ -160,8 +199,12 @@ export function AgentWidget({ name = "" }: { name?: string }) {
           setConversationId(data.conversationId);
           writeStored(data.conversationId);
         }
-        if (data.ok) setItems((prev) => [...prev, ...data.items]);
-        else say(t(`errors.${data.error}`));
+        if (data.ok) {
+          setItems((prev) => [...prev, ...data.items]);
+          // A voice note gets a spoken answer.
+          const reply = opts?.voice ? [...data.items].reverse().find((i) => i.type === "text" && i.role === "assistant") : undefined;
+          if (reply && reply.type === "text") void play(reply.text, data.conversationId ?? conversationId);
+        } else say(t(`errors.${data.error}`));
       } catch {
         say(t("errors.network"));
       } finally {
@@ -169,8 +212,84 @@ export function AgentWidget({ name = "" }: { name?: string }) {
         inputRef.current?.focus();
       }
     },
-    [busy, conversationId, locale, page, say, t],
+    [busy, conversationId, locale, page, play, say, t],
   );
+
+  const finishRecording = useCallback(
+    async (keep: boolean) => {
+      const r = recorderRef.current;
+      if (!r) return;
+      r.keep = keep;
+      clearInterval(r.timer);
+      if (r.rec.state !== "inactive") r.rec.stop();
+    },
+    [],
+  );
+
+  const startRecording = useCallback(async () => {
+    if (recorderRef.current || busy) return;
+    stopPlaying();
+    let stream: MediaStream;
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    } catch {
+      return say(t("voice.errors.mic"));
+    }
+    const type = ["audio/webm;codecs=opus", "audio/webm", "audio/mp4", "audio/ogg"].find((m) => typeof MediaRecorder !== "undefined" && MediaRecorder.isTypeSupported(m));
+    let rec: MediaRecorder;
+    try {
+      rec = new MediaRecorder(stream, type ? { mimeType: type } : undefined);
+    } catch {
+      stream.getTracks().forEach((tr) => tr.stop());
+      return say(t("voice.errors.mic"));
+    }
+    const started = Date.now();
+    const state = {
+      rec,
+      stream,
+      chunks: [] as Blob[],
+      keep: true,
+      timer: setInterval(() => {
+        const secs = Math.floor((Date.now() - started) / 1000);
+        setRecording(secs);
+        if (secs >= MAX_NOTE_SECONDS) void finishRecording(true);
+      }, 250),
+    };
+    recorderRef.current = state;
+    rec.ondataavailable = (e) => e.data.size > 0 && state.chunks.push(e.data);
+    rec.onstop = async () => {
+      stream.getTracks().forEach((tr) => tr.stop());
+      recorderRef.current = null;
+      setRecording(null);
+      if (!state.keep) return;
+      const blob = new Blob(state.chunks, { type: rec.mimeType || type || "audio/webm" });
+      if (blob.size === 0) return say(t("voice.errors.EMPTY"));
+      setTranscribing(true);
+      try {
+        const form = new FormData();
+        form.append("audio", blob, "nota");
+        form.append("locale", locale);
+        const res = await fetch("/api/agent/voice/transcribe", { method: "POST", body: form });
+        const data = (await res.json()) as { ok: true; text: string } | { ok: false; error: string };
+        setTranscribing(false);
+        if (!data.ok) return say(t(["EMPTY", "TOO_BIG", "RATE_LIMITED"].includes(data.error) ? `voice.errors.${data.error}` : "voice.errors.generic"));
+        track("click", window.location.pathname, "chat-voice-note");
+        await send(data.text, { voice: true });
+      } catch {
+        setTranscribing(false);
+        say(t("errors.network"));
+      }
+    };
+    rec.start(1000);
+    setRecording(0);
+  }, [busy, finishRecording, locale, say, send, stopPlaying, t]);
+
+  // Release the microphone and audio if the panel closes.
+  useEffect(() => {
+    if (open) return;
+    void finishRecording(false);
+    stopPlaying();
+  }, [open, finishRecording, stopPlaying]);
 
   const decide = useCallback(
     async (actionId: string, decision: "confirm" | "dismiss") => {
@@ -371,9 +490,27 @@ export function AgentWidget({ name = "" }: { name?: string }) {
             )}
             {items.map((item, i) =>
               item.type === "text" ? (
-                <Bubble key={i} role={item.role}>
-                  {item.text}
-                </Bubble>
+                <div key={i}>
+                  <Bubble role={item.role}>{item.text}</Bubble>
+                  {voice && item.role === "assistant" && !item.local && conversationId && (
+                    <button
+                      type="button"
+                      onClick={() => (playing === item.text ? stopPlaying() : void play(item.text, conversationId))}
+                      aria-label={playing === item.text ? t("voice.stopPlay") : t("voice.listenLabel")}
+                      className="mt-1 inline-flex min-h-8 items-center gap-1.5 rounded-full px-2 text-xs text-ash hover:bg-bone/5 hover:text-bone"
+                    >
+                      <svg viewBox="0 0 20 20" className="size-3.5" aria-hidden>
+                        {playing === item.text ? (
+                          <path d="M6 5h3v10H6zM11 5h3v10h-3z" fill="currentColor" />
+                        ) : (
+                          <path d="M3 8v4h3l4 3V5L6 8H3zm10-1a4 4 0 010 6m2-8a7 7 0 010 10" stroke="currentColor" strokeWidth="1.6" fill="none" strokeLinecap="round" />
+                        )}
+                      </svg>
+                      {playing === item.text ? t("voice.stopPlay") : t("voice.listen")}
+                      <span className="text-ash/70">· {t("voice.aiVoice")}</span>
+                    </button>
+                  )}
+                </div>
               ) : (
                 <Card key={i} card={item.card} busy={busy} onSend={send} onDecide={decide} />
               ),
@@ -381,6 +518,11 @@ export function AgentWidget({ name = "" }: { name?: string }) {
             {analyzing !== null && (
               <p className="text-sm text-ash" role="status">
                 {t("analysis.progress", { percent: Math.round(analyzing * 100) })}
+              </p>
+            )}
+            {transcribing && (
+              <p className="text-sm text-ash" role="status">
+                {t("voice.transcribing")}
               </p>
             )}
             {busy && (
@@ -404,6 +546,30 @@ export function AgentWidget({ name = "" }: { name?: string }) {
           >
             {atLimit ? (
               <p className="px-1 pb-2 text-sm text-ash">{t("errors.CONVERSATION_LIMIT")}</p>
+            ) : recording !== null ? (
+              <div className="flex items-center gap-2" data-testid="agent-recording">
+                <button
+                  type="button"
+                  onClick={() => void finishRecording(false)}
+                  className="min-h-11 rounded-full px-3 text-sm text-ash hover:bg-bone/5 hover:text-bone"
+                >
+                  {t("voice.cancel")}
+                </button>
+                <p className="flex flex-1 items-center gap-2 text-sm" role="status">
+                  <span aria-hidden className="size-2.5 animate-pulse rounded-full bg-red-500 motion-reduce:animate-none" />
+                  {t("voice.recording", { time: `${Math.floor(recording / 60)}:${String(recording % 60).padStart(2, "0")}` })}
+                </p>
+                <button
+                  type="button"
+                  onClick={() => void finishRecording(true)}
+                  className="grid size-11 shrink-0 place-items-center rounded-full bg-bone text-studio transition hover:bg-white"
+                  aria-label={t("voice.stop")}
+                >
+                  <svg viewBox="0 0 20 20" className="size-5" aria-hidden>
+                    <path d="M4 10h11M10 5l5 5-5 5" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </button>
+              </div>
             ) : (
               <div className="flex items-end gap-2">
                 <button
@@ -451,6 +617,21 @@ export function AgentWidget({ name = "" }: { name?: string }) {
                   placeholder={t("placeholder")}
                   className="max-h-32 min-h-11 flex-1 resize-none rounded-2xl border border-rule-key bg-studio px-4 py-2.5 text-base text-bone placeholder:text-ash/70 focus:border-bone/60 focus:outline-none"
                 />
+                {voice && !input.trim() ? (
+                  <button
+                    type="button"
+                    onClick={() => void startRecording()}
+                    disabled={busy || transcribing || analyzing !== null}
+                    className="grid size-11 shrink-0 place-items-center rounded-full bg-bone text-studio transition hover:bg-white disabled:opacity-40"
+                    aria-label={t("voice.record")}
+                    title={t("voice.record")}
+                  >
+                    <svg viewBox="0 0 20 20" className="size-5" aria-hidden>
+                      <rect x="7" y="2.5" width="6" height="10" rx="3" fill="currentColor" />
+                      <path d="M4.5 9.5a5.5 5.5 0 0011 0M10 15v3" stroke="currentColor" strokeWidth="1.8" fill="none" strokeLinecap="round" />
+                    </svg>
+                  </button>
+                ) : (
                 <button
                   type="submit"
                   disabled={busy || !input.trim()}
@@ -461,6 +642,7 @@ export function AgentWidget({ name = "" }: { name?: string }) {
                     <path d="M4 10h11M10 5l5 5-5 5" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 </button>
+                )}
               </div>
             )}
             <p className="mt-2 px-1 text-[0.7rem] leading-snug text-ash/80">{t("disclaimer")}</p>

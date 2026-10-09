@@ -7,6 +7,7 @@ import { YoutubeStatusRow } from "@/components/admin/YoutubeStatus";
 import { agentAvailable } from "@/server/agent/model";
 import { paymentStatus } from "@/server/payments";
 import { emailAlertsConfigured } from "@/server/notify";
+import { voiceEnabled } from "@/server/agent/voice";
 import { whatsappLink } from "@/lib/alerts";
 import { fmtDateTime } from "@/lib/admin-format";
 
@@ -98,6 +99,11 @@ export default async function DashboardHome() {
       <ul className="mt-4 grid gap-3 text-sm">
         <Status ok={pay.configured} label="PayPal" detail={pay.configured ? `Conectado (${pay.mode === "live" ? "dinero real" : pay.mode === "sandbox" ? "modo de prueba" : pay.mode})${pay.webhook ? "" : " · falta el webhook"}` : "Sin configurar"} />
         <Status ok={agentAvailable()} label="Asistente (Claude)" detail={agentAvailable() ? "Activo en la web" : "Falta ANTHROPIC_API_KEY"} />
+        <Status
+          ok={voiceEnabled()}
+          label="Voz del asistente (ElevenLabs)"
+          detail={voiceEnabled() ? "Notas de voz y respuestas con tu voz clonada (marcada como voz IA)" : "Apagada: añade ELEVENLABS_API_KEY y ELEVENLABS_VOICE_ID en Vercel"}
+        />
         <YoutubeStatusRow />
         <Status
           ok={emailAlertsConfigured()}

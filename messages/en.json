@@ -435,6 +435,24 @@
         "short": "The song is too short to measure. I need at least a few seconds.",
         "generic": "I couldn't analyze the song. Try again or use the analyzer page."
       }
+    },
+    "voice": {
+      "record": "Record a voice note",
+      "stop": "Send voice note",
+      "cancel": "Cancel",
+      "recording": "Recording… {time}",
+      "transcribing": "Listening to your voice note…",
+      "listen": "Listen",
+      "listenLabel": "Listen to this reply (AI-generated voice)",
+      "stopPlay": "Stop",
+      "aiVoice": "AI voice",
+      "errors": {
+        "mic": "I couldn't use the microphone. Check the browser permission or type to me.",
+        "EMPTY": "I didn't hear anything in the note. Want to try again?",
+        "TOO_BIG": "That note is too long. Try one under 2 minutes.",
+        "RATE_LIMITED": "Lots of notes in a row. Wait a few minutes or type to me.",
+        "generic": "I couldn't process the voice note. Could you type it?"
+      }
     }
   },
   "account": {

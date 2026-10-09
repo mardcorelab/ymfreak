@@ -6,6 +6,7 @@ import { routing } from "@/i18n/routing";
 import { agentAvailable } from "@/server/agent/model";
 import { getAgentSettings } from "@/server/agent/settings";
 import { AgentWidget } from "@/components/agent/AgentWidget";
+import { voiceEnabled } from "@/server/agent/voice";
 import { Analytics } from "@/components/site/Analytics";
 import { siteUrl } from "@/lib/seo";
 import { archivo, michroma } from "@/lib/fonts";
@@ -52,7 +53,7 @@ export default async function LocaleLayout({
       <body className="min-h-dvh antialiased">
         <NextIntlClientProvider>
           {children}
-          {agentAvailable() && <AgentWidget name={agent.name} />}
+          {agentAvailable() && <AgentWidget name={agent.name} voice={voiceEnabled()} />}
           <Analytics />
         </NextIntlClientProvider>
       </body>

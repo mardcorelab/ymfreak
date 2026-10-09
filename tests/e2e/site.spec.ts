@@ -150,7 +150,7 @@ test("the assistant knows the page and reads a song dropped into the chat", asyn
   await expect(page.getByRole("button", { name: "¿Mi master está listo para Spotify?" })).toBeVisible();
   await page.getByTestId("agent-audio-input").setInputFiles({ name: "tono.wav", mimeType: "audio/wav", buffer: sineWav(-23, 6) });
   // The numbers are measured in the browser and sent as the visitor's message.
-  await expect(chat.getByText(/TEST-REPLY echo: Analicé mi canción «tono\.wav»: -23,0 LUFS integrados/)).toBeVisible({ timeout: 30_000 });
+  await expect(chat.getByText(/TEST-REPLY echo: Analicé mi canción «tono\.wav»: [-−]23[.,]0 LUFS integrados/)).toBeVisible({ timeout: 30_000 });
   await expect(chat.getByText(/En Spotify le subirían el volumen/).first()).toBeVisible();
 });
 

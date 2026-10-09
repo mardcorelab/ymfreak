@@ -97,6 +97,29 @@ test("an unconfirmed proposal shows up as a hot lead in the dashboard", async ({
   await expect(page.getByText("preparó una reserva para confirmar").first()).toBeVisible();
 });
 
+test("voice: notes are transcribed and only the assistant's own replies can be spoken", async ({ page, request }) => {
+  const note = await request.post("/api/agent/voice/transcribe", {
+    multipart: { audio: { name: "nota.webm", mimeType: "audio/webm", buffer: Buffer.from("fake-audio") }, locale: "es" },
+  });
+  expect(await note.json()).toEqual({ ok: true, text: "TEST-TRANSCRIPT nota de voz" });
+
+  const chat = await (await request.post("/api/agent/chat", { data: { text: "hola voz", locale: "es" } })).json();
+  const ok = await request.post("/api/agent/voice/speak", { data: { conversationId: chat.conversationId, text: "TEST-REPLY echo: hola voz" } });
+  expect(ok.status()).toBe(200);
+  expect(ok.headers()["content-type"]).toBe("audio/wav");
+  // The cloned voice can't be made to say anything else.
+  const other = await request.post("/api/agent/voice/speak", { data: { conversationId: chat.conversationId, text: "Cualquier otra cosa" } });
+  expect(other.status()).toBe(404);
+
+  // In the widget: a microphone when the box is empty, and a labelled AI-voice play button on replies.
+  await page.goto("/es");
+  await openChat(page);
+  await expect(page.getByRole("button", { name: "Grabar nota de voz" })).toBeVisible();
+  await say(page, "hola");
+  await expect(log(page).getByText("TEST-REPLY echo: hola")).toBeVisible();
+  await expect(log(page).getByRole("button", { name: "Escuchar esta respuesta (voz generada con IA)" })).toBeVisible();
+});
+
 test("other websites can't drive the assistant", async ({ request }) => {
   const res = await request.post("/api/agent/chat", { headers: { origin: "https://evil.example" }, data: { text: "hola", locale: "es" } });
   expect(res.status()).toBe(403);
