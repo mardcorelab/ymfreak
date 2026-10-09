@@ -21,6 +21,7 @@ export function Hero({ nextAvailable }: { nextAvailable: NextAvailableVM | null 
           alt={t("photoAlt")}
           priority
           placeholder="blur"
+          quality={90}
           sizes="(min-width: 1024px) 54vw, 100vw"
           className="animate-settle h-full w-full object-cover object-[50%_18%] [mask-image:linear-gradient(to_bottom,black_55%,transparent)] lg:[mask-image:linear-gradient(to_right,transparent,black_28%,black_80%,transparent),linear-gradient(to_bottom,black_75%,transparent)] lg:[mask-composite:intersect]"
         />

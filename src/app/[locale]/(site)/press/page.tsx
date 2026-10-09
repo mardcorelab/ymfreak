@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 const PHOTOS = [
   { file: "/images/ymfreak-portrait.jpg", w: 1468, h: 1274 },
-  { file: "/images/ymfreak-profile.jpg", w: 1024, h: 1536 },
+  { file: "/images/ymfreak-profile.jpg", w: 2048, h: 3072 },
   { file: "/images/ymfreak-seated.jpg", w: 1024, h: 1536 },
 ];
 

@@ -39,6 +39,8 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   images: {
     formats: ["image/avif", "image/webp"],
+    // 90 for the hero portrait (sharp when zoomed), 75 for everything else.
+    qualities: [75, 90],
     // Release covers come from the platforms' own CDNs.
     remotePatterns: [
       { protocol: "https", hostname: "i.scdn.co", pathname: "/image/**" },
