@@ -1,5 +1,5 @@
 import "server-only";
-import { cookies, headers } from "next/headers";
+import { cookies, draftMode, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { db } from "../db";
 import { env } from "../env";
@@ -73,12 +73,15 @@ export async function signIn(email: string, password: string): Promise<SignInRes
     path: "/",
     maxAge: SESSION_MAX_AGE_SECONDS,
   });
+  // Lets the owner see the real site while it's hidden from the public (see site-visibility.ts).
+  (await draftMode()).enable();
   await audit("admin.sign_in", "session", null, { ip });
   return { ok: true };
 }
 
 export async function signOut(): Promise<void> {
   (await cookies()).delete(SESSION_COOKIE);
+  (await draftMode()).disable();
 }
 
 export async function currentAdmin(): Promise<SessionPayload | null> {

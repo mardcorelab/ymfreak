@@ -2,7 +2,7 @@
 
 import { db } from "@/server/db";
 import { audit, requireAdmin } from "@/server/auth/admin";
-import { agentSettingsSchema, businessRulesSchema, contactSchema, parseSetting } from "@/server/settings/schemas";
+import { agentSettingsSchema, businessRulesSchema, contactSchema, parseSetting, siteSettingsSchema } from "@/server/settings/schemas";
 import { checkbox, dollarsToCents, optionalInt, text } from "@/lib/form-data";
 import { invalid, refreshSite, type ActionState } from "../common";
 
@@ -65,4 +65,18 @@ export async function saveAgentSettings(_prev: ActionState, fd: FormData): Promi
   await audit("settings.agent", "Setting", "agent", parsed.data);
   refreshSite();
   return { status: "ok", message: "Asistente actualizado. Los cambios se aplican desde el próximo mensaje." };
+}
+
+export async function saveSiteVisibility(_prev: ActionState, fd: FormData): Promise<ActionState> {
+  await requireAdmin();
+  const value = siteSettingsSchema.parse({ hidden: checkbox(fd, "hidden") });
+  await db.setting.upsert({ where: { key: "site" }, update: { value }, create: { key: "site", value } });
+  await audit("settings.site", "Setting", "site", value);
+  refreshSite();
+  return {
+    status: "ok",
+    message: value.hidden
+      ? "Web oculta: los visitantes ven la página de Próximamente. Tú la sigues viendo completa mientras estés conectado."
+      : "Web visible para todo el mundo.",
+  };
 }

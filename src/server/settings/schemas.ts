@@ -74,12 +74,18 @@ export const agentSettingsSchema = z.object({
   notes: z.string().trim().max(4000, "Instrucciones: máximo 4000 caracteres"),
 });
 
+/** Hides the public site behind a "coming soon" page while YM Freak polishes it (he still sees everything signed in). */
+export const siteSettingsSchema = z.object({
+  hidden: z.boolean(),
+});
+
 export const SETTING_SCHEMAS = {
   business_rules: businessRulesSchema,
   contact: contactSchema,
   payment: paymentSettingsSchema,
   booking: bookingSettingsSchema,
   agent: agentSettingsSchema,
+  site: siteSettingsSchema,
 } as const;
 
 export type SettingKey = keyof typeof SETTING_SCHEMAS;

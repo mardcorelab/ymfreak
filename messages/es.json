@@ -704,5 +704,14 @@
     "contactBody": "Entrevistas, notas de prensa y colaboraciones:",
     "views": "Reproducciones en YouTube",
     "viewsValue": "{count} en los temas en los que ha trabajado (se actualiza cada hora)"
+  },
+  "comingSoon": {
+    "eyebrow": "Próximamente",
+    "title": "Estamos afinando algo grande",
+    "text": "La nueva casa de YM Freak abre muy pronto. Mientras tanto, escríbeme por aquí:",
+    "email": "Correo",
+    "instagram": "Instagram",
+    "whatsapp": "WhatsApp",
+    "youtube": "YouTube"
   }
 }

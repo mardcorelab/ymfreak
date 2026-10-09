@@ -704,5 +704,14 @@
     "contactBody": "Interviews, press releases and collaborations:",
     "views": "YouTube plays",
     "viewsValue": "{count} on the songs he has worked on (updated hourly)"
+  },
+  "comingSoon": {
+    "eyebrow": "Coming soon",
+    "title": "Fine-tuning something big",
+    "text": "YM Freak's new home opens very soon. Meanwhile, reach me here:",
+    "email": "Email",
+    "instagram": "Instagram",
+    "whatsapp": "WhatsApp",
+    "youtube": "YouTube"
   }
 }

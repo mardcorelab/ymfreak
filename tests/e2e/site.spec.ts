@@ -189,3 +189,48 @@ test("YM Freak names and guides the assistant from the dashboard", async ({ page
   await page.getByRole("button", { name: "Guardar cambios" }).click();
   await expect(page.getByText("Asistente actualizado.")).toBeVisible();
 });
+
+test("the owner can hide the site behind a coming-soon page and still preview it", async ({ page, browser }) => {
+  await page.goto("/dashboard/login");
+  await page.getByLabel("Correo").fill(EMAIL);
+  await page.getByLabel("Contraseña").fill(process.env.ADMIN_PASSWORD ?? "");
+  await page.getByRole("button", { name: "Entrar" }).click();
+  const visibility = page.locator("section", { has: page.getByRole("heading", { name: "Visibilidad de la web" }) });
+  const toggle = async (hide: boolean, message: RegExp) => {
+    await page.goto("/dashboard");
+    await visibility.getByLabel("Ocultar la web al público (modo Próximamente)").setChecked(hide);
+    await visibility.getByRole("button", { name: "Guardar cambios" }).click();
+    await expect(page.getByText(message)).toBeVisible();
+  };
+
+  await toggle(true, /Web oculta: los visitantes ven la página de Próximamente/);
+  try {
+    const visitor = await browser.newContext();
+    const v = await visitor.newPage();
+    await v.goto("/es");
+    await expect(v.getByTestId("coming-soon")).toBeVisible();
+    await expect(v.getByRole("heading", { name: "Estamos afinando algo grande" })).toBeVisible();
+    await v.goto("/en/services");
+    await expect(v.getByRole("heading", { name: "Fine-tuning something big" })).toBeVisible();
+    await v.goto("/es/links");
+    await expect(v.getByTestId("coming-soon")).toBeVisible();
+    // Clients can still reach their account, checkout and the legal pages.
+    await v.goto("/es/account");
+    await expect(v.getByTestId("coming-soon")).toHaveCount(0);
+    await v.goto("/es/privacy");
+    await expect(v.getByTestId("coming-soon")).toHaveCount(0);
+    await visitor.close();
+
+    // The owner sees the real site with a banner.
+    await page.goto("/es");
+    await expect(page.getByTestId("hidden-banner")).toBeVisible();
+    await expect(page.getByTestId("coming-soon")).toHaveCount(0);
+  } finally {
+    await toggle(false, /Web visible para todo el mundo/);
+  }
+  const visitor = await browser.newContext();
+  const v = await visitor.newPage();
+  await v.goto("/es");
+  await expect(v.getByTestId("coming-soon")).toHaveCount(0);
+  await visitor.close();
+});

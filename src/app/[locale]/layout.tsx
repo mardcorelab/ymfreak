@@ -8,6 +8,7 @@ import { getAgentSettings } from "@/server/agent/settings";
 import { AgentWidget } from "@/components/agent/AgentWidget";
 import { voiceEnabled } from "@/server/agent/voice";
 import { Analytics } from "@/components/site/Analytics";
+import { siteGate } from "@/server/site-visibility";
 import { siteUrl } from "@/lib/seo";
 import { archivo, michroma } from "@/lib/fonts";
 import "../globals.css";
@@ -46,14 +47,23 @@ export default async function LocaleLayout({
   const { locale } = await params;
   if (!hasLocale(routing.locales, locale)) notFound();
   setRequestLocale(locale);
-  const agent = await getAgentSettings();
+  const [agent, gate] = await Promise.all([getAgentSettings(), siteGate()]);
 
   return (
     <html lang={locale} className={`${archivo.variable} ${michroma.variable}`}>
       <body className="min-h-dvh antialiased">
         <NextIntlClientProvider>
+          {gate === "preview" && (
+            <a
+              href="/dashboard"
+              className="fixed top-0 left-1/2 z-[60] -translate-x-1/2 rounded-b-lg bg-amber-400 px-4 py-1.5 text-xs font-semibold text-black shadow"
+              data-testid="hidden-banner"
+            >
+              Web oculta al público · solo tú la ves · cambiar en el panel
+            </a>
+          )}
           {children}
-          {agentAvailable() && <AgentWidget name={agent.name} voice={voiceEnabled()} />}
+          {gate !== "coming-soon" && agentAvailable() && <AgentWidget name={agent.name} voice={voiceEnabled()} />}
           <Analytics />
         </NextIntlClientProvider>
       </body>

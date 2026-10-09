@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { ComingSoon } from "@/components/site/ComingSoon";
+import { siteGate } from "@/server/site-visibility";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import type { AppLocale } from "@/i18n/routing";
@@ -28,6 +30,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function ReleasePage({ params }: Props) {
   const { locale, slug } = await params;
   setRequestLocale(locale);
+  if ((await siteGate()) === "coming-soon") return <ComingSoon locale={locale} />;
   const release = await getRelease(slug, locale);
   if (!release) notFound();
   const [t, tw] = await Promise.all([getTranslations("release"), getTranslations("work")]);

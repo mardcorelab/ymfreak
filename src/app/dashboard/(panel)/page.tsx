@@ -8,6 +8,10 @@ import { agentAvailable } from "@/server/agent/model";
 import { paymentStatus } from "@/server/payments";
 import { emailAlertsConfigured } from "@/server/notify";
 import { voiceEnabled } from "@/server/agent/voice";
+import { siteHidden } from "@/server/site-visibility";
+import { saveSiteVisibility } from "@/server/admin/actions/settings";
+import { AdminForm } from "@/components/admin/AdminForm";
+import { Checkbox } from "@/components/admin/fields";
 import { whatsappLink } from "@/lib/alerts";
 import { fmtDateTime } from "@/lib/admin-format";
 
@@ -29,7 +33,7 @@ export default async function DashboardHome() {
     db.testimonial.count({ where: { fromClient: true, published: false } }),
   ]);
   const pay = paymentStatus();
-  const leads = await hotLeads();
+  const [leads, hidden] = await Promise.all([hotLeads(), siteHidden()]);
 
   const cards = [
     { href: "/dashboard/bookings", title: "Reservas", value: `${activeBookings} activas${awaiting ? `, ${awaiting} esperando pago` : ""}` },
@@ -49,6 +53,37 @@ export default async function DashboardHome() {
         title="Tu panel"
         description="Todo lo que cambies aquí se ve en la web en español e inglés en cuanto guardas."
       />
+      <section
+        aria-labelledby="visibility-title"
+        className={`mb-10 rounded-lg border p-5 ${hidden ? "border-amber-400/50 bg-amber-400/5" : "border-rule"}`}
+      >
+        <h2 id="visibility-title" className="type-sub text-2xl">
+          Visibilidad de la web
+        </h2>
+        <p className="mt-1 text-sm text-ash">
+          {hidden
+            ? "Oculta: los visitantes ven una página de «Próximamente» con tu logo y tu contacto. Tú ves la web completa mientras estés conectado al panel."
+            : "Visible para todo el mundo."}
+        </p>
+        {hidden && (
+          <p className="mt-2 text-sm">
+            <a href="/api/admin/preview" className="underline underline-offset-4 hover:text-bone">
+              Ver la web completa (solo tú)
+            </a>
+          </p>
+        )}
+        <div className="mt-4">
+          <AdminForm action={saveSiteVisibility}>
+            <Checkbox
+              name="hidden"
+              label="Ocultar la web al público (modo Próximamente)"
+              defaultChecked={hidden}
+              hint="El panel, los pagos y el portal de clientes siguen funcionando."
+            />
+          </AdminForm>
+        </div>
+      </section>
+
       {leads.length > 0 && (
         <section aria-labelledby="leads-title" className="mb-10 rounded-lg border border-amber-400/40 bg-amber-400/5 p-5">
           <h2 id="leads-title" className="type-sub text-2xl">

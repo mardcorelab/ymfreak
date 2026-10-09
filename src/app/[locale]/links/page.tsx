@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { ComingSoon } from "@/components/site/ComingSoon";
+import { siteGate } from "@/server/site-visibility";
 import Image from "next/image";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import type { AppLocale } from "@/i18n/routing";
@@ -28,6 +30,7 @@ const big =
 /** Link-in-bio page for Instagram, TikTok and YouTube: standalone, thumb-sized, everything one tap away. */
 export default async function LinksPage({ params }: Props) {
   const { locale } = await params;
+  if ((await siteGate()) === "coming-soon") return <ComingSoon locale={locale} />;
   setRequestLocale(locale);
   const [t, tAll, contact, releases, achievements, next, videos] = await Promise.all([
     getTranslations("links"),
