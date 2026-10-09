@@ -195,6 +195,7 @@ test("the owner can hide the site behind a coming-soon page and still preview it
   await page.getByLabel("Correo").fill(EMAIL);
   await page.getByLabel("Contraseña").fill(process.env.ADMIN_PASSWORD ?? "");
   await page.getByRole("button", { name: "Entrar" }).click();
+  await expect(page.getByRole("heading", { name: "Tu panel" })).toBeVisible();
   const visibility = page.locator("section", { has: page.getByRole("heading", { name: "Visibilidad de la web" }) });
   const toggle = async (hide: boolean, message: RegExp) => {
     await page.goto("/dashboard");
