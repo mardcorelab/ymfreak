@@ -252,7 +252,7 @@ test("home services: no prices at first, investment on demand, and the guide rec
   await expect(page.getByLabel("Escribe tu mensaje…")).toHaveValue("Hola, me interesa Mastering. ¿Qué me recomiendas para mi canción?");
   await page.getByRole("button", { name: "Cerrar el chat" }).click();
 
-  // Guide (booking closed for visitors in CI: unit price and an invitation to write).
+  // Guide: real quote when booking is open, otherwise the unit price and an invitation to write.
   const guide = page.getByTestId("service-guide");
   await guide.getByRole("button", { name: "Ya está mezclada" }).click();
   await guide.getByRole("button", { name: "Una canción más" }).click();
@@ -260,8 +260,8 @@ test("home services: no prices at first, investment on demand, and the guide rec
   await guide.getByRole("button", { name: "Lo antes posible" }).click();
   const result = page.getByTestId("guide-result");
   await expect(result.getByText("Mastering", { exact: true })).toBeVisible();
-  await expect(result.getByText("$70")).toBeVisible();
-  await expect(result.getByText("Escríbeme y te confirmo la fecha de entrega.")).toBeVisible();
+  await expect(result.getByText(/Te la entrego el|Escríbeme y te confirmo la fecha de entrega\./)).toBeVisible();
+  await expect(result.getByText(/^\$(70|140)$/)).toBeVisible();
 });
 
 test("the guide quotes the real total and delivery date when booking is open", async ({ page }) => {
