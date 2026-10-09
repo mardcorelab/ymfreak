@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
@@ -54,13 +55,13 @@ export default async function LocaleLayout({
       <body className="min-h-dvh antialiased">
         <NextIntlClientProvider>
           {gate === "preview" && (
-            <a
+            <Link
               href="/dashboard"
               className="fixed top-0 left-1/2 z-[60] -translate-x-1/2 rounded-b-lg bg-amber-400 px-4 py-1.5 text-xs font-semibold text-black shadow"
               data-testid="hidden-banner"
             >
               Web oculta al público · solo tú la ves · cambiar en el panel
-            </a>
+            </Link>
           )}
           {children}
           {gate !== "coming-soon" && agentAvailable() && <AgentWidget name={agent.name} voice={voiceEnabled()} />}

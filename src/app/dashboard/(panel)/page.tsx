@@ -67,6 +67,8 @@ export default async function DashboardHome() {
         </p>
         {hidden && (
           <p className="mt-2 text-sm">
+            {/* A route handler (sets the preview cookie), so a full page load is wanted here. */}
+            {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
             <a href="/api/admin/preview" className="underline underline-offset-4 hover:text-bone">
               Ver la web completa (solo tú)
             </a>
