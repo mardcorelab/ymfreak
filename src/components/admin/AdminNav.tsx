@@ -10,6 +10,7 @@ export const ADMIN_NAV = [
   { href: "/dashboard/orders", label: "Pagos" },
   { href: "/dashboard/clients", label: "Clientes" },
   { href: "/dashboard/conversations", label: "Conversaciones" },
+  { href: "/dashboard/assistant", label: "Asistente" },
   { href: "/dashboard/availability", label: "Disponibilidad" },
   { href: "/dashboard/services", label: "Servicios y precios" },
   { href: "/dashboard/portfolio", label: "Trabajos" },

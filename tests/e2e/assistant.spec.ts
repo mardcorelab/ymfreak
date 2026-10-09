@@ -16,8 +16,8 @@ async function login(page: Page) {
 }
 
 async function openChat(page: Page) {
-  await page.getByRole("button", { name: "Habla con YM Freak AI" }).click();
-  await expect(page.getByRole("dialog", { name: "YM Freak AI" })).toBeVisible();
+  await page.getByRole("button", { name: /¿Qué quieres crear/ }).click();
+  await expect(page.getByRole("dialog", { name: "Asistente del estudio" })).toBeVisible();
 }
 
 async function say(page: Page, text: string) {
@@ -43,7 +43,7 @@ test.describe.configure({ mode: "serial" });
 test("the assistant answers from live data and cannot book while booking is closed", async ({ page }) => {
   await page.goto("/es");
   await openChat(page);
-  await expect(log(page).getByText(/Soy el asistente de YM Freak/)).toBeVisible();
+  await expect(log(page).getByText(/Soy el asistente del estudio/)).toBeVisible();
 
   await say(page, "hola");
   await expect(log(page).getByText("TEST-REPLY echo: hola")).toBeVisible();

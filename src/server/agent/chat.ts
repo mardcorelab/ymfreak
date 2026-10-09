@@ -13,6 +13,7 @@ import { bookingRequestSchema } from "@/lib/validators/booking";
 import { AGENT_LIMITS, type AgentCard, type ChatItem, type ChatResponse, type ConfirmResponse } from "@/lib/agent-types";
 import { recentWindow, toApiMessages, type Block, type ToolResultBlock, type ToolUseBlock } from "./llm";
 import { getAgentModel } from "./model";
+import { getAgentSettings } from "./settings";
 import { dynamicPrompt, STABLE_PROMPT } from "./prompt";
 import { fmtTime, runTool, TOOL_DEFS, type Locale } from "./tools";
 
@@ -99,8 +100,11 @@ export async function handleChat(input: { conversationId?: string | null; text: 
   await addRow(conversationId, "user", [{ type: "text", text }]);
   await db.conversation.update({ where: { id: conversationId }, data: { userMessages: { increment: 1 }, lastMessageAt: now } });
 
-  const [rules, open] = await Promise.all([getSetting("business_rules"), bookingOpen()]);
-  const system = { stable: STABLE_PROMPT, dynamic: dynamicPrompt({ now, timeZone: rules.timeZone, bookingOpen: open, pageLocale: input.locale }) };
+  const [rules, open, agent] = await Promise.all([getSetting("business_rules"), bookingOpen(), getAgentSettings()]);
+  const system = {
+    stable: STABLE_PROMPT,
+    dynamic: dynamicPrompt({ now, timeZone: rules.timeZone, bookingOpen: open, pageLocale: input.locale, name: agent.name, ownerNotes: agent.notes }),
+  };
 
   const rows = (await db.message.findMany({ where: { conversationId, role: { not: "card" } }, orderBy: { seq: "desc" }, take: 80 })).reverse();
   const messages = toApiMessages(recentWindow(rows.map((r) => ({ role: r.role, content: r.content as unknown as Block[] })), HISTORY_USER_TURNS));

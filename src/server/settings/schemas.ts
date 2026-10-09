@@ -68,11 +68,18 @@ export const bookingSettingsSchema = z.object({
   holdMinutes: z.number().int().min(10).max(24 * 60),
 });
 
+/** The assistant's name and YM Freak's own guidance on how it should talk and sell. */
+export const agentSettingsSchema = z.object({
+  name: z.string().trim().max(30, "Nombre: máximo 30 caracteres"),
+  notes: z.string().trim().max(4000, "Instrucciones: máximo 4000 caracteres"),
+});
+
 export const SETTING_SCHEMAS = {
   business_rules: businessRulesSchema,
   contact: contactSchema,
   payment: paymentSettingsSchema,
   booking: bookingSettingsSchema,
+  agent: agentSettingsSchema,
 } as const;
 
 export type SettingKey = keyof typeof SETTING_SCHEMAS;

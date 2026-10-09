@@ -152,3 +152,28 @@ test("press kit: bios, facts and downloadable logos", async ({ page, request }) 
     expect((await request.get(`/press/${f}`)).ok()).toBe(true);
   }
 });
+
+test("YM Freak names and guides the assistant from the dashboard", async ({ page }) => {
+  await page.goto("/dashboard/login");
+  await page.getByLabel("Correo").fill(EMAIL);
+  await page.getByLabel("Contraseña").fill(PASSWORD);
+  await page.getByRole("button", { name: "Entrar" }).click();
+  await expect(page.getByRole("heading", { name: "Tu panel" })).toBeVisible();
+  await page.goto("/dashboard/assistant");
+  await page.getByLabel("Nombre del asistente").fill("Eco");
+  await page.getByLabel("Tus instrucciones").fill("Saluda con energía.");
+  await page.getByRole("button", { name: "Guardar cambios" }).click();
+  await expect(page.getByText("Asistente actualizado.")).toBeVisible();
+
+  await page.goto("/es");
+  await page.getByRole("button", { name: /¿Qué quieres crear/ }).click();
+  await expect(page.getByRole("dialog", { name: "Eco" })).toBeVisible();
+  await expect(page.getByText(/Soy Eco, el asistente del estudio/)).toBeVisible();
+
+  // Back to no name so other runs start clean.
+  await page.goto("/dashboard/assistant");
+  await page.getByLabel("Nombre del asistente").fill("");
+  await page.getByLabel("Tus instrucciones").fill("");
+  await page.getByRole("button", { name: "Guardar cambios" }).click();
+  await expect(page.getByText("Asistente actualizado.")).toBeVisible();
+});

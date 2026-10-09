@@ -272,12 +272,12 @@
     "dueLabel": "Pendiente"
   },
   "agent": {
-    "open": "Habla con YM Freak AI",
-    "openShort": "Pregúntame",
+    "open": "¿Qué quieres crear hoy?",
+    "openShort": "¿Qué quieres crear?",
     "close": "Cerrar el chat",
-    "title": "YM Freak AI",
-    "subtitle": "Asistente virtual · precios, fechas y reservas",
-    "greeting": "¡Hola! Soy el asistente de YM Freak. Te ayudo con precios, fechas de entrega reales y reservas. ¿En qué canción estás trabajando?",
+    "title": "Asistente del estudio",
+    "subtitle": "Bienvenido a YM Freak · precios, fechas y reservas al instante",
+    "greeting": "¡Bienvenido al estudio de YM Freak! Soy el asistente del estudio: te respondo lo que quieras, te doy precios y fechas reales y te reservo tu fecha aquí mismo. ¿Qué quieres crear hoy?",
     "suggestions": {
       "s1": "¿Cuánto cuesta mezcla y mastering?",
       "s2": "¿Para cuándo estaría lista mi canción?",
@@ -364,7 +364,9 @@
       "emailUs": "Correo",
       "instagram": "Instagram",
       "whatsapp": "WhatsApp"
-    }
+    },
+    "openSub": "Tu asistente del estudio · responde al instante",
+    "greetingNamed": "¡Bienvenido al estudio de YM Freak! Soy {name}, el asistente del estudio: te respondo lo que quieras, te doy precios y fechas reales y te reservo tu fecha aquí mismo. ¿Qué quieres crear hoy?"
   },
   "account": {
     "title": "Mi cuenta",
@@ -510,8 +512,8 @@
     "description": "Todo YM Freak en un solo lugar: reservas, trabajos, redes y contacto.",
     "book": "Reserva tu fecha",
     "bookHint": "Mezcla, mastering, producción y más",
-    "agent": "Habla con YM Freak AI",
-    "agentHint": "Precios y fechas al instante",
+    "agent": "¿Qué quieres crear hoy?",
+    "agentHint": "Tu asistente del estudio · responde al instante",
     "listen": "Escucha mis trabajos",
     "latest": "Lo último",
     "account": "Mi cuenta",

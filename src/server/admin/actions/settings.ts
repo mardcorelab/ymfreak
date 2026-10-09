@@ -2,7 +2,7 @@
 
 import { db } from "@/server/db";
 import { audit, requireAdmin } from "@/server/auth/admin";
-import { businessRulesSchema, contactSchema, parseSetting } from "@/server/settings/schemas";
+import { agentSettingsSchema, businessRulesSchema, contactSchema, parseSetting } from "@/server/settings/schemas";
 import { checkbox, dollarsToCents, optionalInt, text } from "@/lib/form-data";
 import { invalid, refreshSite, type ActionState } from "../common";
 
@@ -54,4 +54,15 @@ export async function saveBusinessRules(_prev: ActionState, fd: FormData): Promi
   await audit("settings.business_rules", "Setting", "business_rules", parsed.data);
   refreshSite();
   return { status: "ok", message: "Reglas del negocio actualizadas." };
+}
+
+/** The assistant's name and YM Freak's guidance on its tone and sales approach. */
+export async function saveAgentSettings(_prev: ActionState, fd: FormData): Promise<ActionState> {
+  await requireAdmin();
+  const parsed = agentSettingsSchema.safeParse({ name: text(fd, "name"), notes: text(fd, "notes") });
+  if (!parsed.success) return invalid(parsed.error);
+  await db.setting.upsert({ where: { key: "agent" }, update: { value: parsed.data }, create: { key: "agent", value: parsed.data } });
+  await audit("settings.agent", "Setting", "agent", parsed.data);
+  refreshSite();
+  return { status: "ok", message: "Asistente actualizado. Los cambios se aplican desde el próximo mensaje." };
 }

@@ -28,7 +28,7 @@ function writeStored(id: string | null) {
 /** Opens the assistant from anywhere on the site: window.dispatchEvent(new Event("ymf:agent-open")). */
 export const OPEN_EVENT = "ymf:agent-open";
 
-export function AgentWidget() {
+export function AgentWidget({ name = "" }: { name?: string }) {
   const t = useTranslations("agent");
   const locale = useLocale();
   const [open, setOpen] = useState(false);
@@ -170,14 +170,25 @@ export function AgentWidget() {
             setOpen(true);
             track("agent_open");
           }}
-          className="fixed right-4 bottom-4 z-40 inline-flex min-h-12 items-center gap-2.5 rounded-full bg-bone py-2 pr-5 pl-3 font-semibold text-studio shadow-[0_8px_30px_rgba(0,0,0,0.45)] transition hover:bg-white active:scale-[0.98] sm:right-6 sm:bottom-6"
+          className="plate group fixed right-4 bottom-4 z-40 inline-flex min-h-14 items-center gap-3 rounded-xl py-2 pr-4 pl-2.5 text-left transition hover:brightness-110 active:scale-[0.98] sm:right-6 sm:bottom-6 sm:pr-5"
           aria-haspopup="dialog"
+          aria-label={`${t("open")} · ${t("openSub")}`}
         >
-          <span aria-hidden className="grid size-8 place-items-center rounded-full bg-black text-white">
-            <Monogram className="w-[60%]" />
+          <span aria-hidden className="plate-rivet absolute top-1.5 right-1.5" />
+          <span aria-hidden className="plate-rivet absolute right-1.5 bottom-1.5" />
+          <span
+            aria-hidden
+            className="grid size-10 shrink-0 place-items-center rounded-lg bg-black text-white shadow-[inset_0_1px_3px_rgba(0,0,0,0.8),0_1px_0_rgba(255,255,255,0.5)]"
+          >
+            <Monogram className="w-[62%]" />
           </span>
-          <span className="hidden sm:inline">{t("open")}</span>
-          <span className="sm:hidden">{t("openShort")}</span>
+          <span aria-hidden className="grid leading-tight">
+            <span className="plate-stamp type-head text-[0.82rem] sm:text-[0.9rem]">
+              <span className="hidden sm:inline">{t("open")}</span>
+              <span className="sm:hidden">{t("openShort")}</span>
+            </span>
+            <span className="plate-stamp hidden text-[0.72rem] font-semibold opacity-80 sm:block">{t("openSub")}</span>
+          </span>
         </button>
       )}
 
@@ -185,7 +196,7 @@ export function AgentWidget() {
         <div
           role="dialog"
           aria-modal="false"
-          aria-label={t("title")}
+          aria-label={name || t("title")}
           className="fixed inset-0 z-50 flex flex-col bg-studio-deep sm:inset-auto sm:right-6 sm:bottom-6 sm:h-[min(680px,calc(100dvh-3rem))] sm:w-[400px] sm:rounded-2xl sm:border sm:border-rule sm:shadow-[0_20px_60px_rgba(0,0,0,0.55)]"
         >
           <header className="flex items-center gap-3 border-b border-rule px-4 py-3">
@@ -193,7 +204,7 @@ export function AgentWidget() {
               <Monogram className="w-[60%]" />
             </span>
             <div className="min-w-0 flex-1">
-              <p className="type-sub text-lg leading-tight">{t("title")}</p>
+              <p className="type-head text-base leading-tight">{name || t("title")}</p>
               <p className="truncate text-xs text-ash">{t("subtitle")}</p>
             </div>
             {items.length > 0 && (
@@ -217,7 +228,7 @@ export function AgentWidget() {
           </header>
 
           <div ref={listRef} className="flex-1 space-y-3 overflow-y-auto overscroll-contain px-4 py-4" aria-live="polite" data-testid="agent-log">
-            <Bubble role="assistant">{t("greeting")}</Bubble>
+            <Bubble role="assistant">{name ? t("greetingNamed", { name }) : t("greeting")}</Bubble>
             {items.length === 0 && (
               <div className="flex flex-wrap gap-2 pt-1">
                 {(["s1", "s2", "s3"] as const).map((k) => (

@@ -272,12 +272,12 @@
     "dueLabel": "Due"
   },
   "agent": {
-    "open": "Chat with YM Freak AI",
-    "openShort": "Ask me",
+    "open": "What are we making today?",
+    "openShort": "What are we making?",
     "close": "Close chat",
-    "title": "YM Freak AI",
-    "subtitle": "Virtual assistant · prices, dates and booking",
-    "greeting": "Hi! I'm YM Freak's assistant. I can help with prices, real delivery dates and booking. What song are you working on?",
+    "title": "Studio assistant",
+    "subtitle": "Welcome to YM Freak · prices, dates and booking in seconds",
+    "greeting": "Welcome to YM Freak's studio! I'm the studio assistant: ask me anything, get real prices and dates, and book your date right here. What are we making today?",
     "suggestions": {
       "s1": "How much is mixing and mastering?",
       "s2": "When would my song be ready?",
@@ -364,7 +364,9 @@
       "emailUs": "Email",
       "instagram": "Instagram",
       "whatsapp": "WhatsApp"
-    }
+    },
+    "openSub": "Your studio assistant · instant answers",
+    "greetingNamed": "Welcome to YM Freak's studio! I'm {name}, the studio assistant: ask me anything, get real prices and dates, and book your date right here. What are we making today?"
   },
   "account": {
     "title": "My account",
@@ -510,8 +512,8 @@
     "description": "Everything YM Freak in one place: booking, work, socials and contact.",
     "book": "Book your date",
     "bookHint": "Mixing, mastering, production and more",
-    "agent": "Chat with YM Freak AI",
-    "agentHint": "Prices and dates in seconds",
+    "agent": "What are we making today?",
+    "agentHint": "Your studio assistant · instant answers",
     "listen": "Listen to my work",
     "latest": "Latest",
     "account": "My account",
