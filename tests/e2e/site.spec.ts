@@ -341,3 +341,13 @@ test("extras: first-visit intro lifts by itself, sound is opt-in, and typing fre
   await expect(page.locator("html")).not.toHaveClass(/studio-mode/);
   await ctx.close();
 });
+
+test("the full portfolio is a compact grid with several releases per row", async ({ page }) => {
+  await page.goto("/es/portfolio");
+  const cards = page.getByTestId("work-grid").locator(":scope > li");
+  const n = await cards.count();
+  test.skip(n < 2, "needs at least two releases");
+  const [a, b] = [await cards.nth(0).boundingBox(), await cards.nth(1).boundingBox()];
+  expect(a && b && Math.abs(a.y - b.y) < 2).toBe(true);
+  expect(a!.width).toBeLessThan(400);
+});

@@ -17,7 +17,7 @@ export interface EmbedPlayerLabels {
  * scripts and cookies — loads only when the visitor presses play, which keeps
  * the page fast and private until then.
  */
-export function EmbedPlayer({ item, labels }: { item: PortfolioVM; labels: EmbedPlayerLabels }) {
+export function EmbedPlayer({ item, labels, compact = false }: { item: PortfolioVM; labels: EmbedPlayerLabels; compact?: boolean }) {
   const [active, setActive] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [halo, setHalo] = useState<string | null>(null);
@@ -69,7 +69,7 @@ export function EmbedPlayer({ item, labels }: { item: PortfolioVM; labels: Embed
 
   if (active && src && item.embed) {
     return (
-      <div className={`relative overflow-hidden rounded-md bg-studio-deep ${tall ? "h-[352px]" : "aspect-video"}`}>
+      <div className={`relative overflow-hidden rounded-md bg-studio-deep ${tall ? (compact ? "h-[152px]" : "h-[352px]") : "aspect-video"}`}>
         {!loaded && (
           <p role="status" className="absolute inset-0 grid place-items-center text-sm text-ash">
             {labels.loading}
@@ -98,7 +98,7 @@ export function EmbedPlayer({ item, labels }: { item: PortfolioVM; labels: Embed
             src={item.coverUrl}
             alt={labels.coverAlt}
             fill
-            sizes="(min-width: 1024px) 40vw, 100vw"
+            sizes={compact ? "(min-width: 1280px) 18vw, (min-width: 1024px) 23vw, (min-width: 640px) 31vw, 48vw" : "(min-width: 1024px) 40vw, 100vw"}
             onLoad={(e) => sampleHalo(e.currentTarget)}
             className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.02]"
           />
@@ -110,10 +110,10 @@ export function EmbedPlayer({ item, labels }: { item: PortfolioVM; labels: Embed
           type="button"
           onClick={() => setActive(true)}
           aria-label={labels.play}
-          className="absolute inset-0 flex items-end justify-start bg-gradient-to-t from-black/55 via-transparent to-transparent p-5"
+          className={`absolute inset-0 flex items-end justify-start bg-gradient-to-t from-black/55 via-transparent to-transparent ${compact ? "p-3" : "p-5"}`}
         >
-          <span className="grid size-16 place-items-center rounded-full bg-bone text-studio shadow-xl shadow-black/40 transition-transform duration-200 group-hover:scale-105 group-active:scale-95">
-            <svg viewBox="0 0 24 24" aria-hidden="true" className="ml-1 size-6" fill="currentColor">
+          <span className={`grid place-items-center rounded-full bg-bone text-studio ${compact ? "size-11" : "size-16"} shadow-xl shadow-black/40 transition-transform duration-200 group-hover:scale-105 group-active:scale-95`}>
+            <svg viewBox="0 0 24 24" aria-hidden="true" className={compact ? "ml-0.5 size-4" : "ml-1 size-6"} fill="currentColor">
               <path d="M7 4.5v15l13-7.5z" />
             </svg>
           </span>

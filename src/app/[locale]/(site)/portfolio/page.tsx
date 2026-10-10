@@ -24,7 +24,7 @@ export default async function PortfolioPage({ params }: Props) {
 
   return (
     <Section headingLevel="h1" title={t("title")} intro={t("intro")}>
-      <WorkGrid items={items} views={views} />
+      <WorkGrid items={items} views={views} compact />
       {items.some((i) => i.embed?.provider === "SPOTIFY") && <p className="mt-10 text-sm text-ash">{t("embedNote")}</p>}
     </Section>
   );
