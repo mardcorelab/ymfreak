@@ -98,6 +98,7 @@ export function ServiceGuide({ services }: { services: ServiceVM[] }) {
       </h3>
 
       <div aria-live="polite" className="mt-6">
+        <div key={`${step}-${pick ?? ""}`} className="step-in">
         {step === "stage" && (
           <fieldset>
             <legend className="text-bone/85">{t("qStage")}</legend>
@@ -282,6 +283,7 @@ export function ServiceGuide({ services }: { services: ServiceVM[] }) {
             {t("back")}
           </button>
         )}
+        </div>
       </div>
     </section>
   );

@@ -1,4 +1,5 @@
 import { useTranslations } from "next-intl";
+import { SoundToggle } from "@/components/motion/SoundToggle";
 import { Link } from "@/i18n/navigation";
 import type { ContactVM } from "@/lib/view-models";
 import { NAV_ITEMS } from "./SiteHeader";
@@ -45,6 +46,7 @@ export function SiteFooter({ contact }: { contact: ContactVM }) {
       </div>
       <div className="mx-auto flex max-w-[90rem] flex-wrap items-center gap-x-6 gap-y-2 px-5 pb-10 text-sm text-ash sm:px-8 lg:px-12">
         <p>{t("footer.rights", { year: new Date().getFullYear() })}</p>
+        <SoundToggle label={t("motion.sound")} className="-ml-3" />
         <Link href="/terms" className="hover:text-bone">
           {t("legal.footerTerms")}
         </Link>

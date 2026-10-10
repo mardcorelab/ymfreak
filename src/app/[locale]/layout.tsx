@@ -11,6 +11,7 @@ import { voiceEnabled } from "@/server/agent/voice";
 import { Analytics } from "@/components/site/Analytics";
 import { siteGate } from "@/server/site-visibility";
 import { MOTION_BOOT, MotionRoot } from "@/components/motion/MotionRoot";
+import { StudioIntro } from "@/components/motion/StudioIntro";
 import { siteUrl } from "@/lib/seo";
 import { archivo, michroma } from "@/lib/fonts";
 import "../globals.css";
@@ -49,7 +50,7 @@ export default async function LocaleLayout({
   const { locale } = await params;
   if (!hasLocale(routing.locales, locale)) notFound();
   setRequestLocale(locale);
-  const [agent, gate] = await Promise.all([getAgentSettings(), siteGate()]);
+  const [agent, gate, tm] = await Promise.all([getAgentSettings(), siteGate(), getTranslations({ locale, namespace: "motion" })]);
 
   return (
     <html lang={locale} className={`${archivo.variable} ${michroma.variable}`} suppressHydrationWarning>
@@ -57,7 +58,8 @@ export default async function LocaleLayout({
         <script dangerouslySetInnerHTML={{ __html: MOTION_BOOT }} />
       </head>
       <body className="min-h-dvh antialiased">
-        <MotionRoot />
+        <MotionRoot studioOn={tm("studioOn")} studioOff={tm("studioOff")} />
+        {gate !== "coming-soon" && <StudioIntro skipLabel={tm("skip")} />}
         <NextIntlClientProvider>
           {gate === "preview" && (
             <Link

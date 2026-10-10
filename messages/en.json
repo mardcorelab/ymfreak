@@ -776,5 +776,11 @@
     "process": "Process",
     "reviews": "Reviews",
     "outro": "Outro"
+  },
+  "motion": {
+    "sound": "Sound",
+    "skip": "Skip",
+    "studioOn": "Studio mode: lights down. Type “freak” again to leave.",
+    "studioOff": "Lights back on."
   }
 }

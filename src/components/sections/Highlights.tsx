@@ -19,14 +19,14 @@ export function Highlights({ achievements }: { achievements: AchievementVM[] }) 
       {achievements.map((a) => (
         <li key={a.id} data-reveal className="grid gap-4 py-10 md:grid-cols-[10rem_minmax(0,1fr)] md:gap-10 md:py-14">
           <div className="flex items-center gap-3 text-brass md:block">
-            <RecordMark className="size-10 md:size-14" />
+            <RecordMark className={`size-10 md:size-14 ${a.kind === "NOMINATION" || a.highlight ? "record-spin" : ""}`} />
             <p className="text-sm md:mt-4">
               {t(KIND_KEY[a.kind])}
               {a.year !== null && <span className="num">, {a.year}</span>}
             </p>
           </div>
           <div>
-            <h3 className="type-head text-[clamp(1.6rem,3.6vw,2.8rem)]">{a.title}</h3>
+            <h3 className={`type-head text-[clamp(1.6rem,3.6vw,2.8rem)] ${a.kind === "NOMINATION" ? "gold-sweep" : ""}`}>{a.title}</h3>
             <p className="mt-3 max-w-[52ch] text-lg text-bone/80">{a.detail}</p>
           </div>
         </li>

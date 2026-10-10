@@ -311,3 +311,33 @@ test("motion: reveals as you scroll, the song timeline follows, and nothing hide
   await expect(p.locator("[data-service='mastering']")).toHaveCSS("opacity", "1");
   await calm.close();
 });
+
+test("extras: first-visit intro lifts by itself, sound is opt-in, and typing freak turns the studio lights down", async ({ browser }) => {
+  // Automated browsers skip the intro; pretend to be a person for this one.
+  const ctx = await browser.newContext();
+  await ctx.addInitScript(() => Object.defineProperty(navigator, "webdriver", { get: () => false }));
+  const page = await ctx.newPage();
+  await page.goto("/es");
+  await expect(page.locator("html")).toHaveClass(/(^|\s)intro(\s|$)/);
+  await expect(page.locator(".studio-intro")).toBeVisible();
+  await expect(page.locator("html")).not.toHaveClass(/(^|\s)intro(\s|$)/, { timeout: 5000 });
+  // Only once per visit.
+  await page.reload();
+  await expect(page.locator("html")).not.toHaveClass(/(^|\s)intro(\s|$)/);
+
+  // Sound: off by default, remembered when turned on.
+  const sound = page.locator("footer").getByRole("button", { name: "Sonido" });
+  await expect(sound).toHaveAttribute("aria-pressed", "false");
+  await sound.click();
+  await expect(sound).toHaveAttribute("aria-pressed", "true");
+  await page.reload();
+  await expect(page.locator("footer").getByRole("button", { name: "Sonido" })).toHaveAttribute("aria-pressed", "true");
+
+  // The secret.
+  await page.keyboard.type("freak");
+  await expect(page.locator("html")).toHaveClass(/studio-mode/);
+  await expect(page.getByRole("status").filter({ hasText: "Modo estudio" })).toBeVisible();
+  await page.keyboard.type("freak");
+  await expect(page.locator("html")).not.toHaveClass(/studio-mode/);
+  await ctx.close();
+});

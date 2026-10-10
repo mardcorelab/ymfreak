@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { SoundToggle } from "./SoundToggle";
 
 export type TimelinePart = { id: string; label: string };
 
@@ -10,7 +11,7 @@ export type TimelinePart = { id: string; label: string };
  * Desktop: a rail on the right edge, markers jump to their part.
  * Phone: a thin bar along the top.
  */
-export function SongTimeline({ parts, label }: { parts: TimelinePart[]; label: string }) {
+export function SongTimeline({ parts, label, soundLabel }: { parts: TimelinePart[]; label: string; soundLabel: string }) {
   const railRef = useRef<HTMLDivElement>(null);
   const barRef = useRef<HTMLDivElement>(null);
   const [marks, setMarks] = useState<{ id: string; label: string; at: number }[]>([]);
@@ -97,6 +98,7 @@ export function SongTimeline({ parts, label }: { parts: TimelinePart[]; label: s
                 <li key={m.id} className="absolute right-0 -translate-y-1/2" style={{ top: `${m.at * 100}%` }}>
                   <a
                     href={`#${m.id}`}
+                    data-sound="kick"
                     aria-current={on ? "true" : undefined}
                     className="flex items-center gap-3 py-1.5 pl-6 text-right"
                   >
@@ -112,6 +114,7 @@ export function SongTimeline({ parts, label }: { parts: TimelinePart[]; label: s
             })}
           </ol>
         </div>
+        <SoundToggle label={soundLabel} className="absolute -bottom-14 right-0 translate-x-3 whitespace-nowrap text-[0.7rem]" />
       </nav>
     </>
   );

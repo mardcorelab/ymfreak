@@ -1,5 +1,6 @@
 import { useTranslations } from "next-intl";
 import type { AchievementVM } from "@/lib/view-models";
+import { VuMeter } from "@/components/ui/VuMeter";
 import { RecordMark } from "@/components/ui/RecordMark";
 import { CountUp } from "@/components/ui/CountUp";
 import { useLocale } from "next-intl";
@@ -30,10 +31,13 @@ export function Credits({ achievements, youtubeViews }: { achievements: Achievem
             </div>
           </div>
         ))}
-        <div data-reveal className="flex items-baseline gap-4 py-7 md:px-8">
-          <dt className="sr-only">{t("credits.years")}</dt>
-          <dd className="type-figure num text-5xl">{t("credits.yearsValue")}</dd>
-          <dd className="text-[0.95rem] text-bone/75">{t("credits.years")}</dd>
+        <div data-reveal className="py-7 md:px-8">
+          <div className="flex items-baseline gap-4">
+            <dt className="sr-only">{t("credits.years")}</dt>
+            <dd className="type-figure num text-5xl">{t("credits.yearsValue")}</dd>
+            <dd className="text-[0.95rem] text-bone/75">{t("credits.years")}</dd>
+          </div>
+          <VuMeter level={0.78} />
         </div>
         {views && (
           <div data-reveal className="flex flex-col gap-1 py-7 md:px-8" data-testid="youtube-views">
@@ -42,6 +46,7 @@ export function Credits({ achievements, youtubeViews }: { achievements: Achievem
               <CountUp value={views} locale={locale} />
             </dd>
             <dd className="text-[0.95rem] text-bone/75">{t("credits.views")}</dd>
+            <VuMeter level={0.92} />
           </div>
         )}
       </dl>

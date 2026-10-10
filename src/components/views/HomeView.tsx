@@ -43,7 +43,7 @@ export function HomeView({ data }: { data: HomeData }) {
 
   return (
     <>
-      <SongTimeline parts={parts} label={t("timeline.label")} />
+      <SongTimeline parts={parts} label={t("timeline.label")} soundLabel={t("motion.sound")} />
       <Hero nextAvailable={data.nextAvailable} />
       <Credits achievements={data.achievements} youtubeViews={data.youtubeViews?.total ?? null} />
 

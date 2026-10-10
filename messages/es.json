@@ -776,5 +776,11 @@
     "process": "Proceso",
     "reviews": "Opiniones",
     "outro": "Outro"
+  },
+  "motion": {
+    "sound": "Sonido",
+    "skip": "Saltar",
+    "studioOn": "Modo estudio: luces bajas. Escribe «freak» otra vez para salir.",
+    "studioOff": "Luces encendidas de nuevo."
   }
 }

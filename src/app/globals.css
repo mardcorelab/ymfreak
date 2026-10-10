@@ -273,6 +273,243 @@ html.navigating main {
   animation: logo-sweep 1.6s var(--ease-studio) 1.25s 1 forwards;
 }
 
+/* ───────────────────────── Signature moments ───────────────────────── */
+
+/* VU meter: segments light up one by one when their figure comes into view. */
+.vu-seg {
+  background: rgb(235 230 220 / 0.12);
+  transition: background-color 0.18s ease, box-shadow 0.18s ease;
+  transition-delay: calc(var(--i) * 45ms + 350ms);
+}
+.is-in .vu-seg.vu-on,
+html:not(.motion) .vu-seg.vu-on {
+  background: var(--color-bone);
+  box-shadow: 0 0 6px rgb(235 230 220 / 0.45);
+}
+.is-in .vu-seg.vu-peak,
+html:not(.motion) .vu-seg.vu-peak {
+  background: var(--color-brass);
+  box-shadow: 0 0 8px rgb(201 167 95 / 0.7);
+}
+@keyframes vu-settle {
+  0%, 100% { opacity: 1; }
+  40% { opacity: 0.55; }
+  55% { opacity: 1; }
+  70% { opacity: 0.8; }
+}
+html.motion .is-in .vu-meter {
+  animation: vu-settle 0.9s ease 1.4s 1 both;
+}
+
+/* The one golden moment: nominations catch a band of brass light once. */
+.gold-sweep {
+  background-image: linear-gradient(100deg, var(--color-bone) 42%, #f3dc9b 49%, var(--color-brass) 51%, var(--color-bone) 58%);
+  background-size: 320% 100%;
+  background-position: 100% 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+@keyframes gold-pass {
+  from { background-position: 100% 0; }
+  to { background-position: 0% 0; }
+}
+html.motion .is-in .gold-sweep {
+  animation: gold-pass 2.2s var(--ease-studio) 0.5s 1 both;
+}
+@keyframes record-spin {
+  from { rotate: -200deg; }
+}
+html.motion .is-in .record-spin {
+  animation: record-spin 2.4s var(--ease-studio) 0.2s 1 both;
+}
+
+/* Release covers: tilt toward the pointer, a light glare and a halo in the cover's own colour. */
+.cover-tilt {
+  transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transition: transform 0.6s var(--ease-studio);
+  will-change: transform;
+}
+.cover-tilt.is-tilting {
+  transition-duration: 0.12s;
+}
+.cover-glare {
+  background: radial-gradient(28rem circle at var(--gx, 50%) var(--gy, 0%), rgb(255 255 255 / 0.16), transparent 45%);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+.cover-tilt.is-tilting .cover-glare {
+  opacity: 1;
+}
+.cover-halo {
+  background: var(--halo, transparent);
+  filter: blur(42px);
+  opacity: 0.28;
+  transition: opacity 0.6s ease;
+}
+.group:hover .cover-halo {
+  opacity: 0.5;
+}
+
+/* Panels that open like a fader going up; guide steps that slide in. */
+@keyframes fader-open {
+  from {
+    opacity: 0;
+    clip-path: inset(100% 0 0 0);
+    translate: 0 10px;
+  }
+}
+.fader-open:not([hidden]) {
+  animation: fader-open 0.6s var(--ease-studio);
+}
+@keyframes step-in {
+  from {
+    opacity: 0;
+    translate: 18px 0;
+  }
+}
+.step-in {
+  animation: step-in 0.55s var(--ease-studio);
+}
+
+/* ───────────────────────── First-visit intro ───────────────────────── */
+html:not(.intro) .studio-intro {
+  display: none;
+}
+.studio-intro {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  pointer-events: none;
+  animation: intro-off 0s linear 2.2s forwards;
+}
+@keyframes intro-off {
+  to {
+    visibility: hidden;
+  }
+}
+.intro-curtain {
+  position: absolute;
+  inset-inline: 0;
+  height: 50.5%;
+  background: var(--color-studio-deep);
+}
+.intro-curtain-top {
+  top: 0;
+  animation: curtain-up 0.85s var(--ease-studio) 1.3s forwards;
+}
+.intro-curtain-bottom {
+  bottom: 0;
+  animation: curtain-down 0.85s var(--ease-studio) 1.3s forwards;
+}
+@keyframes curtain-up {
+  to {
+    translate: 0 -101%;
+  }
+}
+@keyframes curtain-down {
+  to {
+    translate: 0 101%;
+  }
+}
+.intro-wave {
+  position: absolute;
+  top: 50%;
+  left: 8%;
+  width: 84%;
+  height: 120px;
+  translate: 0 -50%;
+  overflow: visible;
+  filter: drop-shadow(0 0 6px rgb(244 241 234 / 0.55));
+  scale: 0 1;
+  animation:
+    wave-draw 0.6s var(--ease-studio) 0.1s forwards,
+    wave-out 0.4s ease 1.25s forwards;
+}
+.intro-kick {
+  transform-origin: 50% 50%;
+  transform-box: view-box;
+  scale: 1 0.04;
+  animation: kick 0.7s var(--ease-studio) 0.6s forwards;
+}
+@keyframes wave-draw {
+  to {
+    scale: 1 1;
+  }
+}
+@keyframes wave-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes kick {
+  0% { scale: 1 0.04; }
+  25% { scale: 1 1; }
+  60% { scale: 1 0.35; }
+  100% { scale: 1 0.06; }
+}
+.intro-skip {
+  position: absolute;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  pointer-events: auto;
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-ash);
+  padding: 0.75rem 1rem;
+  opacity: 0;
+  animation: fade 0.4s ease 0.3s forwards;
+}
+/* While the intro plays, the hero waits behind the curtain. */
+html.intro #inicio .animate-settle {
+  animation-delay: 1.15s;
+}
+html.intro #inicio .animate-rise {
+  animation-delay: 1.4s;
+}
+html.intro #inicio .animate-fade {
+  animation-delay: 1.75s;
+}
+html.intro #inicio .logo-sweep {
+  animation-delay: 2.6s;
+}
+
+/* Studio mode (the "freak" secret): lights down, warm glow from the desk, REC lamp on. */
+.studio-mode-lights {
+  position: fixed;
+  inset: 0;
+  z-index: 65;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1.2s var(--ease-studio);
+  background:
+    radial-gradient(120% 70% at 50% 115%, rgb(201 140 60 / 0.16), transparent 60%),
+    radial-gradient(140% 120% at 50% 40%, transparent 45%, rgb(0 0 0 / 0.62));
+}
+html.studio-mode .studio-mode-lights {
+  opacity: 1;
+}
+.rec-lamp {
+  position: absolute;
+  top: 1.1rem;
+  left: 50%;
+  translate: -50% 0;
+  font-family: var(--font-display);
+  font-size: 0.62rem;
+  letter-spacing: 0.3em;
+  color: #ff5a4f;
+  text-shadow: 0 0 10px rgb(255 90 79 / 0.8);
+}
+@keyframes rec-blink {
+  50% {
+    opacity: 0.25;
+  }
+}
+html.studio-mode .rec-lamp {
+  animation: rec-blink 1.6s steps(1) infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

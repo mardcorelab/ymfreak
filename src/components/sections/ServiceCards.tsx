@@ -62,6 +62,7 @@ function ServiceCard({ service: s, flagship }: { service: ServiceVM; flagship: b
           type="button"
           aria-expanded={open}
           aria-controls={panelId}
+          data-sound="rise"
           onClick={() => {
             if (!open) track("click", window.location.pathname, `price:${s.slug}`);
             setOpen(!open);
@@ -73,7 +74,7 @@ function ServiceCard({ service: s, flagship }: { service: ServiceVM; flagship: b
             <path d="M5 8l5 5 5-5" stroke="currentColor" strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </button>
-        <div id={panelId} hidden={!open} className="mt-4 border-t border-rule-key pt-5">
+        <div id={panelId} hidden={!open} className="fader-open mt-4 border-t border-rule-key pt-5">
           <p className="text-sm text-ash">{t("investment")}</p>
           <p className="mt-1">
             <span className="type-figure num text-3xl">{s.price}</span> <span className="text-sm text-ash">{unit}</span>
