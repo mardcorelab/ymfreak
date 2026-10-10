@@ -348,6 +348,7 @@ test("the full portfolio is a compact grid with several releases per row", async
   const n = await cards.count();
   test.skip(n < 2, "needs at least two releases");
   const [a, b] = [await cards.nth(0).boundingBox(), await cards.nth(1).boundingBox()];
-  expect(a && b && Math.abs(a.y - b.y) < 2).toBe(true);
+  // Side by side (compared horizontally: the cards may still be rising into place).
+  expect(a && b && b.x > a.x + a.width - 1).toBe(true);
   expect(a!.width).toBeLessThan(400);
 });
