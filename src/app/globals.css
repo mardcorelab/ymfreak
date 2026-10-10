@@ -122,6 +122,157 @@
   animation: fade 0.9s ease-out both;
 }
 
+/* ───────────────────────── Motion system ─────────────────────────
+ * One curve, a few durations. Elements marked data-reveal start quiet and
+ * come in when they enter the screen (MotionRoot adds .is-in). Nothing is
+ * hidden unless html has .motion, which a tiny head script sets only when the
+ * visitor hasn't asked for reduced motion (and removes again if the app's
+ * script never starts), so content is never stuck invisible.
+ */
+@theme {
+  --ease-studio: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-reveal: 1s;
+}
+
+html.motion [data-reveal] {
+  opacity: 0;
+  translate: 0 28px;
+  transition:
+    opacity var(--dur-reveal) var(--ease-studio),
+    translate var(--dur-reveal) var(--ease-studio),
+    filter 1.2s var(--ease-studio),
+    scale 1.4s var(--ease-studio);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+html.motion [data-reveal].is-in {
+  opacity: 1;
+  translate: 0 0;
+}
+/* Images open like a fader: from dim and soft to bright and sharp. */
+html.motion [data-reveal="fader"] {
+  translate: none;
+  filter: blur(12px) brightness(0.45);
+  scale: 1.05;
+}
+html.motion [data-reveal="fader"].is-in {
+  filter: none;
+  scale: 1;
+}
+/* Titles rise out of their own baseline. */
+html.motion [data-reveal="mask"] {
+  opacity: 1;
+  translate: none;
+  overflow: hidden;
+  padding-bottom: 0.08em;
+}
+html.motion [data-reveal="mask"] > * {
+  display: inline-block;
+  translate: 0 110%;
+  transition: translate 1.1s var(--ease-studio);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+html.motion [data-reveal="mask"].is-in > * {
+  translate: 0 0;
+}
+/* Lists come in one after another. */
+[data-stagger] > :nth-child(2) { --reveal-delay: 90ms; }
+[data-stagger] > :nth-child(3) { --reveal-delay: 180ms; }
+[data-stagger] > :nth-child(4) { --reveal-delay: 270ms; }
+[data-stagger] > :nth-child(5) { --reveal-delay: 360ms; }
+[data-stagger] > :nth-child(6) { --reveal-delay: 450ms; }
+[data-stagger] > :nth-child(7) { --reveal-delay: 540ms; }
+[data-stagger] > :nth-child(n + 8) { --reveal-delay: 600ms; }
+
+/* Each page arrives softly (transform-free afterwards, so fixed elements keep working). */
+@keyframes page-in {
+  from {
+    opacity: 0;
+    translate: 0 14px;
+  }
+}
+@utility page-enter {
+  animation: page-in 0.7s var(--ease-studio) backwards;
+}
+/* While a page is loading after a click: a silver playhead runs along the top. */
+@keyframes playhead-run {
+  from {
+    scale: 0 1;
+  }
+  to {
+    scale: 0.85 1;
+  }
+}
+.nav-playhead {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 70;
+  height: 2px;
+  transform-origin: left;
+  scale: 0 1;
+  background: linear-gradient(90deg, transparent, #f4f1ea 40%, #b9b5ad);
+  box-shadow: 0 0 12px rgb(244 241 234 / 0.6);
+  opacity: 0;
+  pointer-events: none;
+}
+html.navigating .nav-playhead {
+  opacity: 1;
+  animation: playhead-run 2.4s var(--ease-studio) forwards;
+}
+html.navigating main {
+  opacity: 0.55;
+  transition: opacity 0.4s ease;
+}
+
+/* Hero: a studio light that follows the visitor, and the portrait drifting
+   slower than the page (scroll-driven, no JavaScript). */
+.studio-light {
+  background: radial-gradient(
+    38rem 38rem at var(--lx, 70%) var(--ly, 35%),
+    rgb(244 241 234 / 0.085),
+    rgb(244 241 234 / 0.03) 40%,
+    transparent 70%
+  );
+  transition: background-position 0.2s linear;
+}
+@keyframes light-drift {
+  0%, 100% { --lx: 62%; --ly: 30%; }
+  50% { --lx: 78%; --ly: 42%; }
+}
+@property --lx { syntax: "<percentage>"; inherits: true; initial-value: 70%; }
+@property --ly { syntax: "<percentage>"; inherits: true; initial-value: 35%; }
+@media (hover: none) and (prefers-reduced-motion: no-preference) {
+  .studio-light {
+    animation: light-drift 14s ease-in-out infinite;
+  }
+}
+@keyframes drift-down {
+  to {
+    translate: 0 14vh;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: scroll()) {
+    .hero-parallax {
+      animation: drift-down linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0 100vh;
+    }
+  }
+}
+/* One metallic sweep across the wordmark after it rises. */
+@keyframes logo-sweep {
+  from {
+    transform: translateX(-700px) skewX(-18deg);
+  }
+  to {
+    transform: translateX(2600px) skewX(-18deg);
+  }
+}
+.logo-sweep {
+  transform: translateX(-700px) skewX(-18deg);
+  animation: logo-sweep 1.6s var(--ease-studio) 1.25s 1 forwards;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

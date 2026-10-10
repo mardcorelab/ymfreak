@@ -9,9 +9,9 @@ export function Testimonials({ items }: { items: TestimonialVM[] }) {
   return (
     <section className="mx-auto max-w-[90rem] px-5 py-24 sm:px-8 lg:px-12">
       <h2 className="type-head text-[clamp(1.6rem,3.6vw,2.8rem)]">{t("title")}</h2>
-      <ul className="mt-12 grid gap-12 md:grid-cols-2">
+      <ul className="mt-12 grid gap-12 md:grid-cols-2" data-stagger>
         {items.map((q) => (
-          <li key={q.id}>
+          <li key={q.id} data-reveal>
             <figure>
               {q.rating !== null && (
                 <p className="mb-3 text-lg tracking-widest text-brass" aria-label={t("stars", { count: q.rating })}>

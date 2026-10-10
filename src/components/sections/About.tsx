@@ -12,7 +12,7 @@ export function About({ headingLevel = "h2" }: { headingLevel?: "h1" | "h2" }) {
 
   return (
     <div className="grid items-end gap-10 md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] lg:gap-20">
-      <div className="relative mx-auto aspect-[2/3] w-full max-w-md md:max-w-none">
+      <div className="relative mx-auto aspect-[2/3] w-full max-w-md md:max-w-none" data-reveal="fader">
         <Image
           src={seated}
           alt={t("photoAlt")}
@@ -23,8 +23,10 @@ export function About({ headingLevel = "h2" }: { headingLevel?: "h1" | "h2" }) {
         />
       </div>
       <div className="pb-4 md:pb-16">
-        <Heading className="type-head text-[clamp(1.6rem,3.6vw,2.8rem)]">{t("title")}</Heading>
-        <div className="mt-8 max-w-[58ch] space-y-5 text-lg text-bone/85">
+        <Heading className="type-head text-[clamp(1.6rem,3.6vw,2.8rem)]" data-reveal="mask">
+          <span>{t("title")}</span>
+        </Heading>
+        <div className="mt-8 max-w-[58ch] space-y-5 text-lg text-bone/85" data-reveal>
           <p>{t("p1")}</p>
           <p>{t("p2")}</p>
           <p>{t("p3")}</p>

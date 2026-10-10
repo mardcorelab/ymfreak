@@ -13,6 +13,7 @@ import { Testimonials } from "@/components/sections/Testimonials";
 import { ClosingCta } from "@/components/sections/ClosingCta";
 import { ButtonAnchor, ButtonLink } from "@/components/ui/ButtonLink";
 import { VideoGrid } from "@/components/sections/VideoGrid";
+import { SongTimeline } from "@/components/motion/SongTimeline";
 
 export interface HomeData {
   featured: PortfolioVM[];
@@ -28,9 +29,21 @@ export interface HomeData {
 
 export function HomeView({ data }: { data: HomeData }) {
   const t = useTranslations();
+  const parts = [
+    { id: "inicio", label: t("timeline.intro") },
+    { id: "trabajos", label: t("timeline.work") },
+    ...(data.videos.length > 0 ? [{ id: "youtube", label: t("timeline.videos") }] : []),
+    { id: "servicios", label: t("timeline.services") },
+    ...(data.achievements.length > 0 ? [{ id: "logros", label: t("timeline.highlights") }] : []),
+    { id: "sobre-mi", label: t("timeline.about") },
+    { id: "proceso", label: t("timeline.process") },
+    ...(data.testimonials.length > 0 ? [{ id: "opiniones", label: t("timeline.reviews") }] : []),
+    { id: "outro", label: t("timeline.outro") },
+  ];
 
   return (
     <>
+      <SongTimeline parts={parts} label={t("timeline.label")} />
       <Hero nextAvailable={data.nextAvailable} />
       <Credits achievements={data.achievements} youtubeViews={data.youtubeViews?.total ?? null} />
 
@@ -89,18 +102,20 @@ export function HomeView({ data }: { data: HomeData }) {
         </Section>
       )}
 
-      <section className="bg-key">
+      <section id="sobre-mi" className="scroll-mt-8 bg-key">
         <div className="mx-auto max-w-[90rem] px-5 pt-20 sm:px-8 lg:px-12 lg:pt-28">
           <About />
         </div>
       </section>
 
-      <Section title={t("process.title")}>
+      <Section id="proceso" title={t("process.title")}>
         <Process depositPercent={data.business.depositPercent} />
       </Section>
 
-      <Testimonials items={data.testimonials} />
-      <div className="border-t border-rule">
+      <div id="opiniones" className="scroll-mt-8">
+        <Testimonials items={data.testimonials} />
+      </div>
+      <div id="outro" className="scroll-mt-8 border-t border-rule">
         <ClosingCta contact={data.contact} />
       </div>
     </>

@@ -764,5 +764,17 @@
     "otherIntro": "These fit best. Tap one to book, or ask the assistant.",
     "askPrompt": "Hi, I want {service} for {count, plural, one {# song} other {# songs}}. How do we start?",
     "askSession": "Hi, I want a {service} session. What times do you have?"
+  },
+  "timeline": {
+    "label": "Page journey",
+    "intro": "Intro",
+    "work": "Work",
+    "videos": "Videos",
+    "services": "Services",
+    "highlights": "Highlights",
+    "about": "About",
+    "process": "Process",
+    "reviews": "Reviews",
+    "outro": "Outro"
   }
 }

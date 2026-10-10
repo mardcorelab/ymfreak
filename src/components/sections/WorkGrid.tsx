@@ -14,11 +14,11 @@ export function WorkGrid({ items, views }: { items: PortfolioVM[]; views?: Recor
   if (items.length === 0) return <p className="text-ash">{t("empty")}</p>;
 
   return (
-    <ul className="grid gap-x-8 gap-y-14 md:grid-cols-2">
+    <ul className="grid gap-x-8 gap-y-14 md:grid-cols-2" data-stagger>
       {items.map((item) => {
         const provider = item.embed ? PROVIDER_NAME[item.embed.provider] : null;
                 return (
-          <li key={item.slug}>
+          <li key={item.slug} data-reveal>
             <EmbedPlayer
               item={item}
               labels={{

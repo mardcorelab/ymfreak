@@ -764,5 +764,17 @@
     "otherIntro": "Esto es lo que más se ajusta. Toca uno para reservar o pregúntale al asistente.",
     "askPrompt": "Hola, quiero {service} para {count, plural, one {# canción} other {# canciones}}. ¿Cómo empezamos?",
     "askSession": "Hola, quiero una sesión de {service}. ¿Qué horarios tienes?"
+  },
+  "timeline": {
+    "label": "Recorrido de la página",
+    "intro": "Intro",
+    "work": "Trabajos",
+    "videos": "Videos",
+    "services": "Servicios",
+    "highlights": "Logros",
+    "about": "Sobre mí",
+    "process": "Proceso",
+    "reviews": "Opiniones",
+    "outro": "Outro"
   }
 }

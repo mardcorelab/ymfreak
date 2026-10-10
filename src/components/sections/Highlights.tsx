@@ -15,9 +15,9 @@ export function Highlights({ achievements }: { achievements: AchievementVM[] }) 
   if (achievements.length === 0) return null;
 
   return (
-    <ol className="divide-y divide-rule border-y border-rule">
+    <ol className="divide-y divide-rule border-y border-rule" data-stagger>
       {achievements.map((a) => (
-        <li key={a.id} className="grid gap-4 py-10 md:grid-cols-[10rem_minmax(0,1fr)] md:gap-10 md:py-14">
+        <li key={a.id} data-reveal className="grid gap-4 py-10 md:grid-cols-[10rem_minmax(0,1fr)] md:gap-10 md:py-14">
           <div className="flex items-center gap-3 text-brass md:block">
             <RecordMark className="size-10 md:size-14" />
             <p className="text-sm md:mt-4">

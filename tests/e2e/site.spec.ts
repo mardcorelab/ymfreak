@@ -286,3 +286,28 @@ test("the guide quotes the real total and delivery date when booking is open", a
   await result.getByRole("button", { name: "Hablarlo con el asistente" }).click();
   await expect(page.getByLabel("Escribe tu mensaje…")).toHaveValue("Hola, quiero Mezcla + Mastering para 2 canciones. ¿Cómo empezamos?");
 });
+
+test("motion: reveals as you scroll, the song timeline follows, and nothing hides from reduced-motion visitors", async ({ page, browser }) => {
+  await page.goto("/es");
+  await expect(page.locator("html")).toHaveClass(/motion-ready/);
+  await expect(page.locator("html")).toHaveClass(/(^|\s)motion(\s|$)/);
+  const closing = page.locator("#outro [data-reveal='mask']");
+  await expect(closing).not.toHaveClass(/is-in/);
+  await closing.scrollIntoViewIfNeeded();
+  await expect(closing).toHaveClass(/is-in/);
+
+  // The timeline appears once past the hero and jumps to a part.
+  const timeline = page.getByTestId("song-timeline");
+  await expect(timeline).toHaveCSS("opacity", "1");
+  await timeline.hover();
+  await timeline.getByRole("link", { name: "Servicios" }).click();
+  await expect(page).toHaveURL(/#servicios$/);
+
+  const calm = await browser.newContext({ reducedMotion: "reduce" });
+  const p = await calm.newPage();
+  await p.goto("/es");
+  await expect(p.locator("html")).not.toHaveClass(/(^|\s)motion(\s|$)/);
+  await expect(p.locator("#outro [data-reveal='mask']")).toHaveCSS("opacity", "1");
+  await expect(p.locator("[data-service='mastering']")).toHaveCSS("opacity", "1");
+  await calm.close();
+});

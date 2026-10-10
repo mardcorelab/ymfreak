@@ -47,13 +47,15 @@ export function EmbedPlayer({ item, labels }: { item: PortfolioVM; labels: Embed
   return (
     <div className="group relative aspect-square overflow-hidden rounded-md bg-studio-deep">
       {item.coverUrl && (
-        <Image
-          src={item.coverUrl}
-          alt={labels.coverAlt}
-          fill
-          sizes="(min-width: 1024px) 40vw, 100vw"
-          className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.02]"
-        />
+        <div className="absolute inset-0" data-reveal="fader">
+          <Image
+            src={item.coverUrl}
+            alt={labels.coverAlt}
+            fill
+            sizes="(min-width: 1024px) 40vw, 100vw"
+            className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.02]"
+          />
+        </div>
       )}
       {src && (
         <button

@@ -3,6 +3,7 @@ import { useTranslations } from "next-intl";
 import { ButtonLink } from "@/components/ui/ButtonLink";
 import { Slogan, Wordmark } from "@/components/brand/Logo";
 import type { NextAvailableVM } from "@/lib/view-models";
+import { StudioLight } from "@/components/motion/StudioLight";
 import profile from "../../../public/images/ymfreak-profile.jpg";
 
 /**
@@ -13,9 +14,9 @@ export function Hero({ nextAvailable }: { nextAvailable: NextAvailableVM | null 
   const t = useTranslations("hero");
 
   return (
-    <section className="relative isolate overflow-hidden bg-studio">
+    <section id="inicio" className="relative isolate overflow-hidden bg-studio">
       {/* Portrait */}
-      <div className="absolute inset-x-0 top-0 -z-10 h-[68svh] lg:inset-y-0 lg:left-auto lg:right-0 lg:h-full lg:w-[54%]">
+      <div className="hero-parallax absolute inset-x-0 top-0 -z-10 h-[68svh] lg:inset-y-0 lg:left-auto lg:right-0 lg:h-full lg:w-[54%]">
         <Image
           src={profile}
           alt={t("photoAlt")}
@@ -26,6 +27,7 @@ export function Hero({ nextAvailable }: { nextAvailable: NextAvailableVM | null 
           className="animate-settle h-full w-full object-cover object-[50%_18%] [mask-image:linear-gradient(to_bottom,black_55%,transparent)] lg:[mask-image:linear-gradient(to_right,transparent,black_28%,black_80%,transparent),linear-gradient(to_bottom,black_75%,transparent)] lg:[mask-composite:intersect]"
         />
       </div>
+      <StudioLight />
 
       <div className="mx-auto flex min-h-[100svh] max-w-[90rem] flex-col justify-end px-5 pb-14 pt-[52svh] sm:px-8 lg:px-12 lg:pb-20 lg:pt-40">
         <p className="animate-fade text-sm text-bone/75 [animation-delay:500ms] sm:text-base">{t("roles")}</p>
@@ -33,7 +35,7 @@ export function Hero({ nextAvailable }: { nextAvailable: NextAvailableVM | null 
         <h1 className="mt-5">
           <span className="sr-only">YM Freak</span>
           <span className="block overflow-hidden pb-[0.5%]">
-            <Wordmark className="animate-rise block h-auto w-[min(100%,62rem)] lg:w-[min(40vw,44rem)] [animation-delay:150ms]" />
+            <Wordmark shine className="animate-rise block h-auto w-[min(100%,62rem)] lg:w-[min(40vw,44rem)] [animation-delay:150ms]" />
           </span>
         </h1>
         <p className="animate-fade mt-[clamp(0.75rem,1.6vw,1.4rem)] [animation-delay:450ms]">

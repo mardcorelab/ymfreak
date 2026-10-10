@@ -17,7 +17,7 @@ const FLAGSHIP = "mezcla-mastering";
 export function ServiceCards({ services }: { services: ServiceVM[] }) {
   const ordered = [...services.filter((s) => s.slug === FLAGSHIP), ...services.filter((s) => s.slug !== FLAGSHIP)];
   return (
-    <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3" data-testid="service-cards">
+    <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3" data-testid="service-cards" data-stagger>
       {ordered.map((s) => (
         <ServiceCard key={s.slug} service={s} flagship={s.slug === FLAGSHIP} />
       ))}
@@ -41,6 +41,7 @@ function ServiceCard({ service: s, flagship }: { service: ServiceVM; flagship: b
     <li
       className={`flex flex-col rounded-xl border p-6 sm:p-7 ${flagship ? "border-bone/25 bg-key sm:col-span-2 lg:col-span-1 lg:row-span-2" : "border-rule bg-studio"}`}
       data-service={s.slug}
+      data-reveal
     >
       {flagship && <p className="text-sm text-bone/70">{t("flagship")}</p>}
       <h3 className={`type-head ${flagship ? "mt-2 text-[clamp(1.2rem,2.2vw,1.6rem)]" : "text-lg"}`}>{s.name}</h3>

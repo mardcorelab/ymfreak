@@ -17,9 +17,9 @@ export function Credits({ achievements, youtubeViews }: { achievements: Achievem
 
   return (
     <section aria-label={t("credits.label")} className="border-y border-rule bg-studio-deep">
-      <dl className={`mx-auto grid max-w-[90rem] divide-y divide-rule px-5 sm:px-8 md:divide-x md:divide-y-0 lg:px-12 ${views ? "md:grid-cols-2 xl:grid-cols-4" : "md:grid-cols-3"}`}>
+      <dl data-stagger className={`mx-auto grid max-w-[90rem] divide-y divide-rule px-5 sm:px-8 md:divide-x md:divide-y-0 lg:px-12 ${views ? "md:grid-cols-2 xl:grid-cols-4" : "md:grid-cols-3"}`}>
         {highlighted.map((a) => (
-          <div key={a.id} className="flex gap-4 py-7 md:px-8 md:first:pl-0">
+          <div key={a.id} data-reveal className="flex gap-4 py-7 md:px-8 md:first:pl-0">
             <RecordMark className="mt-1 size-7 shrink-0 text-brass" />
             <div>
               <dt className="type-sub text-xl text-brass">
@@ -30,13 +30,13 @@ export function Credits({ achievements, youtubeViews }: { achievements: Achievem
             </div>
           </div>
         ))}
-        <div className="flex items-baseline gap-4 py-7 md:px-8">
+        <div data-reveal className="flex items-baseline gap-4 py-7 md:px-8">
           <dt className="sr-only">{t("credits.years")}</dt>
           <dd className="type-figure num text-5xl">{t("credits.yearsValue")}</dd>
           <dd className="text-[0.95rem] text-bone/75">{t("credits.years")}</dd>
         </div>
         {views && (
-          <div className="flex flex-col gap-1 py-7 md:px-8" data-testid="youtube-views">
+          <div data-reveal className="flex flex-col gap-1 py-7 md:px-8" data-testid="youtube-views">
             <dt className="sr-only">{t("credits.views")}</dt>
             <dd className="type-figure num text-5xl">
               <CountUp value={views} locale={locale} />

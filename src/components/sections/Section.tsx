@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 
 /** Standard section frame: heading, optional intro, content. */
 export function Section({
@@ -29,10 +29,20 @@ export function Section({
       >
         <div className="mb-12 flex flex-wrap items-end justify-between gap-6 lg:mb-16">
           <div>
-            <Heading className="type-head text-[clamp(1.6rem,3.6vw,2.8rem)]">{title}</Heading>
-            {intro && <p className="mt-4 max-w-[56ch] text-lg text-bone/75">{intro}</p>}
+            <Heading className="type-head text-[clamp(1.6rem,3.6vw,2.8rem)]" data-reveal="mask">
+              <span>{title}</span>
+            </Heading>
+            {intro && (
+              <p className="mt-4 max-w-[56ch] text-lg text-bone/75" data-reveal style={{ "--reveal-delay": "120ms" } as CSSProperties}>
+                {intro}
+              </p>
+            )}
           </div>
-          {aside}
+          {aside && (
+            <div data-reveal style={{ "--reveal-delay": "200ms" } as CSSProperties}>
+              {aside}
+            </div>
+          )}
         </div>
         {children}
       </div>

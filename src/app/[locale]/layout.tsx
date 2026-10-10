@@ -10,6 +10,7 @@ import { AgentWidget } from "@/components/agent/AgentWidget";
 import { voiceEnabled } from "@/server/agent/voice";
 import { Analytics } from "@/components/site/Analytics";
 import { siteGate } from "@/server/site-visibility";
+import { MOTION_BOOT, MotionRoot } from "@/components/motion/MotionRoot";
 import { siteUrl } from "@/lib/seo";
 import { archivo, michroma } from "@/lib/fonts";
 import "../globals.css";
@@ -51,8 +52,12 @@ export default async function LocaleLayout({
   const [agent, gate] = await Promise.all([getAgentSettings(), siteGate()]);
 
   return (
-    <html lang={locale} className={`${archivo.variable} ${michroma.variable}`}>
+    <html lang={locale} className={`${archivo.variable} ${michroma.variable}`} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: MOTION_BOOT }} />
+      </head>
       <body className="min-h-dvh antialiased">
+        <MotionRoot />
         <NextIntlClientProvider>
           {gate === "preview" && (
             <Link

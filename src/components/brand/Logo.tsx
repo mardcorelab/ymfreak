@@ -4,11 +4,31 @@ export const SLOGAN_TEXT = "El Producto Perfecto";
 
 type Props = { className?: string; title?: string };
 
-/** Full "YM FREAK" logo. Decorative unless a title is given. */
-export function Wordmark({ className = "", title }: Props) {
+/**
+ * Full "YM FREAK" logo. Decorative unless a title is given. With `shine`, a
+ * band of light crosses it once (the hero), like light on brushed metal.
+ */
+export function Wordmark({ className = "", title, shine = false }: Props & { shine?: boolean }) {
   return (
     <svg viewBox={WORDMARK.viewBox} className={className} fill="currentColor" {...(title ? { role: "img", "aria-label": title } : { "aria-hidden": true })}>
       <path fillRule="evenodd" d={WORDMARK.d} />
+      {shine && (
+        <>
+          <defs>
+            <clipPath id="wordmark-shine-clip">
+              <path fillRule="evenodd" d={WORDMARK.d} />
+            </clipPath>
+            <linearGradient id="wordmark-shine-band" x1="0" x2="1" y1="0" y2="0">
+              <stop offset="0" stopColor="#fff" stopOpacity="0" />
+              <stop offset="0.5" stopColor="#fff" stopOpacity="0.95" />
+              <stop offset="1" stopColor="#fff" stopOpacity="0" />
+            </linearGradient>
+          </defs>
+          <g clipPath="url(#wordmark-shine-clip)">
+            <rect className="logo-sweep" x="0" y="-60" width="420" height="440" fill="url(#wordmark-shine-band)" />
+          </g>
+        </>
+      )}
     </svg>
   );
 }

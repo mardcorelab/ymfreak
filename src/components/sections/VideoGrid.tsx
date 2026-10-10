@@ -6,9 +6,9 @@ import { EmbedPlayer } from "@/components/media/EmbedPlayer";
 export function VideoGrid({ items }: { items: PortfolioVM[] }) {
   const t = useTranslations("work");
   return (
-    <ul className="grid gap-x-6 gap-y-10 md:grid-cols-3">
+    <ul className="grid gap-x-6 gap-y-10 md:grid-cols-3" data-stagger>
       {items.map((v) => (
-        <li key={v.slug}>
+        <li key={v.slug} data-reveal>
           <EmbedPlayer
             item={v}
             labels={{

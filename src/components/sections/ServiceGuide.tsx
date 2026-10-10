@@ -91,7 +91,7 @@ export function ServiceGuide({ services }: { services: ServiceVM[] }) {
   const option = "min-h-12 rounded-full border border-rule-key px-5 text-left text-[0.95rem] text-bone/90 transition hover:border-bone/60 hover:bg-bone/5";
 
   return (
-    <section aria-labelledby="guide-title" className="mb-14 rounded-2xl border border-rule-key bg-studio p-6 sm:p-9" data-testid="service-guide">
+    <section aria-labelledby="guide-title" className="mb-14 rounded-2xl border border-rule-key bg-studio p-6 sm:p-9" data-testid="service-guide" data-reveal>
       <p className="text-sm text-bone/60">{t("eyebrow")}</p>
       <h3 id="guide-title" className="type-head mt-2 text-[clamp(1.2rem,2.4vw,1.75rem)]">
         {t("title")}
